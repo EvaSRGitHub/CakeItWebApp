@@ -9,9 +9,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using CakeItWebApp.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using CakeItWebApp.Models;
+using CakeItWebApp.Data;
 
 namespace CakeItWebApp
 {
@@ -34,11 +35,12 @@ namespace CakeItWebApp
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDefaultIdentity<IdentityUser>()
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            services.AddDbContext<CakeItDbContext>(options =>
+                    options.UseSqlServer(
+                        this.Configuration.GetConnectionString("DefaultConnection")).UseLazyLoadingProxies());
+
+            services.AddDefaultIdentity<CakeItUser>()
+                .AddEntityFrameworkStores<CakeItDbContext>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }

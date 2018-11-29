@@ -11,4 +11,9 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.5" PrivateAssets="All" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CakeItWebApp.Data\CakeItWebApp.Data.csproj" />
+    <ProjectReference Include="..\CakeItWebApp.Models\CakeItWebApp.Models.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -5,6 +5,10 @@ VisualStudioVersion = 15.0.28010.2050
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CakeItWebApp", "CakeItWebApp\CakeItWebApp.csproj", "{2A203E56-0E5E-4506-9514-46A53974F889}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CakeItWebApp.Data", "CakeItWebApp.Data\CakeItWebApp.Data.csproj", "{472A6E47-9CF2-433C-8093-C829859519BB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CakeItWebApp.Models", "CakeItWebApp.Models\CakeItWebApp.Models.csproj", "{9B06373F-A7A6-4638-97E0-99E737873D03}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{2A203E56-0E5E-4506-9514-46A53974F889}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2A203E56-0E5E-4506-9514-46A53974F889}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2A203E56-0E5E-4506-9514-46A53974F889}.Release|Any CPU.Build.0 = Release|Any CPU
+		{472A6E47-9CF2-433C-8093-C829859519BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{472A6E47-9CF2-433C-8093-C829859519BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{472A6E47-9CF2-433C-8093-C829859519BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{472A6E47-9CF2-433C-8093-C829859519BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9B06373F-A7A6-4638-97E0-99E737873D03}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B06373F-A7A6-4638-97E0-99E737873D03}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B06373F-A7A6-4638-97E0-99E737873D03}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B06373F-A7A6-4638-97E0-99E737873D03}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
