@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CakeItWebApp.Data", "CakeIt
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CakeItWebApp.Models", "CakeItWebApp.Models\CakeItWebApp.Models.csproj", "{9B06373F-A7A6-4638-97E0-99E737873D03}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{0C8B7779-369F-47E3-B629-EFECA1454FD8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MailService", "MailService", "{01BA3881-B22A-4814-B3A5-9F129345C58E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,6 +34,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{01BA3881-B22A-4814-B3A5-9F129345C58E} = {0C8B7779-369F-47E3-B629-EFECA1454FD8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0764962D-1B1F-458C-9082-7083B9D22EF8}

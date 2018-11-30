@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using CakeItWebApp.Models;
 using CakeItWebApp.Data;
+using CakeItWebApp.Middlewares.MiddlewareExtensions;
 
 namespace CakeItWebApp
 {
@@ -39,10 +40,24 @@ namespace CakeItWebApp
                     options.UseSqlServer(
                         this.Configuration.GetConnectionString("DefaultConnection")).UseLazyLoadingProxies());
 
-            services.AddDefaultIdentity<CakeItUser>()
+            services.AddIdentity<CakeItUser, IdentityRole>(options => {
+                options.Password.RequireDigit = true;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequiredLength = 3;
+                options.Password.RequiredUniqueChars = 1;
+
+                // Lockout settings.
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(1);
+                options.Lockout.MaxFailedAccessAttempts = 5;
+                options.Lockout.AllowedForNewUsers = false;
+            })
                 .AddEntityFrameworkStores<CakeItDbContext>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+           services.AddTransient(this.GetType());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -59,6 +74,8 @@ namespace CakeItWebApp
                 app.UseHsts();
             }
 
+            app.UseSeedRolesMiddleware();
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
@@ -67,6 +84,10 @@ namespace CakeItWebApp
 
             app.UseMvc(routes =>
             {
+                routes.MapRoute(
+                     name: "areaRoute",
+                     template: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
