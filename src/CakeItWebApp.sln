@@ -3,15 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2050
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CakeItWebApp", "CakeItWebApp\CakeItWebApp.csproj", "{2A203E56-0E5E-4506-9514-46A53974F889}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CakeItWebApp", "CakeItWebApp\CakeItWebApp.csproj", "{2A203E56-0E5E-4506-9514-46A53974F889}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CakeItWebApp.Data", "CakeItWebApp.Data\CakeItWebApp.Data.csproj", "{472A6E47-9CF2-433C-8093-C829859519BB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CakeItWebApp.Data", "CakeItWebApp.Data\CakeItWebApp.Data.csproj", "{472A6E47-9CF2-433C-8093-C829859519BB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CakeItWebApp.Models", "CakeItWebApp.Models\CakeItWebApp.Models.csproj", "{9B06373F-A7A6-4638-97E0-99E737873D03}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CakeItWebApp.Models", "CakeItWebApp.Models\CakeItWebApp.Models.csproj", "{9B06373F-A7A6-4638-97E0-99E737873D03}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{0C8B7779-369F-47E3-B629-EFECA1454FD8}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{1A21D587-CED2-4644-AD4C-6A72AB80CEA2}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MailService", "MailService", "{01BA3881-B22A-4814-B3A5-9F129345C58E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CakeItWebApp.Services.Messaging", "Services\CakeItWebApp.Services.Messaging\CakeItWebApp.Services.Messaging.csproj", "{0B3238DB-0E50-4460-BCC3-4155B7AEFED3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,12 +31,16 @@ Global
 		{9B06373F-A7A6-4638-97E0-99E737873D03}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9B06373F-A7A6-4638-97E0-99E737873D03}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9B06373F-A7A6-4638-97E0-99E737873D03}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B3238DB-0E50-4460-BCC3-4155B7AEFED3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B3238DB-0E50-4460-BCC3-4155B7AEFED3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B3238DB-0E50-4460-BCC3-4155B7AEFED3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B3238DB-0E50-4460-BCC3-4155B7AEFED3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{01BA3881-B22A-4814-B3A5-9F129345C58E} = {0C8B7779-369F-47E3-B629-EFECA1454FD8}
+		{0B3238DB-0E50-4460-BCC3-4155B7AEFED3} = {1A21D587-CED2-4644-AD4C-6A72AB80CEA2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0764962D-1B1F-458C-9082-7083B9D22EF8}

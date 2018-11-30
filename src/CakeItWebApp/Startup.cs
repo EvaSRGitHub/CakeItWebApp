@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using CakeItWebApp.Models;
 using CakeItWebApp.Data;
 using CakeItWebApp.Middlewares.MiddlewareExtensions;
+using CakeItWebApp.Services.Messaging;
 
 namespace CakeItWebApp
 {
@@ -57,11 +58,13 @@ namespace CakeItWebApp
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-           services.AddTransient(this.GetType());
+           services.AddSingleton(this.Configuration);
+
+            services.AddTransient<IEmailSender, SendGridEmailSender>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider provider)
         {
             if (env.IsDevelopment())
             {
@@ -91,6 +94,16 @@ namespace CakeItWebApp
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
+            });
+
+            provider.GetRequiredService<IEmailSender>().SendEmailAsync(new SendEmailDetails {
+                FromEmail = "mail@cakeIt.com",
+                FromName = "Peter Pan",
+                ToEmail = "evarakova79@gmail.com",
+                ToName = "My Lady",
+                Subject = "Test email",
+                Content = "This is my first test mail",
+                IsHtml = false
             });
         }
     }

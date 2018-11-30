@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Identity;
 using CakeItWebApp.Models;
+using Microsoft.Extensions.Configuration;
 
 namespace CakeItWebApp.Middlewares
 {
@@ -39,11 +40,11 @@ namespace CakeItWebApp.Middlewares
         private void SeedAdmin(IServiceProvider provider)
         {
             var signInManager = provider.GetRequiredService<SignInManager<CakeItUser>>();
-            var configuration = provider.GetRequiredService<Startup>();
+            var configuration = provider.GetRequiredService<IConfiguration>();
 
             // Seed User admin
-            var email = configuration.Configuration.GetSection("AdminUser").GetChildren().ToList()[0].Value;
-            var pass = configuration.Configuration.GetSection("AdminUser").GetChildren().ToList()[1].Value;
+            var email = configuration.GetSection("AdminUser").GetChildren().ToList()[0].Value;
+            var pass = configuration.GetSection("AdminUser").GetChildren().ToList()[1].Value;
 
             var user = new CakeItUser
             {
@@ -59,9 +60,6 @@ namespace CakeItWebApp.Middlewares
         private void SeedRoles(IServiceProvider provider)
         {
             var roleManager = provider.GetRequiredService<RoleManager<IdentityRole>>();
-            var userManager = provider.GetRequiredService<UserManager<CakeItUser>>();
-            var signInManager = provider.GetRequiredService<SignInManager<CakeItUser>>();
-            var configuration = provider.GetRequiredService<Startup>();
 
             Task<IdentityResult> roleResult;
 
