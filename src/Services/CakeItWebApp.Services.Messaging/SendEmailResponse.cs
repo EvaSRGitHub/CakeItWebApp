@@ -1,9 +1,11 @@
-﻿namespace CakeItWebApp.Services.Messaging
+﻿using System.Collections.Generic;
+
+namespace CakeItWebApp.Services.Messaging
 {
     public class SendEmailResponse
     {
-        public bool Successful => ErrorMessage == null;
+        public bool Successful => !(Errors?.Count > 0);
 
-        public string ErrorMessage { get; set; }
+        public List<string> Errors{ get; set; }
     }
 }

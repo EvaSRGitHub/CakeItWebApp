@@ -9,6 +9,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using CakeItWebApp.Services.Messaging;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
+using System.IO;
+using CakeWebApp.Services.Common.Contracts;
 
 namespace CakeItWebApp.Areas.Identity.Pages.Account
 {
@@ -16,12 +21,14 @@ namespace CakeItWebApp.Areas.Identity.Pages.Account
     public class ForgotPasswordModel : PageModel
     {
         private readonly UserManager<CakeItUser> _userManager;
-        private readonly IEmailSender _emailSender;
+        private readonly ICustomEmilSender _emailSender;
+        private readonly IServiceProvider _provider;
 
-        public ForgotPasswordModel(UserManager<CakeItUser> userManager, IEmailSender emailSender)
+        public ForgotPasswordModel(UserManager<CakeItUser> userManager, ICustomEmilSender emailSender, IServiceProvider provider)
         {
             _userManager = userManager;
             _emailSender = emailSender;
+            _provider = provider;
         }
 
         [BindProperty]
@@ -54,15 +61,47 @@ namespace CakeItWebApp.Areas.Identity.Pages.Account
                     values: new { code },
                     protocol: Request.Scheme);
 
-                await _emailSender.SendEmailAsync(
-                    Input.Email,
-                    "Reset Password",
-                    $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                string content = CreateEmaiContent(Input.Email, callbackUrl);
+
+                //if the mail is html the link shoul be HtmlEncoder.Default.Encode(callbackUrl). 
+                SendEmailDetails details = new SendEmailDetails()
+                {
+                    FromEmail = this._provider.GetService<IConfiguration>()["VerificationEmailDetails:FromEmail"],
+                    FromName = this._provider.GetService<IConfiguration>()["VerificationEmailDetails:FromName"],
+                    ToEmail = Input.Email,
+                    ToName = Input.Email,
+                    Subject = "Reset Password",
+                    Content = content
+                };
+
+                var sendEmailResult = await this._provider.GetService<ICustomEmilSender>().SendEmailAsync(details);
+
+                if (!sendEmailResult.Successful)
+                {
+                    var errors = sendEmailResult.Errors;
+
+                    this._provider.GetService<IErrorService>().PassErrorParam(errors);
+
+                    return RedirectToPage("/Error");
+                }
 
                 return RedirectToPage("./ForgotPasswordConfirmation");
             }
 
             return Page();
         }
+        private string CreateEmaiContent(string email, string callbackUrl)
+        {
+            var dir = Directory.GetCurrentDirectory();
+            var path = $"{dir}/wwwroot/templates/SendConfirmEmail.html";
+            string html = System.IO.File.ReadAllText(path);
+            html = html.Replace("--Title--", $"Hello, {email}");
+            html = html.Replace("--Content1--", "Thanky you for choosing our web site.");
+            html = html.Replace("--Content2--", "To reset your password please click the button");
+            html = html.Replace(@"--Url--", $"{HtmlEncoder.Default.Encode(callbackUrl)}");
+            html = html.Replace("-- ButtonText--", "Reset your email");
+            return html;
+        }
+
     }
 }

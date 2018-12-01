@@ -15,6 +15,8 @@ using CakeItWebApp.Models;
 using CakeItWebApp.Data;
 using CakeItWebApp.Middlewares.MiddlewareExtensions;
 using CakeItWebApp.Services.Messaging;
+using CakeWebApp.Services.Common.Contracts;
+using CakeWebApp.Services.Common.CommonServices;
 
 namespace CakeItWebApp
 {
@@ -54,13 +56,16 @@ namespace CakeItWebApp
                 options.Lockout.MaxFailedAccessAttempts = 5;
                 options.Lockout.AllowedForNewUsers = false;
             })
-                .AddEntityFrameworkStores<CakeItDbContext>();
+                .AddEntityFrameworkStores<CakeItDbContext>()
+                .AddDefaultTokenProviders();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
            services.AddSingleton(this.Configuration);
 
-            services.AddTransient<IEmailSender, SendGridEmailSender>();
+            services.AddScoped<ICustomEmilSender, SendGridEmailSender>();
+
+            services.AddSingleton<IErrorService, ErrorService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -96,15 +101,18 @@ namespace CakeItWebApp
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
 
-            provider.GetRequiredService<IEmailSender>().SendEmailAsync(new SendEmailDetails {
-                FromEmail = "mail@cakeIt.com",
-                FromName = "Peter Pan",
-                ToEmail = "evarakova79@gmail.com",
-                ToName = "My Lady",
-                Subject = "Test email",
-                Content = "This is my first test mail",
-                IsHtml = false
-            });
+
+            ////Only for testing purposes.To be deleted.
+            //provider.GetRequiredService<ICustomEmilSender>().SendEmailAsync(new SendEmailDetails
+            //{
+            //    FromEmail = this.Configuration["SenderEmailDetails:FromEmail"],
+            //    FromName = this.Configuration["SenderEmailDetails:FromName"],
+            //    ToEmail = "evarakova79@gmail.com",
+            //    ToName = "My Lady",
+            //    Subject = "Test email",
+            //    Content = "This is my second test mail",
+            //    IsHtml = false
+            //});
         }
     }
 }

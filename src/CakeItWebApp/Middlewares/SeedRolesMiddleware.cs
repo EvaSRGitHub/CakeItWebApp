@@ -43,8 +43,9 @@ namespace CakeItWebApp.Middlewares
             var configuration = provider.GetRequiredService<IConfiguration>();
 
             // Seed User admin
-            var email = configuration.GetSection("AdminUser").GetChildren().ToList()[0].Value;
-            var pass = configuration.GetSection("AdminUser").GetChildren().ToList()[1].Value;
+            var email = configuration["AdminUser:Email"];
+
+            var pass = configuration["AdminUser:Password"];
 
             var user = new CakeItUser
             {

@@ -7,20 +7,26 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using CakeWebApp.Services.Common.Contracts;
 
 namespace CakeItWebApp.Areas.Identity.Pages
 {
     [AllowAnonymous]
     public class ErrorModel : PageModel
     {
-        public string RequestId { get; set; }
+        private readonly IErrorService errorService;
 
-        public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
+        public ErrorModel(IErrorService errorService)
+        {
+            this.errorService = errorService;
+        }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        [BindProperty(SupportsGet = true)]
+        public ICollection<string> Errors { get; set; } = new List<string>();
+
         public void OnGet()
         {
-            RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+            Errors = errorService.ErrorParm as List<string>;
         }
     }
 }

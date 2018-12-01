@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
+using CakeWebApp.Services.Common.Contracts;
 
 namespace CakeItWebApp.Areas.Identity.Pages.Account
 {
@@ -18,11 +20,13 @@ namespace CakeItWebApp.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<CakeItUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly IServiceProvider _provider;
 
-        public LoginModel(SignInManager<CakeItUser> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(SignInManager<CakeItUser> signInManager, ILogger<LoginModel> logger, IServiceProvider provider)
         {
             _signInManager = signInManager;
             _logger = logger;
+            _provider = provider;
         }
 
         [BindProperty]
@@ -80,10 +84,12 @@ namespace CakeItWebApp.Areas.Identity.Pages.Account
                     _logger.LogInformation("User logged in.");
                     return LocalRedirect(returnUrl);
                 }
+
                 if (result.RequiresTwoFactor)
                 {
                     return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
                 }
+
                 if (result.IsLockedOut)
                 {
                     _logger.LogWarning("User account locked out.");
@@ -92,12 +98,14 @@ namespace CakeItWebApp.Areas.Identity.Pages.Account
                 else
                 {
                     ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-                    return Page();
                 }
             }
 
-            // If we got this far, something failed, redisplay form
-            return Page();
+            var errors = this.ModelState.Values.SelectMany(p => p.Errors).Select(e => e.ErrorMessage).ToList();
+
+            this._provider.GetService<IErrorService>().PassErrorParam(errors);
+
+            return RedirectToPage("/Error");
         }
     }
 }

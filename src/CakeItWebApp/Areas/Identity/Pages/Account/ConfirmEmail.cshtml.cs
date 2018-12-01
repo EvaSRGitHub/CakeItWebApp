@@ -39,7 +39,8 @@ namespace CakeItWebApp.Areas.Identity.Pages.Account
                 throw new InvalidOperationException($"Error confirming email for user with ID '{userId}':");
             }
 
-            return Page();
+            return RedirectToPage("./Index");
+            //return Page();
         }
     }
 }
