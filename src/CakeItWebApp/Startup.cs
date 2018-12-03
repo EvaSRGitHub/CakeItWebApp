@@ -17,6 +17,7 @@ using CakeItWebApp.Middlewares.MiddlewareExtensions;
 using CakeItWebApp.Services.Messaging;
 using CakeWebApp.Services.Common.Contracts;
 using CakeWebApp.Services.Common.CommonServices;
+using CakeItWebApp.Data.Repository;
 
 namespace CakeItWebApp
 {
@@ -72,6 +73,8 @@ namespace CakeItWebApp
                 facebookOptions.AppId = Configuration["Authentication:Facebook:AppId"];
                 facebookOptions.AppSecret = Configuration["Authentication:Facebook:AppSecret"];
             });
+
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
