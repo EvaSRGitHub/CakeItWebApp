@@ -5,10 +5,15 @@ using System.Linq;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using CakeItWebApp.Models;
+using CakeItWebApp.Services.Messaging;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.DependencyInjection;
+using CakeWebApp.Services.Common.Contracts;
+using Microsoft.Extensions.Configuration;
+using System.IO;
 
 namespace CakeItWebApp.Areas.Identity.Pages.Account.Manage
 {
@@ -16,16 +21,16 @@ namespace CakeItWebApp.Areas.Identity.Pages.Account.Manage
     {
         private readonly UserManager<CakeItUser> _userManager;
         private readonly SignInManager<CakeItUser> _signInManager;
-        //private readonly IEmailSender _emailSender;
+        private readonly IServiceProvider _provider;
 
         public IndexModel(
             UserManager<CakeItUser> userManager,
-            SignInManager<CakeItUser> signInManager
-           /* IEmailSender emailSender*/)
+            SignInManager<CakeItUser> signInManager,
+           IServiceProvider provider)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            //_emailSender = emailSender;
+            _provider = provider;
         }
 
         public string Username { get; set; }
@@ -118,7 +123,11 @@ namespace CakeItWebApp.Areas.Identity.Pages.Account.Manage
         {
             if (!ModelState.IsValid)
             {
-                return Page();
+                var errors = this.ModelState.Values.SelectMany(p => p.Errors).Select(e => e.ErrorMessage).ToArray();
+
+                this._provider.GetService<IErrorService>().PassErrorParam(errors);
+
+                return RedirectToPage("/Error");
             }
 
             var user = await _userManager.GetUserAsync(User);
@@ -137,13 +146,45 @@ namespace CakeItWebApp.Areas.Identity.Pages.Account.Manage
                 values: new { userId = userId, code = code },
                 protocol: Request.Scheme);
 
-            //await _emailSender.SendEmailAsync(
-            //    email,
-            //    "Confirm your email",
-            //    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+            string content = CreateEmaiContent(Input.Email, callbackUrl);
+
+            SendEmailDetails details = new SendEmailDetails()
+            {
+                FromEmail = this._provider.GetService<IConfiguration>()["VerificationEmailDetails:FromEmail"],
+                FromName = this._provider.GetService<IConfiguration>()["VerificationEmailDetails:FromName"],
+                ToEmail = Input.Email,
+                ToName = Input.Email,
+                Subject = "Confirm your email.",
+                Content = content
+            };
+
+            var sendEmailResult = await this._provider.GetService<ICustomEmilSender>().SendEmailAsync(details);
+
+            if (!sendEmailResult.Successful)
+            {
+                var mailErrors = sendEmailResult.Errors;
+
+                this._provider.GetService<IErrorService>().PassErrorParam(mailErrors);
+
+                return RedirectToPage("/Error");
+            }
 
             StatusMessage = "Verification email sent. Please check your email.";
+
             return RedirectToPage();
+        }
+
+        private string CreateEmaiContent(string email, string callbackUrl)
+        {
+            var dir = Directory.GetCurrentDirectory();
+            var path = $"{dir}/wwwroot/templates/SendConfirmEmail.html";
+            string html = System.IO.File.ReadAllText(path);
+            html = html.Replace("--Title--", $"Hello, {email}");
+            html = html.Replace("--Content1--", "Thanky you for choosing our web site. Hope enjoy it!");
+            html = html.Replace("--Content2--", "Please confirm your account by clicking the button");
+            html = html.Replace(@"--Url--", $"{HtmlEncoder.Default.Encode(callbackUrl)}");
+            html = html.Replace("-- ButtonText--", "Verify your email");
+            return html;
         }
     }
 }
