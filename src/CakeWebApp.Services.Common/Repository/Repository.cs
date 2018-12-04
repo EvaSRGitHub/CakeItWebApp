@@ -1,11 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using CakeItWebApp.Data;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CakeItWebApp.Data.Repository
+namespace CakeItWebApp.Services.Common.Repository
 {
     public class Repository<TEntity> : IRepository<TEntity> where TEntity:class
     {

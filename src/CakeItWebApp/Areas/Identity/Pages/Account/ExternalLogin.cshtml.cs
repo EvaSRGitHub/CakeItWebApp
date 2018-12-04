@@ -10,6 +10,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using CakeItWebApp.ViewModels.ShoppingCart;
+using CakeWebApp.Services.Common.Contracts;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CakeItWebApp.Areas.Identity.Pages.Account
 {
@@ -19,15 +22,17 @@ namespace CakeItWebApp.Areas.Identity.Pages.Account
         private readonly SignInManager<CakeItUser> _signInManager;
         private readonly UserManager<CakeItUser> _userManager;
         private readonly ILogger<ExternalLoginModel> _logger;
+        private readonly IServiceProvider _provider;
 
         public ExternalLoginModel(
             SignInManager<CakeItUser> signInManager,
             UserManager<CakeItUser> userManager,
-            ILogger<ExternalLoginModel> logger)
+            ILogger<ExternalLoginModel> logger, IServiceProvider provider)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _logger = logger;
+            _provider = provider;
         }
 
         [BindProperty]
@@ -77,8 +82,13 @@ namespace CakeItWebApp.Areas.Identity.Pages.Account
 
             // Sign in the user with this external login provider if the user already has a login.
             var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor : true);
+
             if (result.Succeeded)
             {
+                ShoppingCartViewModel usersShoppingCart = new ShoppingCartViewModel();
+                String cartId = _provider.GetService<IShoppingCartService>().GetShoppingCart().Id;
+                _provider.GetService<IShoppingCartService>().MigrateCart(cartId, Input.Email);
+
                 _logger.LogInformation("{Name} logged in with {LoginProvider} provider.", info.Principal.Identity.Name, info.LoginProvider);
                 return LocalRedirect(returnUrl);
             }

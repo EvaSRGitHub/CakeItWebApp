@@ -17,7 +17,8 @@ using CakeItWebApp.Middlewares.MiddlewareExtensions;
 using CakeItWebApp.Services.Messaging;
 using CakeWebApp.Services.Common.Contracts;
 using CakeWebApp.Services.Common.CommonServices;
-using CakeItWebApp.Data.Repository;
+using CakeItWebApp.Services.Common.Repository;
+using CakeItWebApp.ViewModels.ShoppingCart;
 
 namespace CakeItWebApp
 {
@@ -74,7 +75,21 @@ namespace CakeItWebApp
                 facebookOptions.AppSecret = Configuration["Authentication:Facebook:AppSecret"];
             });
 
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+            services.AddDistributedMemoryCache();
+
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromSeconds(120);
+                options.Cookie.HttpOnly = true;
+            });
+
+          
+
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+
+            services.AddScoped<IShoppingCartService, ShoppingCartService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -96,7 +111,7 @@ namespace CakeItWebApp
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
-
+            app.UseSession();
             app.UseAuthentication();
 
             app.UseMvc(routes =>

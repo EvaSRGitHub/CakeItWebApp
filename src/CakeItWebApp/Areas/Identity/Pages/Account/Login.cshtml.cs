@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using CakeWebApp.Services.Common.Contracts;
+using CakeItWebApp.ViewModels.ShoppingCart;
 
 namespace CakeItWebApp.Areas.Identity.Pages.Account
 {
@@ -79,8 +80,13 @@ namespace CakeItWebApp.Areas.Identity.Pages.Account
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: true);
+
                 if (result.Succeeded)
                 {
+                    ShoppingCartViewModel usersShoppingCart = new ShoppingCartViewModel();
+                    String cartId = _provider.GetService<IShoppingCartService>().GetShoppingCart().Id;
+                    _provider.GetService<IShoppingCartService>().MigrateCart(cartId, Input.Email);
+
                     _logger.LogInformation("User logged in.");
                     return LocalRedirect(returnUrl);
                 }

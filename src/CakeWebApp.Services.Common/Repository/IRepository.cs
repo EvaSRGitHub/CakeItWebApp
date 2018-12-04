@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CakeItWebApp.Data.Repository
+namespace CakeItWebApp.Services.Common.Repository
 {
     public interface IRepository<TEntity> where TEntity: class
     {
