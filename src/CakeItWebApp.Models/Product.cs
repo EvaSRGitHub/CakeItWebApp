@@ -30,6 +30,8 @@ namespace CakeItWebApp.Models
         [Required]
         public decimal Price { get; set; }
 
+        public string Description { get; set; }
+
         [Required]
         public bool IsDeleted { get; set; }
 

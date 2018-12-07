@@ -5,28 +5,54 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using CakeItWebApp.Models;
+using CakeWebApp.Services.Common.Contracts;
+using CakeItWebApp.ViewModels.Home;
 
 namespace CakeItWebApp.Controllers
 {
     public class HomeController : Controller
     {
-        public IActionResult Index()
+        private readonly IHomeService homeService;
+        private readonly IErrorService errorService;
+
+        public HomeController(IHomeService homeService, IErrorService errorService)
         {
-            return View();
+            this.homeService = homeService;
+            this.errorService = errorService;
         }
 
-        public IActionResult About()
+        public async Task<IActionResult> Index()
         {
-            ViewData["Message"] = "Your application description page.";
+            var rnd = new Random();
 
-            return View();
-        }
+            var max = this.homeService.GetCakeProductsCount();
 
-        public IActionResult Contact()
-        {
-            ViewData["Message"] = "Your contact page.";
+            if(max == 0)
+            {
+                var errorMessage = "The site is under construction.Temporary unavailable.";
 
-            return View();
+                this.errorService.PassErrorParam(new object[] { errorMessage });
+
+                ViewData["Errors"] = this.errorService.ErrorParm;
+
+                return View("Error");
+            }
+
+            HomeIndexViewModel model; 
+
+            while (true)
+            {
+                var cakeIdToDesplay = rnd.Next(1, max + 1);
+
+                model = await this.homeService.GetCakeById(cakeIdToDesplay);
+
+                if (model != null)
+                {
+                    break;
+                }
+            }
+           
+            return View(model);
         }
 
         public IActionResult Privacy()
@@ -34,10 +60,5 @@ namespace CakeItWebApp.Controllers
             return View();
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
     }
 }

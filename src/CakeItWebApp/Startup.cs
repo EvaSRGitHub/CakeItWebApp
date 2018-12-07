@@ -18,7 +18,7 @@ using CakeItWebApp.Services.Messaging;
 using CakeWebApp.Services.Common.Contracts;
 using CakeWebApp.Services.Common.CommonServices;
 using CakeItWebApp.Services.Common.Repository;
-using CakeItWebApp.ViewModels.ShoppingCart;
+using AutoMapper;
 
 namespace CakeItWebApp
 {
@@ -63,6 +63,8 @@ namespace CakeItWebApp
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
+            services.AddAutoMapper();
+
            services.AddSingleton(this.Configuration);
 
             services.AddScoped<ICustomEmilSender, SendGridEmailSender>();
@@ -85,11 +87,13 @@ namespace CakeItWebApp
                 options.Cookie.HttpOnly = true;
             });
 
-          
-
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
             services.AddScoped<IShoppingCartService, ShoppingCartService>();
+
+            services.AddScoped<IHomeService, HomeService>();
+
+            //services.AddAutoMapper();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

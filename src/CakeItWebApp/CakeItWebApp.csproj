@@ -6,6 +6,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+ <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="6.0.0" />
+    <PackageReference Include="AutoMapper" Version="8.0.0" />
+    <PackageReference Include="CloudinaryDotNet" Version="1.5.0" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.2" PrivateAssets="All" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.6" PrivateAssets="All" />
@@ -17,6 +20,10 @@
     <ProjectReference Include="..\CakeItWebApp.ViewModels\CakeItWebApp.ViewModels.csproj" />
     <ProjectReference Include="..\CakeWebApp.Services.Common\CakeWebApp.Services.Common.csproj" />
     <ProjectReference Include="..\Services\CakeItWebApp.Services.Messaging\CakeItWebApp.Services.Messaging.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="ViewModels\" />
   </ItemGroup>
 
 </Project>
