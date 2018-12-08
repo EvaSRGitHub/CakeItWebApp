@@ -21,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CakeItWebApp.Services.Commo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CakeWebApp.Services.Common", "CakeWebApp.Services.Common\CakeWebApp.Services.Common.csproj", "{E55972B8-B07C-48BB-822D-830074BB750D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CakeItWebApp.Services.Common.IntegrationTests", "CakeItWebApp.Services.Common.IntegrationTests\CakeItWebApp.Services.Common.IntegrationTests.csproj", "{46919A41-BD06-466D-A867-683F4BF03FE4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,10 @@ Global
 		{E55972B8-B07C-48BB-822D-830074BB750D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E55972B8-B07C-48BB-822D-830074BB750D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E55972B8-B07C-48BB-822D-830074BB750D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{46919A41-BD06-466D-A867-683F4BF03FE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46919A41-BD06-466D-A867-683F4BF03FE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46919A41-BD06-466D-A867-683F4BF03FE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46919A41-BD06-466D-A867-683F4BF03FE4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -63,6 +69,7 @@ Global
 		{0B3238DB-0E50-4460-BCC3-4155B7AEFED3} = {1A21D587-CED2-4644-AD4C-6A72AB80CEA2}
 		{078A552C-136D-4261-8FD1-77AEBE78CEF6} = {B46AFE03-1991-49CA-879A-7221C562856D}
 		{E55972B8-B07C-48BB-822D-830074BB750D} = {1A21D587-CED2-4644-AD4C-6A72AB80CEA2}
+		{46919A41-BD06-466D-A867-683F4BF03FE4} = {B46AFE03-1991-49CA-879A-7221C562856D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0764962D-1B1F-458C-9082-7083B9D22EF8}

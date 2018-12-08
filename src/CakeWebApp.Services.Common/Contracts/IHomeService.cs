@@ -8,7 +8,7 @@ namespace CakeWebApp.Services.Common.Contracts
 {
     public interface IHomeService
     {
-        Task<HomeIndexViewModel> GetCakeById(int id);
+        Task<HomeIndexViewModel> GetRandomCake();
 
         int GetCakeProductsCount();
     }

@@ -23,35 +23,17 @@ namespace CakeItWebApp.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var rnd = new Random();
+           var model = await this.homeService.GetRandomCake();
 
-            var max = this.homeService.GetCakeProductsCount();
-
-            if(max == 0)
+            if (model == null)
             {
-                var errorMessage = "The site is under construction.Temporary unavailable.";
+                var errorMessage = "The site is under construction.Please excuse us and try again later.";
 
-                this.errorService.PassErrorParam(new object[] { errorMessage });
-
-                ViewData["Errors"] = this.errorService.ErrorParm;
+                ViewData["Errors"] = errorMessage;
 
                 return View("Error");
             }
 
-            HomeIndexViewModel model; 
-
-            while (true)
-            {
-                var cakeIdToDesplay = rnd.Next(1, max + 1);
-
-                model = await this.homeService.GetCakeById(cakeIdToDesplay);
-
-                if (model != null)
-                {
-                    break;
-                }
-            }
-           
             return View(model);
         }
 

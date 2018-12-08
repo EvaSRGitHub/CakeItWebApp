@@ -22,11 +22,31 @@ namespace CakeWebApp.Services.Common.CommonServices
             this.mapper = mapper;
         }
 
-        public async Task<HomeIndexViewModel> GetCakeById(int id)
+        public async Task<HomeIndexViewModel> GetRandomCake()
         {
-            var product = await this.repository.GetByIdAsync(id);
+            HomeIndexViewModel model;
 
-            var model = mapper.Map<Product, HomeIndexViewModel>(product);
+            var max = this.GetCakeProductsCount();
+
+            var rnd = new Random();
+
+            while (true)
+            {
+                var cakeIdToDesplay = rnd.Next(1, max + 1);
+
+                var product = await this.repository.GetByIdAsync(cakeIdToDesplay);
+
+                if(product.IsDeleted == false)
+                {
+                     model = mapper.Map<Product, HomeIndexViewModel>(product);
+                    break;
+                }
+
+                if (max == 1 && product.IsDeleted == true)
+                {
+                    return null;
+                }
+            }
 
             return model;
         }
