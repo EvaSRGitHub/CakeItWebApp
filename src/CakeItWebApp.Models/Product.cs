@@ -11,7 +11,7 @@ namespace CakeItWebApp.Models
     {
         public Product()
         {
-            this.Ingredients = new HashSet<Ingredients>();
+            this.IsDeleted = false;
         }
 
         public int Id { get; set;}
@@ -30,12 +30,16 @@ namespace CakeItWebApp.Models
         [Required]
         public decimal Price { get; set; }
 
+        [Required]
         public string Description { get; set; }
 
         [Required]
         public bool IsDeleted { get; set; }
 
-        public virtual ICollection<Ingredients> Ingredients { get; set; }
+        public virtual Ingredients Ingredients { get; set; }
 
+        public double? Rating { get; set; }
+
+        public int? RatingVotes { get; set; }
     }
 }

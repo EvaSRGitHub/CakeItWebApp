@@ -25,7 +25,7 @@ namespace CakeItWebApp.Data
 
         public DbSet<Tutorial> Tutorials { get; set; }
 
-        public DbSet<Ingredients> Ingredients { get; set; }
+       public DbSet<Ingredients> Ingredients { get; set; }
 
         public DbSet<ShoppingCartItem> CartItems { get; set; }
 
@@ -40,7 +40,9 @@ namespace CakeItWebApp.Data
 
             builder.Entity<Ingredients>().Property(e => e.Sponge).HasConversion(v => v.ToString(), v => (SpongeType)Enum.Parse(typeof(SpongeType), v));
 
-            builder.Entity<Ingredients>().Property(e => e.Cream).HasConversion(v => v.ToString(), v => (CreamType)Enum.Parse(typeof(CreamType), v));
+            builder.Entity<Ingredients>().Property(e => e.FirstLayerCream).HasConversion(v => v.ToString(), v => (CreamType)Enum.Parse(typeof(CreamType), v));
+
+            builder.Entity<Ingredients>().Property(e => e.SecondLayerCream).HasConversion(v => v.ToString(), v => (CreamType)Enum.Parse(typeof(CreamType), v));
 
             builder.Entity<Ingredients>().Property(e => e.Filling).HasConversion(v => v.ToString(), v => (FillingType)Enum.Parse(typeof(FillingType), v));
 

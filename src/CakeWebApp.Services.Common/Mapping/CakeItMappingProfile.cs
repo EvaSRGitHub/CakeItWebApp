@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CakeItWebApp.Models;
+using CakeItWebApp.ViewModels.Cakes;
 using CakeItWebApp.ViewModels.Home;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,8 @@ namespace CakeWebApp.Services.Common.Mapping
         public CakeItMappingProfile()
         {
             CreateMap<Product, HomeIndexViewModel>().ReverseMap();
+
+            CreateMap<Product, CreateCakeViewModel>().ReverseMap();
         }
     }
 }

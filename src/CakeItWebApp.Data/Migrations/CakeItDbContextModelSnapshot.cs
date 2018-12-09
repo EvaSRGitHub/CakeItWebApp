@@ -30,13 +30,16 @@ namespace CakeItWebApp.Data.Migrations
 
                     b.Property<string>("CakeItUserId");
 
-                    b.Property<string>("Description");
-
-                    b.Property<int>("DownloadCounter");
+                    b.Property<string>("Description")
+                        .IsRequired();
 
                     b.Property<int>("DownloadUrl");
 
                     b.Property<int>("Pages");
+
+                    b.Property<double>("Rating");
+
+                    b.Property<int>("RatingVotes");
 
                     b.Property<string>("Title")
                         .IsRequired();
@@ -125,13 +128,16 @@ namespace CakeItWebApp.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Cream")
-                        .IsRequired();
-
                     b.Property<string>("Filling")
                         .IsRequired();
 
-                    b.Property<int?>("ProductId");
+                    b.Property<string>("FirstLayerCream")
+                        .IsRequired();
+
+                    b.Property<int>("ProductId");
+
+                    b.Property<string>("SecondLayerCream")
+                        .IsRequired();
 
                     b.Property<string>("SideDecoration")
                         .IsRequired();
@@ -144,7 +150,8 @@ namespace CakeItWebApp.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProductId");
+                    b.HasIndex("ProductId")
+                        .IsUnique();
 
                     b.ToTable("Ingredients");
                 });
@@ -186,7 +193,8 @@ namespace CakeItWebApp.Data.Migrations
 
                     b.Property<int>("CategoryId");
 
-                    b.Property<string>("Description");
+                    b.Property<string>("Description")
+                        .IsRequired();
 
                     b.Property<string>("Image")
                         .IsRequired();
@@ -197,6 +205,10 @@ namespace CakeItWebApp.Data.Migrations
                         .IsRequired();
 
                     b.Property<decimal>("Price");
+
+                    b.Property<double>("Rating");
+
+                    b.Property<int>("RatingVotes");
 
                     b.HasKey("Id");
 
@@ -238,7 +250,9 @@ namespace CakeItWebApp.Data.Migrations
 
                     b.Property<string>("Description");
 
-                    b.Property<int>("StreamCaounter");
+                    b.Property<double>("Rating");
+
+                    b.Property<int>("RatingVotes");
 
                     b.Property<string>("Title")
                         .IsRequired();
@@ -372,9 +386,10 @@ namespace CakeItWebApp.Data.Migrations
 
             modelBuilder.Entity("CakeItWebApp.Models.Ingredients", b =>
                 {
-                    b.HasOne("CakeItWebApp.Models.Product")
-                        .WithMany("Ingredients")
-                        .HasForeignKey("ProductId");
+                    b.HasOne("CakeItWebApp.Models.Product", "Product")
+                        .WithOne("Ingredients")
+                        .HasForeignKey("CakeItWebApp.Models.Ingredients", "ProductId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("CakeItWebApp.Models.Order", b =>

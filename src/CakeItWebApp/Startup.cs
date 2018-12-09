@@ -65,7 +65,9 @@ namespace CakeItWebApp
 
             services.AddAutoMapper();
 
-           services.AddSingleton(this.Configuration);
+            services.AddLogging();
+
+            services.AddSingleton(this.Configuration);
 
             services.AddScoped<ICustomEmilSender, SendGridEmailSender>();
 
@@ -93,7 +95,7 @@ namespace CakeItWebApp
 
             services.AddScoped<IHomeService, HomeService>();
 
-            //services.AddAutoMapper();
+            services.AddScoped<ICakeService, CakeService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

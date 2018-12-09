@@ -17,6 +17,8 @@ namespace CakeItWebApp.Models
         [Required]
         public string Url { get; set; }
 
-        public int StreamCaounter { get; set; }
+        public double? Rating { get; set; }
+
+        public int? RatingVotes { get; set; }
     }
 }

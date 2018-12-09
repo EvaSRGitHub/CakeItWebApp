@@ -6,6 +6,8 @@
 
   <ItemGroup>
     <Compile Remove="Migrations\20181204081614_CakeItModelsAdded.cs" />
+    <Compile Remove="Migrations\20181209194753_RatingAdded_RemoveTableIngredients_OtherSmallChanges.cs" />
+    <Compile Remove="Migrations\20181209205537_CakeIt_Initial.cs" />
   </ItemGroup>
 
   <ItemGroup>

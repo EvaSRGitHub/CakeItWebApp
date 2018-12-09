@@ -36,16 +36,18 @@ namespace CakeWebApp.Services.Common.CommonServices
 
                 var product = await this.repository.GetByIdAsync(cakeIdToDesplay);
 
-                if(product.IsDeleted == false)
+                if (product == null || (max == 1 && product.IsDeleted == true))
+                {
+                    return null;
+                }
+
+                if (product.IsDeleted == false)
                 {
                      model = mapper.Map<Product, HomeIndexViewModel>(product);
                     break;
                 }
 
-                if (max == 1 && product.IsDeleted == true)
-                {
-                    return null;
-                }
+                
             }
 
             return model;

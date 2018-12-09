@@ -9,6 +9,8 @@ namespace CakeItWebApp.Models
     {
         public CakeItUser()
         {
+            this.IsDeleted = false;
+            this.CreatedOn = DateTime.UtcNow;
             this.Orders = new HashSet<Order>();
             this.Books = new HashSet<Book>();
             this.Tutorials = new HashSet<Tutorial>();

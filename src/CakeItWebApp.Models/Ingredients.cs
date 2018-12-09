@@ -14,7 +14,10 @@ namespace CakeItWebApp.Models
         public SpongeType Sponge { get; set; }
 
         [Required]
-        public CreamType Cream { get; set; }
+        public CreamType FirstLayerCream { get; set; }
+
+        [Required]
+        public CreamType SecondLayerCream { get; set; }
 
         [Required]
         public FillingType Filling { get; set; }
@@ -24,5 +27,9 @@ namespace CakeItWebApp.Models
 
         [Required]
         public TopDecorationType TopDecoration { get; set; }
+
+        public int ProductId { get; set; }
+
+        public virtual Product Product { get; set; }
     }
 }

@@ -18,11 +18,14 @@ namespace CakeItWebApp.Models
         [Required]
         public int Pages { get; set; }
 
+        [Required]
         public string Description { get; set; }
 
         [Required]
         public int DownloadUrl { get; set; }
 
-        public int DownloadCounter { get; set; }
+        public double? Rating { get; set; }
+
+        public int? RatingVotes { get; set; }
     }
 }

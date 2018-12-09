@@ -10,6 +10,7 @@ namespace CakeItWebApp.Models
     {
         public Order()
         {
+            this.OrederDate = DateTime.UtcNow;
             this.ShoppedItems = new HashSet<ShoppingCartItem>();
         }
 

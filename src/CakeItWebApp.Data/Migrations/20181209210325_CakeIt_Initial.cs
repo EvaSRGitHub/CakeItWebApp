@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CakeItWebApp.Data.Migrations
 {
-    public partial class CakeItModelsAdded : Migration
+    public partial class CakeIt_Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -62,9 +62,10 @@ namespace CakeItWebApp.Data.Migrations
                     Title = table.Column<string>(nullable: false),
                     Author = table.Column<string>(nullable: false),
                     Pages = table.Column<int>(nullable: false),
-                    Description = table.Column<string>(nullable: true),
+                    Description = table.Column<string>(nullable: false),
                     DownloadUrl = table.Column<int>(nullable: false),
-                    DownloadCounter = table.Column<int>(nullable: false),
+                    Rating = table.Column<double>(nullable: true),
+                    RatingVotes = table.Column<int>(nullable: true),
                     CakeItUserId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -124,7 +125,8 @@ namespace CakeItWebApp.Data.Migrations
                     Title = table.Column<string>(nullable: false),
                     Description = table.Column<string>(nullable: true),
                     Url = table.Column<string>(nullable: false),
-                    StreamCaounter = table.Column<int>(nullable: false),
+                    Rating = table.Column<double>(nullable: true),
+                    RatingVotes = table.Column<int>(nullable: true),
                     CakeItUserId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -148,7 +150,10 @@ namespace CakeItWebApp.Data.Migrations
                     CategoryId = table.Column<int>(nullable: false),
                     Image = table.Column<string>(nullable: false),
                     Price = table.Column<decimal>(nullable: false),
-                    IsDeleted = table.Column<bool>(nullable: false)
+                    Description = table.Column<string>(nullable: false),
+                    IsDeleted = table.Column<bool>(nullable: false),
+                    Rating = table.Column<double>(nullable: true),
+                    RatingVotes = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -196,11 +201,12 @@ namespace CakeItWebApp.Data.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Sponge = table.Column<string>(nullable: false),
-                    Cream = table.Column<string>(nullable: false),
+                    FirstLayerCream = table.Column<string>(nullable: false),
+                    SecondLayerCream = table.Column<string>(nullable: false),
                     Filling = table.Column<string>(nullable: false),
                     SideDecoration = table.Column<string>(nullable: false),
                     TopDecoration = table.Column<string>(nullable: false),
-                    ProductId = table.Column<int>(nullable: true)
+                    ProductId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -210,7 +216,7 @@ namespace CakeItWebApp.Data.Migrations
                         column: x => x.ProductId,
                         principalTable: "Products",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -231,7 +237,8 @@ namespace CakeItWebApp.Data.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Ingredients_ProductId",
                 table: "Ingredients",
-                column: "ProductId");
+                column: "ProductId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Oreders_UserId",
