@@ -17,5 +17,9 @@ namespace CakeItWebApp.Services.Common.Repository
         void Delete(TEntity entity);
 
         Task<int> SaveChangesAsync();
+
+        void Update(TEntity entity);
+
+        void Dispose();
     }
 }

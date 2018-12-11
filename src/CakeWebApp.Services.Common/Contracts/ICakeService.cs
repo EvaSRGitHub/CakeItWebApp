@@ -1,4 +1,6 @@
-﻿using CakeItWebApp.ViewModels.Cakes;
+﻿using CakeItWebApp.Models;
+using CakeItWebApp.ViewModels;
+using CakeItWebApp.ViewModels.Cakes;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,8 +10,14 @@ namespace CakeWebApp.Services.Common.Contracts
 {
     public interface ICakeService
     {
-        bool AddRatingToJoke(int cakeId, int rating);
+        bool AddRatingToCake(int cakeId, int rating);
 
-        Task<bool> AddCakeToDb(CreateCakeViewModel model);
+        Task<string> AddCakeToDb(CreateCakeViewModel model);
+
+        IEnumerable<CakeIndexViewModel> GetAllCakes();
+
+        Task<EditAndDeleteViewModel> GetCakeById(int id);
+
+        Task<string> UpdateProduct(EditAndDeleteViewModel model);
     }
 }

@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using CakeItWebApp.Models;
 using CakeItWebApp.Services.Common.Repository;
-using CakeItWebApp.ViewModels.Home;
+using CakeItWebApp.ViewModels;
 using CakeWebApp.Services.Common.Contracts;
 using System;
 using System.Collections.Generic;
@@ -22,9 +22,9 @@ namespace CakeWebApp.Services.Common.CommonServices
             this.mapper = mapper;
         }
 
-        public async Task<HomeIndexViewModel> GetRandomCake()
+        public async Task<CakeIndexViewModel> GetRandomCake()
         {
-            HomeIndexViewModel model;
+            CakeIndexViewModel model;
 
             var max = this.GetCakeProductsCount();
 
@@ -43,11 +43,9 @@ namespace CakeWebApp.Services.Common.CommonServices
 
                 if (product.IsDeleted == false)
                 {
-                     model = mapper.Map<Product, HomeIndexViewModel>(product);
+                     model = mapper.Map<Product, CakeIndexViewModel>(product);
                     break;
                 }
-
-                
             }
 
             return model;

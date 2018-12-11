@@ -43,5 +43,19 @@ namespace CakeItWebApp.Services.Common.Repository
         {
            return this.db.SaveChangesAsync();
         }
+
+        public void Update(TEntity entity)
+        {
+            var entry = this.db.Entry(entity);
+
+            if (entry.State == EntityState.Detached)
+            {
+                this.dbSet.Attach(entity);
+            }
+
+            entry.State = EntityState.Modified;
+        }
+
+        public void Dispose() => this.db.Dispose();
     }
 }

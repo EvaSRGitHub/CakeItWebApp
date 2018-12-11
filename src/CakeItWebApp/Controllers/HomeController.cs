@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using CakeItWebApp.Models;
 using CakeWebApp.Services.Common.Contracts;
-using CakeItWebApp.ViewModels.Home;
+using CakeItWebApp.ViewModels;
 
 namespace CakeItWebApp.Controllers
 {

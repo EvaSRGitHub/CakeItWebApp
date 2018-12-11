@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CakeItWebApp.Models;
 using CakeItWebApp.Services.Common.Repository;
+using CakeItWebApp.ViewModels;
 using CakeItWebApp.ViewModels.Cakes;
 using CakeWebApp.Services.Common.Contracts;
 using Microsoft.Extensions.Logging;
@@ -25,9 +26,14 @@ namespace CakeWebApp.Services.Common.CommonServices
             this.mapper = mapper;
         }
 
-        public async Task<bool> AddCakeToDb(CreateCakeViewModel model)
+        public async Task<string> AddCakeToDb(CreateCakeViewModel model)
         {
             var product = this.mapper.Map<CreateCakeViewModel, Product>(model);
+
+            if(this.repository.All().Any(p => p.Name == product.Name))
+            {
+                return "Cake with such name alreadey exist in the data base."; ;
+            }
 
             this.repository.Add(product);
 
@@ -35,15 +41,17 @@ namespace CakeWebApp.Services.Common.CommonServices
             {
                 await this.repository.SaveChangesAsync();
 
-                return true;
+                return "true";
             }
             catch (Exception e)
             {
-                this.logger.LogError(e.InnerException.ToString());
-                return false;
+                //this.logger.LogError(e.InnerException.ToString());
+
+                return e.InnerException.ToString();
             }
         }
-        public bool AddRatingToJoke(int cakeId, int rating)
+
+        public bool AddRatingToCake(int cakeId, int rating)
         {
             var cake = this.repository.All().FirstOrDefault(j => j.Id == cakeId);
             if (cake != null)
@@ -54,6 +62,37 @@ namespace CakeWebApp.Services.Common.CommonServices
             }
 
             return false;
+        }
+
+        public IEnumerable<CakeIndexViewModel> GetAllCakes()
+        {
+            return mapper.ProjectTo<CakeIndexViewModel>(this.repository.All()).ToList();
+        }
+
+        public async Task<EditAndDeleteViewModel> GetCakeById(int id)
+        {
+            var product = await this.repository.GetByIdAsync(id);
+
+            var model = this.mapper.Map<Product, EditAndDeleteViewModel>(product);
+
+            return model;
+        }
+
+        public async Task<string> UpdateProduct(EditAndDeleteViewModel model)
+        {
+            var product = this.mapper.Map<EditAndDeleteViewModel, Product>(model);
+
+            this.repository.Update(product);
+
+            try
+            {
+                await this.repository.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                return e.InnerException.ToString();
+            }
+            return "true";
         }
     }
 }

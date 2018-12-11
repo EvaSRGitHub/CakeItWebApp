@@ -1,4 +1,4 @@
-﻿using CakeItWebApp.ViewModels.Home;
+﻿using CakeItWebApp.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,7 +8,7 @@ namespace CakeWebApp.Services.Common.Contracts
 {
     public interface IHomeService
     {
-        Task<HomeIndexViewModel> GetRandomCake();
+        Task<CakeIndexViewModel> GetRandomCake();
 
         int GetCakeProductsCount();
     }

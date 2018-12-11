@@ -21,21 +21,22 @@ namespace CakeItWebApp.Services.Common.IntegrationTests
         [Fact]
         public async Task Index_WithProducts_ShouldReturn200()
         {
-            var client = this.Server.CreateClient();
-            var result = await client.GetAsync("/");
+            //Act
+            var result = await this.Client.GetAsync("/");
 
+            //Assert
             result.EnsureSuccessStatusCode();
         }
 
         [Fact]
         public async Task Index_WithNoProducts_ShouldReturn_ErrorView()
         {
-            var client = this.Server.CreateClient();
-
-            var result = await client.GetAsync("/");
+           //Act
+            var result = await this.Client.GetAsync("/");
 
             var respAsString = await result.Content.ReadAsStringAsync();
 
+            //Assert
             Assert.Contains("<title>Error", respAsString);
         }
     }

@@ -2,7 +2,7 @@
 using CakeItWebApp.Data;
 using CakeItWebApp.Models;
 using CakeItWebApp.Services.Common.Repository;
-using CakeItWebApp.ViewModels.Home;
+using CakeItWebApp.ViewModels;
 using CakeWebApp.Services.Common.CommonServices;
 using Microsoft.EntityFrameworkCore;
 using Moq;

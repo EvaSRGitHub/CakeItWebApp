@@ -7,6 +7,7 @@ using CakeWebApp.Services.Common.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using X.PagedList;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -24,9 +25,15 @@ namespace CakeItWebApp.Controllers
         }
 
         // GET: /<controller>/
-        public IActionResult Index()
+        public IActionResult Index(int? page)
         {
-            return View();
+            var allCakes = this.cakeService.GetAllCakes();
+
+            var nextPage = page ?? 1;
+
+            var cakesPerPage = allCakes.ToPagedList(nextPage, 3);
+
+            return View(cakesPerPage);
         }
 
         [Authorize(Roles="Admin")]
@@ -36,6 +43,7 @@ namespace CakeItWebApp.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(CreateCakeViewModel model)
         {
             if (!ModelState.IsValid)
@@ -44,23 +52,52 @@ namespace CakeItWebApp.Controllers
 
                 var errors = this.ModelState.Values.SelectMany(p => p.Errors).Select(e => e.ErrorMessage).ToList();
 
-                return View("Errors", errors);
+                return View("Error", errors);
             }
 
             var result = await this.cakeService.AddCakeToDb(model);
 
-            if (!result)
+            if (result != "true")
             {
-                return View();
+                return View("Error", result);
             }
 
             return Redirect("/");
         }
 
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Edit(int id)
+        {
+           var model = await this.cakeService.GetCakeById(id);
+            
+            if(model == null)
+            {
+                var errorMessage = "Product not found.";
+
+                return this.View("Error", errorMessage);
+            }
+
+            return this.View(model);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Edit(EditAndDeleteViewModel model)
+        {
+           var successMessage = await this.cakeService.UpdateProduct(model);
+
+            if (successMessage != "true")
+            {
+                return this.View("Error", successMessage);
+            }
+
+            return Redirect("/Cakes/Index");
+        }
+
         [HttpPost]
         public object RateCake(int jokeId, int rating)
         {
-            var rateJoke = this.cakeService.AddRatingToJoke(jokeId, rating);
+            var rateJoke = this.cakeService.AddRatingToCake(jokeId, rating);
             if (!rateJoke)
             {
                 return Json($"An error occurred while processing your vote");

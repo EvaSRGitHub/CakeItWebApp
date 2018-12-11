@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace CakeItWebApp.ViewModels.Home
+namespace CakeItWebApp.ViewModels
 {
-    public class HomeIndexViewModel
+    public class CakeIndexViewModel
     {
+        [Required]
+        public int Id { get; set; }
+
         [Required]
         public string Image { get; set; }
 
