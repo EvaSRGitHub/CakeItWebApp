@@ -116,9 +116,9 @@ namespace CakeItWebApp.Areas.Identity.Pages.Account
 
                     await _signInManager.SignInAsync(user, isPersistent: false);
 
-                    ShoppingCartViewModel usersShoppingCart = new ShoppingCartViewModel();
-                    String cartId = _provider.GetService<IShoppingCartService>().GetShoppingCart().Id;
-                    _provider.GetService<IShoppingCartService>().MigrateCart(cartId, Input.Email);
+                    //ShoppingCartViewModel usersShoppingCart = new ShoppingCartViewModel();
+                    //String cartId = _provider.GetService<IShoppingCartService>().GetShoppingCart().Id;
+                    //await _provider.GetService<IShoppingCartService>().MigrateCart(Input.Email);
 
                     return LocalRedirect(returnUrl);
                 }

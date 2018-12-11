@@ -27,7 +27,7 @@ namespace CakeItWebApp.Services.Common.IntegrationTests
         }
 
         [Fact]
-        public async Task AddCakeToDb_WithAuthenicatedUser_ShouldNotReturn200()
+        public async Task AddCakeToDb_WithAuthenicatedUser_ShouldReturn200()
         {
             // Arrange
             this.Client = this.Server.CreateClient(new WebApplicationFactoryClientOptions()

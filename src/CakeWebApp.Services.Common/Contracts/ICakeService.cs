@@ -18,6 +18,8 @@ namespace CakeWebApp.Services.Common.Contracts
 
         Task<EditAndDeleteViewModel> GetCakeById(int id);
 
-        Task<string> UpdateProduct(EditAndDeleteViewModel model);
+        Task<string> UpdateCake(EditAndDeleteViewModel model);
+
+        Task DeleteCake(int id);
     }
 }

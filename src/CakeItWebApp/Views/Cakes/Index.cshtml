@@ -30,7 +30,7 @@
                 </div>
                 }
                 <div class="button-holder d-flex justify-content-center">
-                    <a asp-controller="Cart" asp-action="Buy" class="btn btn-dark text-white mb-3">Buy</a>
+                    <a asp-controller="ShoppingCart" asp-action="AddToCart" asp-route-id="@Model[i].Id" class="btn btn-dark text-white mb-3">Add to Cart</a>
                 </div>
             </div>
         </div>

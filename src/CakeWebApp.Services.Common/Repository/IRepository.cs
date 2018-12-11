@@ -18,6 +18,8 @@ namespace CakeItWebApp.Services.Common.Repository
 
         Task<int> SaveChangesAsync();
 
+        void DeleteRange(IQueryable<TEntity> entities);
+
         void Update(TEntity entity);
 
         void Dispose();

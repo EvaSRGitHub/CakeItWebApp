@@ -1,0 +1,18 @@
+﻿@if (this.User.Identity.IsAuthenticated)
+{
+    <li class="nav-item dropdown">
+        <a class="nav-link nav-link-event dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:white">
+            My Shop
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" asp-controller="ShoppingCart" asp-action="Index">My Cart</a>
+            <a class="dropdown-item" asp-controller="Orders" asp-action="All">My Orders</a>
+        </div>
+    </li>
+}
+else
+{
+    <li class="nav-item">
+        <a asp-controller="ShoppingCart" asp-action="Index">Cart</a>
+    </li>
+}

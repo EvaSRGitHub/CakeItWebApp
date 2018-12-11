@@ -84,7 +84,7 @@ namespace CakeItWebApp.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(EditAndDeleteViewModel model)
         {
-           var successMessage = await this.cakeService.UpdateProduct(model);
+           var successMessage = await this.cakeService.UpdateCake(model);
 
             if (successMessage != "true")
             {
@@ -92,6 +92,15 @@ namespace CakeItWebApp.Controllers
             }
 
             return Redirect("/Cakes/Index");
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Adimn")]
+        public IActionResult Delete(int id)
+        {
+            this.cakeService.DeleteCake(id);
+
+            return this.View("/Cakes/Index");
         }
 
         [HttpPost]

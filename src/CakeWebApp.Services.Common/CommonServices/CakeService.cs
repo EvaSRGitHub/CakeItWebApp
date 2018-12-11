@@ -64,6 +64,20 @@ namespace CakeWebApp.Services.Common.CommonServices
             return false;
         }
 
+        public async Task DeleteCake(int id)
+        {
+            if (!this.repository.All().Any(p => p.Id == id))
+            {
+                return;
+            }
+
+            var product = await this.repository.GetByIdAsync(id);
+
+            this.repository.Delete(product);
+
+            await this.repository.SaveChangesAsync();
+        }
+
         public IEnumerable<CakeIndexViewModel> GetAllCakes()
         {
             return mapper.ProjectTo<CakeIndexViewModel>(this.repository.All()).ToList();
@@ -78,8 +92,18 @@ namespace CakeWebApp.Services.Common.CommonServices
             return model;
         }
 
-        public async Task<string> UpdateProduct(EditAndDeleteViewModel model)
+        public async Task<string> UpdateCake(EditAndDeleteViewModel model)
         {
+            if(this.repository.All().Any(p => p.Name == model.Name && p.Id != model.Id))
+            {
+                return "Product with such name already exists.";
+            }
+
+            if (this.repository.All().Any(p => p.Image == model.Image && p.Id != model.Id))
+            {
+                return "Product with such image url already exists.";
+            }
+
             var product = this.mapper.Map<EditAndDeleteViewModel, Product>(model);
 
             this.repository.Update(product);

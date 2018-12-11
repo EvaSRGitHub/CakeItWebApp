@@ -3,23 +3,25 @@ using CakeItWebApp.ViewModels;
 using CakeItWebApp.ViewModels.ShoppingCart;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using CakeWebApp.Models;
 
 namespace CakeWebApp.Services.Common.Contracts
 {
     public interface IShoppingCartService
     {
-        ShoppingCartViewModel GetShoppingCart();
-
-        void AddToShoppingCart(string shoppingCartId, Product product, int quantity);
-
-        void RemoveFromShoppingCart(string shoppingCartId, Product product);
+        Task AddToShoppingCart(string shoppingCartId, int id);
 
         ICollection<ShoppingCartItem> GetCartItems(string shoppingCartId);
 
-        void ClearShoppingCart(string shoppingCartId);
+        //Task RemoveFromShoppingCart(int id);
 
-        decimal ShoppingCartTotal(string shoppingCartId);
+        //Task ClearShoppingCart();
 
-        void MigrateCart(string shoppingCartId, string userName);
+        //decimal ShoppingCartTotal();
+
+        Task MigrateCart(string shoppingCartId, string userName);
+
+        ShoppingCartViewModel GetShoppingCart(string shoppingCartId);
     }
 }

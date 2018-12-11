@@ -19,6 +19,7 @@ using CakeWebApp.Services.Common.Contracts;
 using CakeWebApp.Services.Common.CommonServices;
 using CakeItWebApp.Services.Common.Repository;
 using AutoMapper;
+using CakeWebApp.Models;
 
 namespace CakeItWebApp
 {
@@ -85,13 +86,14 @@ namespace CakeItWebApp
 
             services.AddSession(options =>
             {
-                options.IdleTimeout = TimeSpan.FromSeconds(120);
+                options.IdleTimeout = TimeSpan.FromMinutes(60);
                 options.Cookie.HttpOnly = true;
             });
 
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
             services.AddScoped<IShoppingCartService, ShoppingCartService>();
+            services.AddScoped(sp => ShoppingCart.GetShoppingCart(sp));
 
             services.AddScoped<IHomeService, HomeService>();
 

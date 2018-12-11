@@ -57,5 +57,13 @@ namespace CakeItWebApp.Services.Common.Repository
         }
 
         public void Dispose() => this.db.Dispose();
+
+        public void DeleteRange(IQueryable<TEntity> entities)
+        {
+            foreach (var item in entities)
+            {
+                this.Delete(item);
+            }
+        }
     }
 }

@@ -40,8 +40,8 @@
 
                 </div>
                 <hr class="bg-panda hr-2" />
-                <div class="button-holder d-flex justify-content-center">
-                    <button type="submit" class="btn bg-panda text-black" asp-route-id="@Model.Id">Edit Cake</button>
+                <div class="button-holder d-flex justify-content-around">
+                    <button asp-controller="Cakes" asp-action="Edit" type="submit" class="btn bg-panda text-black" asp-route-id="@Model.Id">Edit Cake</button>
                 </div>
             </form>
         </section>
