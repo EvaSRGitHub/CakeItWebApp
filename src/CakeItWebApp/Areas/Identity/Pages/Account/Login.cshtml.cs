@@ -85,7 +85,7 @@ namespace CakeItWebApp.Areas.Identity.Pages.Account
                 {
                     //ShoppingCartViewModel usersShoppingCart = new ShoppingCartViewModel();
                     //String cartId = _provider.GetService<IShoppingCartService>().GetShoppingCart().Id;
-                    //await _provider.GetService<IShoppingCartService>().MigrateCart(Input.Email);
+                    await _provider.GetService<IShoppingCartService>().MigrateCart(Input.Email);
 
                     _logger.LogInformation("User logged in.");
                     return LocalRedirect(returnUrl);

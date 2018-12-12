@@ -11,6 +11,7 @@
   <ItemGroup>
     <ProjectReference Include="..\CakeItWebApp.Data\CakeItWebApp.Data.csproj" />
     <ProjectReference Include="..\CakeItWebApp.ViewModels\CakeItWebApp.ViewModels.csproj" />
+    <ProjectReference Include="..\Services\CakeItWebApp.Services.Messaging\CakeItWebApp.Services.Messaging.csproj" />
   </ItemGroup>
 
 </Project>

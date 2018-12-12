@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CakeItWebApp.ViewModels.ShoppingCart;
 using CakeWebApp.Models;
 using CakeWebApp.Services.Common.Contracts;
 using Microsoft.AspNetCore.Mvc;
@@ -24,19 +25,40 @@ namespace CakeItWebApp.Controllers
             this.shoppingCart = shoppingCart;
         }
 
-        // GET: /<controller>/
         public IActionResult Index()
         {
-            var model = this.shoppingCartService.GetShoppingCart(shoppingCart.Id);
+            var model = this.shoppingCartService.GetShoppingCart();
 
             return View(model);
         }
 
         public async Task <IActionResult> AddToCart(int id)
         {
-            await this.shoppingCartService.AddToShoppingCart(shoppingCart.Id, id);
+            await this.shoppingCartService.AddToShoppingCart(id);
 
-            return Redirect("/ShoppingCart/Index");
+            return RedirectToAction("Index", "ShoppingCart");
+        }
+
+        public async Task<IActionResult> RemoveItem(int id)
+        {
+            await this.shoppingCartService.RemoveFromShoppingCart(id);
+
+            return RedirectToAction("Index", "ShoppingCart");
+        }
+
+        public IActionResult Checkout()
+        {
+            return this.View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Checkout(CheckoutViewModel model)
+        {
+            await this.shoppingCartService.Checkout(model);
+
+            TempData["SentEmail"] = "true";
+
+            return this.RedirectToAction("Index", "Cakes");
         }
     }
 }

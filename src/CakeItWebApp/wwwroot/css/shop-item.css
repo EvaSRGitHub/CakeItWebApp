@@ -51,3 +51,45 @@ body {
 .navbar-dark .navbar-nav .nav-link {
     color: rgb(137, 230, 28);
 }
+
+.cart-summary {
+    background-color: #f5f7fa;
+    margin-top: 118px;
+    position: relative;
+    z-index: 1;
+    padding: 30px 20px;
+}
+
+ .cart-summary h5 {
+    font-size: 18px;
+    margin-bottom: 0;
+}
+
+ .cart-summary .summary-table {
+    margin-top: 30px;
+}
+
+.cart-summary .summary-table li {
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-pack: justify;
+        -ms-flex-pack: justify;
+        justify-content: space-between;
+        margin-bottom: 30px;
+        text-transform: capitalize;
+    }
+.cart-summary .summary-table li span {
+            color: #6b6b6b;
+            font-size: 1rem;
+        }
+.cakeit-btn{
+    background-color: forestgreen;
+}
+
+/*.main-content-wrapper .cart-table-area .cart-summary .payment-method label {
+    font-size: 14px;
+    color: #6b6b6b;
+    font-weight: 400;
+    margin-bottom: 15px;
+}*/

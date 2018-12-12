@@ -3,39 +3,75 @@
 @{
     var count = 0;
 }
-<main class="mt-3">
-    <h1 class="text-center">Shopping Cart</h1>
-    <hr class="hr-2" style="background-color: forestgreen">
-    <div class="d-flex justify-content-between">
-        <div class="col-md-12 mb-5">
-            <table class="table table-hover">
-                <thead>
+<div class="row">
+    <div class="col-12 col-md-8 m-2">
+        <h1>Shopping Cart</h1>
+        <hr class="hr-2" style="background-color: forestgreen">
+        <table class="table table-hover">
+            <thead>
+                <tr class="row">
+                    <th scope="col" class="col-md-1 d-flex"><h3>#</h3></th>
+                    <th scope="col" class="col-md-4 d-flex"><h3>Name</h3></th>
+                    <th scope="col" class="col-md-2 d-flex"><h3>Price</h3></th>
+                    <th scope="col" class="col-md-2 d-flex"><h3>Quantity</h3></th>
+                    <th scope="col" class="col-md-3 d-flex"><h3>Remove</h3></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.CartItems)
+                {
+                    count++;
                     <tr class="row">
-                        <th scope="col" class="col-md-1 d-flex"><h3>#</h3></th>
-                        <th scope="col" class="col-md-4 d-flex"><h3>Name</h3></th>
-                        <th scope="col" class="col-md-2 d-flex"><h3>Price</h3></th>
-                        <th scope="col" class="col-md-2 d-flex"><h3>Quantity</h3></th>
-                        <th scope="col" class="col-md-3 d-flex"><h3>Remove</h3></th>
+                        <th scope="row" class="col-md-1 d-flex"><h5>@count</h5></th>
+                        <td class="col-md-4 d-flex"><h5>@item.Product.Name</h5></td>
+                        <td class="col-md-2 d-flex"><h5>@item.Product.Price</h5></td>
+                        <td class="col-md-2 d-flex"><h5>@item.Quantity</h5></td>
+                        <td class="col-md-3 d-flex justify-content-center">
+                            <div>
+                                <a asp-controller="ShoppingCart" asp-action="RemoveItem" asp-route-id="@item.Product.Id" class="btn btn-danger text-white">Remove</a>
+                            </div>
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model.CartItems)
-                    {
-                        count++;
-                        <tr class="row">
-                            <th scope="row" class="col-md-1 d-flex"><h5>@count</h5></th>
-                            <td class="col-md-4 d-flex"><h5>@item.Product.Name</h5></td>
-                            <td class="col-md-2 d-flex"><h5>@item.Product.Price</h5></td>
-                            <td class="col-md-2 d-flex"><h5>@item.Quantity</h5></td>
-                            <td class="col-lg-3 d-flex justify-content-center">
-                                <div>
-                                    <a asp-controller="ShoppingCart" asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger text-white">Remove</a>
-                                </div>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="col-12 col-md-3">
+        <div class="cart-summary">
+            <h5>Cart Total</h5>
+            <ul class="summary-table p-0">
+                <li>
+                    <span>subtotal:</span>
+                    <span>
+                        $@Model.TotalValue
+                    </span>
+                </li>
+                <li><span>delivery:</span> <span>Free</span></li>
+                <li>
+                    <span>
+                        total:
+                    </span>
+                    <span>
+                        $@Model.TotalValue
+                    </span>
+                </li>
+            </ul>
+            @if (this.User.Identity.IsAuthenticated)
+            {
+                <div class="cakeit-btn mb-2">
+                    <a asp-controller="Orders" asp-action="Checkout" class="btn amado-btn w-100" style="color:white">Checkout</a>
+                </div>
+            }
+            else
+            {
+                <div class="cakeit-btn mb-2">
+                    <a asp-controller="ShoppingCart" asp-action="Checkout" class="btn amado-btn w-100" style="color:white">Checkout</a>
+                </div>
+            }
+            <div class="cakeit-btn">
+                <a asp-controller="Cakes" asp-action="Index" class="btn amado-btn w-100" style="color:white">Continue shopping</a>
+            </div>
         </div>
     </div>
-</main>
+</div>
+

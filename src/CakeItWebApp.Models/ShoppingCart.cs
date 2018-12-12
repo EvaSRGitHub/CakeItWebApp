@@ -23,13 +23,12 @@ namespace CakeWebApp.Models
 
         public ICollection<ShoppingCartItem> CartItems { get; set; }
 
-
         public static ShoppingCart GetShoppingCart(IServiceProvider provider)
         {
             ISession session = provider.GetRequiredService<IHttpContextAccessor>()?
                 .HttpContext.Session;
 
-            string cartId = session.GetString(CartSessionKey) ?? Guid.NewGuid().ToString();
+            string cartId = session?.GetString(CartSessionKey) ?? Guid.NewGuid().ToString();
 
             session.SetString(CartSessionKey, cartId);
 

@@ -2,6 +2,7 @@
 using CakeItWebApp.Models;
 using CakeItWebApp.ViewModels;
 using CakeItWebApp.ViewModels.Cakes;
+using CakeItWebApp.ViewModels.Orders;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -17,6 +18,8 @@ namespace CakeWebApp.Services.Common.Mapping
             CreateMap<Product, CreateCakeViewModel>().ReverseMap();
 
             CreateMap<Product, EditAndDeleteViewModel>().ReverseMap();
+
+            CreateMap<Order, OrderDetailsViewModel>().ReverseMap();
         }
     }
 }

@@ -27,6 +27,8 @@ namespace CakeItWebApp.Controllers
         // GET: /<controller>/
         public IActionResult Index(int? page)
         {
+            ShwoMessageIfOrderHasBeenFinished();
+
             var allCakes = this.cakeService.GetAllCakes();
 
             var nextPage = page ?? 1;
@@ -34,6 +36,16 @@ namespace CakeItWebApp.Controllers
             var cakesPerPage = allCakes.ToPagedList(nextPage, 3);
 
             return View(cakesPerPage);
+        }
+
+        private void ShwoMessageIfOrderHasBeenFinished()
+        {
+            var value = TempData["SentEmail"]?.ToString() ?? null;
+
+            if (value == "true")
+            {
+                ViewData["SentEmail"] = "Your order is accepted. Please check your e-mail.";
+            }
         }
 
         [Authorize(Roles="Admin")]

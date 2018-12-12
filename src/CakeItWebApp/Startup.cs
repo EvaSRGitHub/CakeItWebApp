@@ -38,7 +38,7 @@ namespace CakeItWebApp
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
-                options.CheckConsentNeeded = context => true;
+                options.CheckConsentNeeded = context => false;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
@@ -98,6 +98,8 @@ namespace CakeItWebApp
             services.AddScoped<IHomeService, HomeService>();
 
             services.AddScoped<ICakeService, CakeService>();
+
+            services.AddScoped<IOrderService, OrderService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

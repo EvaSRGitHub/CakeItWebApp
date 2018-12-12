@@ -10,18 +10,18 @@ namespace CakeWebApp.Services.Common.Contracts
 {
     public interface IShoppingCartService
     {
-        Task AddToShoppingCart(string shoppingCartId, int id);
+        Task AddToShoppingCart(int id);
 
-        ICollection<ShoppingCartItem> GetCartItems(string shoppingCartId);
+        ICollection<ShoppingCartItem> GetCartItems();
 
-        //Task RemoveFromShoppingCart(int id);
+        Task RemoveFromShoppingCart(int id);
 
-        //Task ClearShoppingCart();
+        Task ClearShoppingCart();
 
-        //decimal ShoppingCartTotal();
+        Task MigrateCart(string userName);
 
-        Task MigrateCart(string shoppingCartId, string userName);
+        ShoppingCartViewModel GetShoppingCart();
 
-        ShoppingCartViewModel GetShoppingCart(string shoppingCartId);
+        Task Checkout(CheckoutViewModel model);
     }
 }
