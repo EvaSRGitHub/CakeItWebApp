@@ -11,7 +11,7 @@ namespace CakeItWebApp.Models
         public Order()
         {
             this.OrederDate = DateTime.UtcNow;
-            this.ShoppedItems = new HashSet<ShoppingCartItem>();
+            this.Products = new HashSet<OrderProduct>();
         }
 
         public int Id { get; set; }
@@ -24,18 +24,14 @@ namespace CakeItWebApp.Models
         [Required]
         public DateTime OrederDate { get; set; }
 
-        [Required]
-        public string Address { get; set; }
+        [ForeignKey("OrderDetails")]
+        public int OrderDetailsId { get; set; }
 
-        [Required]
-        public string City { get; set; }
-
-        [Required]
-        public string Name { get; set; }
+        public virtual OrderDetails OrderDetails { get; set; }
 
         [Required]
         public decimal Total { get; set; }
 
-        public virtual ICollection<ShoppingCartItem> ShoppedItems { get; set; }
+        public virtual ICollection<OrderProduct> Products { get; set; }
     }
 }

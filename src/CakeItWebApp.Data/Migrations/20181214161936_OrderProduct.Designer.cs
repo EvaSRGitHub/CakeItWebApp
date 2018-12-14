@@ -4,14 +4,16 @@ using CakeItWebApp.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CakeItWebApp.Data.Migrations
 {
     [DbContext(typeof(CakeItDbContext))]
-    partial class CakeItDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181214161936_OrderProduct")]
+    partial class OrderProduct
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

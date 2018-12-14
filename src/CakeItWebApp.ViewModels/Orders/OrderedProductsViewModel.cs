@@ -5,18 +5,18 @@ using System.Text;
 
 namespace CakeItWebApp.ViewModels.Orders
 {
-    public class InputOrderViewModel
+    public class OrderedProductsViewModel
     {
         [Required]
-        public string Username { get; set; }
+        public int OrderId { get; set; }
 
         [Required]
-        public string Address { get; set; }
+        public string ProductName { get; set; }
 
         [Required]
-        public string City { get; set; }
+        public int ProductQuantity { get; set; }
 
         [Required]
-        public string Name { get; set; }
+        public decimal ProductPrice { get; set; }
     }
 }

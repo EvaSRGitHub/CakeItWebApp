@@ -1,5 +1,6 @@
 ﻿@model CakeItWebApp.ViewModels.ShoppingCart.CheckoutViewModel
 
+<main class="container">
 <div class="row">
     <div class="col-md-12">
         <section>
@@ -27,7 +28,7 @@
                     </div>
                     <div class="form-group col-md-6">
                         <label asp-for="PhoneNumber" class="text-center"></label>
-                        <input asp-for="PhoneNumber" type="tel" class="form-control" placeholder="Phone number">
+                        <input asp-for="PhoneNumber" type="tel" class="form-control" placeholder="+359/888888888">
                         <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                     </div>
                 </div>
@@ -58,7 +59,7 @@
         </section>
     </div>
 </div>
-
+</main>
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }

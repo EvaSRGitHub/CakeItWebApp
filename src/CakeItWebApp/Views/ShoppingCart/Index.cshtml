@@ -3,6 +3,7 @@
 @{
     var count = 0;
 }
+<main class=" container">
 <div class="row">
     <div class="col-12 col-md-8 m-2">
         <h1>Shopping Cart</h1>
@@ -65,7 +66,7 @@
             else
             {
                 <div class="cakeit-btn mb-2">
-                    <a asp-controller="ShoppingCart" asp-action="Checkout" class="btn amado-btn w-100" style="color:white">Checkout</a>
+                        <a asp-controller="ShoppingCart" asp-action="Checkout" data-toggle="tooltip" data-container="body" title="If you have an account with us please sign in to continue.Thus you will have your order details available any time you need them" class="btn amado-btn w-100" data-type="warning" style="color:white">Checkout</a>
                 </div>
             }
             <div class="cakeit-btn">
@@ -74,4 +75,9 @@
         </div>
     </div>
 </div>
-
+</main>
+<script>
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+</script>

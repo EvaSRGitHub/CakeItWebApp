@@ -1,4 +1,5 @@
-﻿using CakeWebApp.Services.Common.Contracts;
+﻿using CakeItWebApp.ViewModels;
+using CakeWebApp.Services.Common.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,6 +13,11 @@ namespace CakeWebApp.Services.Common.CommonServices
         public void PassErrorParam(object param)
         {
             this.ErrorParm = param;
+        }
+
+        public ErrorViewModel GetErrorModel(List<string> errors)
+        {
+            return new ErrorViewModel { Errors = errors };
         }
     }
 }

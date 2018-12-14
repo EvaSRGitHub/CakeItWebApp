@@ -19,7 +19,11 @@ namespace CakeWebApp.Services.Common.Mapping
 
             CreateMap<Product, EditAndDeleteViewModel>().ReverseMap();
 
-            CreateMap<Order, OrderDetailsViewModel>().ReverseMap();
+            CreateMap<Order, OrderViewModel>().ReverseMap();
+
+            CreateMap<OrderDetails, OrderDetailsViewModel>().ReverseMap();
+
+            CreateMap<ShoppingCartItem, OrderedProductsViewModel>().ReverseMap();
         }
     }
 }

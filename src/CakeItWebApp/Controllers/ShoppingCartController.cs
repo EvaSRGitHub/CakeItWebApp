@@ -34,13 +34,33 @@ namespace CakeItWebApp.Controllers
 
         public async Task <IActionResult> AddToCart(int id)
         {
-            await this.shoppingCartService.AddToShoppingCart(id);
+            try
+            {
+                await this.shoppingCartService.AddToShoppingCart(id);
+            }
+            catch (Exception e)
+            {
+                ViewData["Errors"] = e.Message;
+
+                return this.View("Error");
+            }
 
             return RedirectToAction("Index", "ShoppingCart");
         }
 
         public async Task<IActionResult> RemoveItem(int id)
         {
+            try
+            {
+                await this.shoppingCartService.RemoveFromShoppingCart(id);
+            }
+            catch (Exception e)
+            {
+                ViewData["Errors"] = e.Message;
+
+                return this.View("Error");
+            }
+
             await this.shoppingCartService.RemoveFromShoppingCart(id);
 
             return RedirectToAction("Index", "ShoppingCart");

@@ -4,14 +4,16 @@ using CakeItWebApp.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CakeItWebApp.Data.Migrations
 {
     [DbContext(typeof(CakeItDbContext))]
-    partial class CakeItDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181214121410_Order_oneToOne_fluentApi")]
+    partial class Order_oneToOne_fluentApi
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -215,21 +217,6 @@ namespace CakeItWebApp.Data.Migrations
                     b.ToTable("OrderDetails");
                 });
 
-            modelBuilder.Entity("CakeItWebApp.Models.OrderProduct", b =>
-                {
-                    b.Property<int>("OrderId");
-
-                    b.Property<int>("ProductId");
-
-                    b.Property<int>("Quantity");
-
-                    b.HasKey("OrderId", "ProductId");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("OrderProducts");
-                });
-
             modelBuilder.Entity("CakeItWebApp.Models.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -268,6 +255,8 @@ namespace CakeItWebApp.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int?>("OrderId");
+
                     b.Property<int>("ProductId");
 
                     b.Property<int>("Quantity");
@@ -275,6 +264,8 @@ namespace CakeItWebApp.Data.Migrations
                     b.Property<string>("ShoppingCartId");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
 
                     b.HasIndex("ProductId");
 
@@ -448,19 +439,6 @@ namespace CakeItWebApp.Data.Migrations
                         .HasForeignKey("CakeItWebApp.Models.OrderDetails", "OrderId");
                 });
 
-            modelBuilder.Entity("CakeItWebApp.Models.OrderProduct", b =>
-                {
-                    b.HasOne("CakeItWebApp.Models.Order", "Order")
-                        .WithMany("Products")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("CakeItWebApp.Models.Product", "Product")
-                        .WithMany("Orders")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
             modelBuilder.Entity("CakeItWebApp.Models.Product", b =>
                 {
                     b.HasOne("CakeItWebApp.Models.Category", "Category")
@@ -471,6 +449,10 @@ namespace CakeItWebApp.Data.Migrations
 
             modelBuilder.Entity("CakeItWebApp.Models.ShoppingCartItem", b =>
                 {
+                    b.HasOne("CakeItWebApp.Models.Order")
+                        .WithMany("ShoppedItems")
+                        .HasForeignKey("OrderId");
+
                     b.HasOne("CakeItWebApp.Models.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId")

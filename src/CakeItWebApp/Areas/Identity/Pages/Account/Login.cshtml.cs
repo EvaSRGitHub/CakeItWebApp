@@ -19,15 +19,15 @@ namespace CakeItWebApp.Areas.Identity.Pages.Account
     [AllowAnonymous]
     public class LoginModel : PageModel
     {
-        private readonly SignInManager<CakeItUser> _signInManager;
-        private readonly ILogger<LoginModel> _logger;
-        private readonly IServiceProvider _provider;
+        private readonly SignInManager<CakeItUser> signInManager;
+        private readonly ILogger<LoginModel> logger;
+        private readonly IServiceProvider provider;
 
         public LoginModel(SignInManager<CakeItUser> signInManager, ILogger<LoginModel> logger, IServiceProvider provider)
         {
-            _signInManager = signInManager;
-            _logger = logger;
-            _provider = provider;
+            this.signInManager = signInManager;
+            this.logger = logger;
+            this.provider = provider;
         }
 
         [BindProperty]
@@ -66,7 +66,7 @@ namespace CakeItWebApp.Areas.Identity.Pages.Account
             // Clear the existing external cookie to ensure a clean login process
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
 
-            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            ExternalLogins = (await this.signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
             ReturnUrl = returnUrl;
         }
@@ -79,15 +79,13 @@ namespace CakeItWebApp.Areas.Identity.Pages.Account
             {
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: true);
+                var result = await this.signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: true);
 
                 if (result.Succeeded)
                 {
-                    //ShoppingCartViewModel usersShoppingCart = new ShoppingCartViewModel();
-                    //String cartId = _provider.GetService<IShoppingCartService>().GetShoppingCart().Id;
-                    await _provider.GetService<IShoppingCartService>().MigrateCart(Input.Email);
+                    await this.provider.GetService<IShoppingCartService>().MigrateCart(Input.Email);
 
-                    _logger.LogInformation("User logged in.");
+                    this.logger.LogInformation("User logged in.");
                     return LocalRedirect(returnUrl);
                 }
 
@@ -98,7 +96,7 @@ namespace CakeItWebApp.Areas.Identity.Pages.Account
 
                 if (result.IsLockedOut)
                 {
-                    _logger.LogWarning("User account locked out.");
+                    this.logger.LogWarning("User account locked out.");
                     return RedirectToPage("./Lockout");
                 }
                 else
@@ -109,7 +107,7 @@ namespace CakeItWebApp.Areas.Identity.Pages.Account
 
             var errors = this.ModelState.Values.SelectMany(p => p.Errors).Select(e => e.ErrorMessage).ToList();
 
-            this._provider.GetService<IErrorService>().PassErrorParam(errors);
+            this.provider.GetService<IErrorService>().PassErrorParam(errors);
 
             return RedirectToPage("/Error");
         }

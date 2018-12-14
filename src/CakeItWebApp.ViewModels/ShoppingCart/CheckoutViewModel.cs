@@ -15,9 +15,11 @@ namespace CakeItWebApp.ViewModels.ShoppingCart
         public string LastName { get; set; }
 
         [Required(ErrorMessage = "Please enter your email")]
+        [RegularExpression(@"^[\w!#$%&'*+\-\/=?\^_`{|}~]+(\.[\w!#$%&'*+\-\/=?\^_`{|}~]+)*@((([\-\w]+\.)+[a-zA-Z]{2,4})|(([0-9]{1,3}\.){3}[0-9]{1,3}))$", ErrorMessage = "Invalid email format.")]
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Please enter your phone number")]
+        [RegularExpression(@"^\+?(\d+)\/(\d{9})$", ErrorMessage = "Invalid Phone number format.")]
         public string PhoneNumber { get; set; }
 
         [Required(ErrorMessage = "Please enter delivery country name")]

@@ -1,6 +1,7 @@
 ﻿using CakeItWebApp.ViewModels.Orders;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -8,8 +9,12 @@ namespace CakeWebApp.Services.Common.Contracts
 {
     public interface IOrderService
     {
-        IEnumerable<OrderDetailsViewModel> GetAllOrdersByUser(string username);
+        Task<int> CreateOrder(string userName);
 
-         Task Checkout(OrderDetailsViewModel model);
+        IEnumerable<AllOrdersViewModel> GetAllOrdersByUser(string userName);
+
+        Task SetOrderDetailsId(int orderDetailsId);
+
+        IEnumerable<OrderedProductsViewModel> GetAllItemsPerOrder(int orderId);
     }
 }

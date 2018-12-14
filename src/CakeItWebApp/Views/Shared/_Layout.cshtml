@@ -47,7 +47,7 @@
     <partial name="_CookieConsentPartial" />
 
     <!--container-->
-    <div class="container">
+    <div class="container-fluid">
         @RenderBody()
     </div>
     <!-- /.container -->
@@ -61,7 +61,7 @@
 
     <environment include="Development">
         <script src="~/vendor/jquery/jquery.min.js"></script>
-        <script src="~/js/popper.min.js"></script>
+        @*<script src="~/js/popper.min.js"></script>*@
         <script src="~/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
         @*<script src="~/js/site.js" asp-append-version="true"></script>*@
     </environment>

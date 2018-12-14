@@ -25,11 +25,15 @@ namespace CakeItWebApp.Data
 
         public DbSet<Tutorial> Tutorials { get; set; }
 
-       public DbSet<Ingredients> Ingredients { get; set; }
+        public DbSet<Ingredients> Ingredients { get; set; }
 
         public DbSet<ShoppingCartItem> CartItems { get; set; }
 
-        public DbSet<Order> Oreders { get; set; }
+        public DbSet<Order> Orders { get; set; }
+
+        public DbSet<OrderDetails> OrderDetails { get; set; }
+
+        public DbSet<OrderProduct> OrderProducts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -51,6 +55,20 @@ namespace CakeItWebApp.Data
             builder.Entity<Ingredients>().Property(e => e.TopDecoration).HasConversion(v => v.ToString(), v => (TopDecorationType)Enum.Parse(typeof(TopDecorationType), v));
 
             builder.Entity<Category>().Property(e => e.Type).HasConversion(v => v.ToString(), v => (CategoryType)Enum.Parse(typeof(CategoryType), v));
+
+            builder.Entity<Order>(entity =>
+            {
+                entity.HasOne(e => e.OrderDetails).WithOne(od => od.Order).HasForeignKey<OrderDetails>(b => b.OrderId);
+            });
+
+            builder.Entity<OrderProduct>(entity => {
+
+                entity.HasKey(e => new { e.OrderId, e.ProductId });
+
+                entity.HasOne(e => e.Order).WithMany(o => o.Products).HasForeignKey(e => e.OrderId);
+
+                entity.HasOne(e => e.Product).WithMany(p => p.Orders).HasForeignKey(e => e.ProductId);
+            });
         }
     }
 }

@@ -93,6 +93,7 @@ namespace CakeItWebApp
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
             services.AddScoped<IShoppingCartService, ShoppingCartService>();
+
             services.AddScoped(sp => ShoppingCart.GetShoppingCart(sp));
 
             services.AddScoped<IHomeService, HomeService>();
@@ -100,6 +101,8 @@ namespace CakeItWebApp
             services.AddScoped<ICakeService, CakeService>();
 
             services.AddScoped<IOrderService, OrderService>();
+
+            services.AddScoped<IOrderDetailsService, OrderDetailsService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

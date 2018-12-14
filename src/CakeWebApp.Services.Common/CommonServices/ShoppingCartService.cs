@@ -26,11 +26,13 @@ namespace CakeWebApp.Services.Common.CommonServices
         private readonly IServiceProvider provider;
         private readonly ILogger<ShoppingCartService> logger;
         private readonly IRepository<ShoppingCartItem> repository;
+        private readonly IRepository<Product> productsRepo;
         private readonly ShoppingCart shoppingCart;
 
-        public ShoppingCartService(IRepository<ShoppingCartItem> repository, ILogger<ShoppingCartService> logger, IServiceProvider provider, ShoppingCart shoppingCart)
+        public ShoppingCartService(IRepository<ShoppingCartItem> repository, IRepository<Product> productsRepo, ILogger<ShoppingCartService> logger, IServiceProvider provider, ShoppingCart shoppingCart)
         {
             this.repository = repository;
+            this.productsRepo = productsRepo;
             this.logger = logger;
             this.provider = provider;
             this.shoppingCart = shoppingCart;
@@ -38,6 +40,13 @@ namespace CakeWebApp.Services.Common.CommonServices
 
         public async Task AddToShoppingCart(int id)
         {
+            var product = this.productsRepo.All().SingleOrDefault(p => p.Id == id);
+
+            if(product == null)
+            {
+                throw new InvalidOperationException("Product not found");
+            }
+
             var shoppingCartItem =
                    this.repository.All().SingleOrDefault(s => s.Product.Id == id && s.ShoppingCartId == this.shoppingCart.Id);
 
@@ -79,6 +88,14 @@ namespace CakeWebApp.Services.Common.CommonServices
 
         public async Task RemoveFromShoppingCart(int id)
         {
+
+            var product = this.productsRepo.All().SingleOrDefault(p => p.Id == id);
+
+            if (product == null)
+            {
+                throw new InvalidOperationException("Product not found");
+            }
+
             var shoppingCartItem =
                     this.repository.All().SingleOrDefault(
                         s => s.Product.Id == id && s.ShoppingCartId == this.shoppingCart.Id);

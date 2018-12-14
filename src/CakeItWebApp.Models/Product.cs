@@ -12,6 +12,7 @@ namespace CakeItWebApp.Models
         public Product()
         {
             this.IsDeleted = false;
+            this.Orders = new HashSet<OrderProduct>();
         }
 
         public int Id { get; set;}
@@ -42,5 +43,7 @@ namespace CakeItWebApp.Models
         public double? Rating { get; set; }
 
         public int? RatingVotes { get; set; }
+
+        public virtual ICollection<OrderProduct> Orders { get; set; }
     }
 }
