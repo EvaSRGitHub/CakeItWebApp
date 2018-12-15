@@ -16,20 +16,6 @@ namespace CakeItWebApp.Services.Common.Tests
 {
     public class ShoppingCartServiceTests : BaseServiceTestClass
     {
-        private async Task SeedProducts()
-        {
-            var repo = new Repository<Product>(this.Db);
-
-            var cakeModel1 = new CreateCakeViewModel { Name = "Chocolate Peanut Cake", CategoryId = 1, Price = 35.50m, Description = "This Chocolate and Peanut Butter Drip Cake is completely sinful.", Image = "https://res.cloudinary.com/cakeit/image/upload/ar_1:1,c_fill,g_auto,e_art:hokusai/v1544136590/Chocolate_and_Peanut_cake.jpg" };
-
-            var cakeModel2 = new CreateCakeViewModel { Name = "Chocolate Cake", CategoryId = 1, Price = 35.50m, Description = "This Chocolate and Peanut Butter Drip Cake is completely sinful.", Image = "https://res.cloudinary.com/cakeit/image/upload/ar_1:1,c_fill,g_auto,e_art:hokusai/v1544136590/Chocolate_and_Peanut_cake.jpg" };
-
-            var cakeService = new CakeService(null, repo, this.Mapper);
-
-            var result1 = await cakeService.AddCakeToDb(cakeModel1);
-            var result2 = await cakeService.AddCakeToDb(cakeModel2);
-        }
-
         [Fact]
         public async Task AddShoppingCartItem_WithValidProductId_ShouldAddNewItemToDb()
         {

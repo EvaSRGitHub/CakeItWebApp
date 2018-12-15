@@ -41,6 +41,13 @@ namespace CakeItWebApp.Controllers
 
         public IActionResult Checkout()
         {
+            if(this.shoppingCartService.GetCartItems().Count == 0)
+            {
+                ViewData["Errors"] = "Your shopping cart is empty.";
+
+                return this.View("Error");
+            } 
+
             return this.View();
         }
 

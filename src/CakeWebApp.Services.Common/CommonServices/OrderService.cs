@@ -33,6 +33,11 @@ namespace CakeWebApp.Services.Common.CommonServices
 
             var orderedItems = this.shoppingCartItems.All().Where(i => i.ShoppingCartId == userName).ToList();
 
+            if(orderedItems.Count() == 0)
+            {
+                throw new InvalidOperationException("Your shopping cart is empty.");
+            }
+
             var model = new OrderViewModel
             {
                 UserId = userId,
