@@ -10,7 +10,7 @@ namespace CakeWebApp.Services.Common.Contracts
 {
     public interface ICakeService
     {
-        bool AddRatingToCake(int cakeId, int rating);
+        Task AddRatingToCake(int cakeId, int rating);
 
         Task<string> AddCakeToDb(CreateCakeViewModel model);
 
@@ -21,5 +21,7 @@ namespace CakeWebApp.Services.Common.Contracts
         Task<string> UpdateCake(EditAndDeleteViewModel model);
 
         Task DeleteCake(int id);
+
+        Task<CakeIndexViewModel> ShowCakeDetails(int id);
     }
 }

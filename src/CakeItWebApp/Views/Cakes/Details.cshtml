@@ -1,0 +1,70 @@
+﻿@model CakeItWebApp.ViewModels.CakeIndexViewModel
+
+@{
+    ViewData["Title"] = "Home Page";
+    var currentRating = (int)Model.Rating == 0 ? 0 : (int)Model.Rating / Model.RatingVotes;
+    var fullStars = new string((char)9733, currentRating);
+    var emptyStars = new string((char)9734, (5 - currentRating));
+    var rating = 0;
+}
+<main class="container">
+    <div class="row">
+        <div class="col-lg-3">
+            <h1 class="my-4">CakeIt</h1>
+            <div class="list-group">
+                <a asp-controller="Cakes" asp-action="Index" class="list-group-item active">Cakes</a>
+                <a href="#" class="list-group-item">Custom Cakes</a>
+                <a asp-controller="Books" asp-action="Index" class="list-group-item">Books</a>
+                <a asp-controller="Tutorials" asp-action="Index" class="list-group-item">Tutorials</a>
+            </div>
+        </div>
+        <!-- /.col-lg-3 -->
+        <div class="col-lg-9">
+            <div class="card mt-4 mb-4">
+                <img class="card-img-top img-fluid" src="@Model.Image" alt="">
+                <div class="card-body">
+                    <h3 class="card-title">@Model.Name</h3>
+                    <h4>$@Model.Price</h4>
+                    <p class="card-text">@Model.Description</p>
+
+                    <span class="text-warning">
+                        @string.Concat(fullStars, emptyStars)
+                    </span>
+                    @if (this.User.Identity.IsAuthenticated)
+                    {
+                        <form asp-controller="Cakes" asp-action="Rate" method="post" asp-route-cakeid="@Model.Id" class="d-inline ml-5">
+                                <input type="number" name="rating" min="1" max="5" value="@rating" class="p-1" style="border-radius: 1px"/>
+                                <button class="btn btn-warning">Rate</button>
+                        </form>
+                    }
+                </div>
+            </div>
+            <!-- /.card -->
+            @*<div class="card card-outline-secondary my-4">
+                    <div class="card-header">
+                        Product Reviews
+                    </div>
+                    <div class="card-body">
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Omnis et enim aperiam inventore, similique necessitatibus neque non! Doloribus, modi sapiente laboriosam aperiam fugiat laborum. Sequi mollitia, necessitatibus quae sint natus.</p>
+                        <small class="text-muted">Posted by Anonymous on 3/1/17</small>
+                        <hr>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Omnis et enim aperiam inventore, similique necessitatibus neque non! Doloribus, modi sapiente laboriosam aperiam fugiat laborum. Sequi mollitia, necessitatibus quae sint natus.</p>
+                        <small class="text-muted">Posted by Anonymous on 3/1/17</small>
+                        <hr>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Omnis et enim aperiam inventore, similique necessitatibus neque non! Doloribus, modi sapiente laboriosam aperiam fugiat laborum. Sequi mollitia, necessitatibus quae sint natus.</p>
+                        <small class="text-muted">Posted by Anonymous on 3/1/17</small>
+                        <hr>
+                        <a href="#" class="btn btn-success">Leave a Review</a>
+                    </div>
+                </div>*@
+            <!-- /.card -->
+        </div>
+        <!-- /.col-lg-9 -->
+    </div>
+    <div class="justify-content-right">
+        <a href="javascript:void(0);" onclick="history.go(-1);" class="btn btn-info" role="button">Back</a>
+    </div>
+</main>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

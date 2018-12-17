@@ -9,8 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using X.PagedList;
 
-// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace CakeItWebApp.Controllers
 {
     public class CakesController : Controller
@@ -24,7 +22,6 @@ namespace CakeItWebApp.Controllers
             this.cakeService = cakeService;
         }
 
-        // GET: /<controller>/
         public IActionResult Index(int? page)
         {
             ShwoMessageIfOrderHasBeenFinished();
@@ -115,16 +112,37 @@ namespace CakeItWebApp.Controllers
             return this.View("/Cakes/Index");
         }
 
-        [HttpPost]
-        public object RateCake(int jokeId, int rating)
+        public async Task<IActionResult> Details(int id)
         {
-            var rateJoke = this.cakeService.AddRatingToCake(jokeId, rating);
-            if (!rateJoke)
+            var cake = await this.cakeService.ShowCakeDetails(id);
+
+            if(cake == null)
             {
-                return Json($"An error occurred while processing your vote");
+                ViewData["Errors"] = "Product not found!";
+
+                return this.View("Error");
             }
-            var successMessage = $"You successfully rated the joke with rating of {rating}";
-            return Json(successMessage);
+
+            return this.View(cake);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Rate(int cakeId, int rating)
+        {
+            try
+            {
+                await this.cakeService.AddRatingToCake(cakeId, rating);
+            }
+            catch (Exception e)
+            {
+                ViewData["Ërrors"] = e.Message;
+
+                return this.View("Error");
+            }
+
+            TempData["Rate"] = "Your rating has been successfully registered.";
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }

@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace CakeWebApp.Services.Common.CommonServices
 {
-    public class CakeService:ICakeService
+    public class CakeService : ICakeService
     {
         private readonly ILogger<CakeService> logger;
         private readonly IRepository<Product> repository;
@@ -30,7 +30,7 @@ namespace CakeWebApp.Services.Common.CommonServices
         {
             var product = this.mapper.Map<CreateCakeViewModel, Product>(model);
 
-            if(this.repository.All().Any(p => p.Name == product.Name))
+            if (this.repository.All().Any(p => p.Name == product.Name))
             {
                 return "Cake with such name alreadey exist in the data base."; ;
             }
@@ -51,17 +51,33 @@ namespace CakeWebApp.Services.Common.CommonServices
             }
         }
 
-        public bool AddRatingToCake(int cakeId, int rating)
+        public async Task AddRatingToCake(int cakeId, int rating)
         {
-            var cake = this.repository.All().FirstOrDefault(j => j.Id == cakeId);
-            if (cake != null)
+            var cake = this.repository.All().FirstOrDefault(c => c.Id == cakeId);
+
+            if (cake == null)
             {
-                cake.Rating += rating;
-                this.repository.SaveChangesAsync();
-                return true;
+                throw new InvalidOperationException("Product not found.");
             }
 
-            return false;
+            if (rating < 1 && rating > 5)
+            {
+                throw new InvalidOperationException("Invlid rating value.");
+            }
+
+            cake.Rating = cake.Rating + rating ?? rating;
+
+            cake.RatingVotes = cake.RatingVotes + 1 ?? 1;
+
+            try
+            {
+                await this.repository.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+
+                throw new InvalidProgramException(e.Message);
+            }
         }
 
         public async Task DeleteCake(int id)
@@ -92,9 +108,18 @@ namespace CakeWebApp.Services.Common.CommonServices
             return model;
         }
 
+        public async Task<CakeIndexViewModel> ShowCakeDetails(int id)
+        {
+            var cake = await this.repository.GetByIdAsync(id);
+
+            var cakeDetails = this.mapper.Map<Product, CakeIndexViewModel>(cake);
+
+            return cakeDetails;
+        }
+
         public async Task<string> UpdateCake(EditAndDeleteViewModel model)
         {
-            if(this.repository.All().Any(p => p.Name == model.Name && p.Id != model.Id))
+            if (this.repository.All().Any(p => p.Name == model.Name && p.Id != model.Id))
             {
                 return "Product with such name already exists.";
             }

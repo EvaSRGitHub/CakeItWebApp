@@ -21,5 +21,9 @@ namespace CakeItWebApp.ViewModels
 
         [Required]
         public string Description { get; set; }
+
+        public double Rating { get; set; }
+
+        public int RatingVotes { get; set; }
     }
 }
