@@ -135,7 +135,7 @@ namespace CakeItWebApp.Controllers
             }
             catch (Exception e)
             {
-                ViewData["Ërrors"] = e.Message;
+                ViewData["Еrrors"] = e.Message;
 
                 return this.View("Error");
             }

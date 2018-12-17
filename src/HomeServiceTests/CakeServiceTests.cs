@@ -278,5 +278,139 @@ namespace CakeItWebApp.Services.Common.Tests
             //Assert
             Assert.Equal(expectedProductsCount, actualProductsCount);
         }
+
+        [Fact]
+        public async Task ShowCakeDetails_WithValidId_ShouldReturnCakeDetailsViewModel()
+        {
+            //Arrange
+            await this.SeedProducts();
+            var repo = new Repository<Product>(this.Db);
+            var service = new CakeService(null, repo, this.Mapper);
+
+            //Act
+            var cakeDetails = await service.ShowCakeDetails(2);
+
+            //Assert
+            Assert.NotNull(cakeDetails);
+            Assert.Equal(2, cakeDetails.Id);
+        }
+
+        [Fact]
+        public async Task ShowCakeDetails_WithInValidId_ShouldReturnNull()
+        {
+            //Arrange
+            await this.SeedProducts();
+            var repo = new Repository<Product>(this.Db);
+            var service = new CakeService(null, repo, this.Mapper);
+
+            //Act
+            var cakeDetails = await service.ShowCakeDetails(3);
+
+            //Assert
+            Assert.Null(cakeDetails);
+        }
+
+        [Fact]
+        public async Task AddRatingToCake_WithValidData_ShouldAddRatingToProduct()
+        {
+            //Arrange
+            await this.SeedProducts();
+            var repo = new Repository<Product>(this.Db);
+            var service = new CakeService(null, repo, this.Mapper);
+
+            //Act
+            await service.AddRatingToCake(2, 5);
+            await repo.SaveChangesAsync();
+            var expectedRate = 5;
+            var actualRate = repo.All().SingleOrDefault(p => p.Id == 2).Rating;
+
+            //Assert
+            Assert.Equal(expectedRate, actualRate);
+        }
+
+        [Fact]
+        public async Task AddRatingToCake_WithValidData_ShoulChangeRatingVotesOfProduct()
+        {
+            //Arrange
+            await this.SeedProducts();
+            var repo = new Repository<Product>(this.Db);
+            var service = new CakeService(null, repo, this.Mapper);
+
+            //Act
+            await service.AddRatingToCake(2, 5);
+            await repo.SaveChangesAsync();
+            var expectedRatingVote = 1;
+            var actualRatingVote = repo.All().SingleOrDefault(p => p.Id == 2).RatingVotes;
+
+            //Assert
+            Assert.Equal(expectedRatingVote, actualRatingVote);
+        }
+
+        [Fact]
+        public async Task AddRatingToCake_WithAddingRate_ShoulIncreaseRating()
+        {
+            //Arrange
+            await this.SeedProducts();
+            var repo = new Repository<Product>(this.Db);
+            var service = new CakeService(null, repo, this.Mapper);
+
+            //Act
+            await service.AddRatingToCake(2, 5);
+            await service.AddRatingToCake(2, 3);
+            await repo.SaveChangesAsync();
+            var expectedRate = 8;
+            var actualRate = repo.All().SingleOrDefault(p => p.Id == 2).Rating;
+
+            //Assert
+            Assert.Equal(expectedRate, actualRate);
+        }
+
+        [Fact]
+        public async Task AddRatingToCake_WithAddingRate_ShoulIncreaseRatingVotes()
+        {
+            //Arrange
+            await this.SeedProducts();
+            var repo = new Repository<Product>(this.Db);
+            var service = new CakeService(null, repo, this.Mapper);
+
+            //Act
+            await service.AddRatingToCake(2, 5);
+            await service.AddRatingToCake(2, 3);
+            await repo.SaveChangesAsync();
+            var expectedRatingVotes = 2;
+            var actualRatingVotes = repo.All().SingleOrDefault(p => p.Id == 2).RatingVotes;
+
+            //Assert
+            Assert.Equal(expectedRatingVotes, actualRatingVotes);
+        }
+
+        [Fact]
+        public async Task AddRatingToCake_WithInValidCakeId_ShoulThrow()
+        {
+            //Arrange
+            await this.SeedProducts();
+            var repo = new Repository<Product>(this.Db);
+            var service = new CakeService(null, repo, this.Mapper);
+
+            //Act
+
+            //Assert
+            await Assert.ThrowsAsync<InvalidOperationException>(async () => await service.AddRatingToCake(3, 5));
+        }
+
+        [Fact]
+        public async Task AddRatingToCake_WithInValidRate_ShoulThrow()
+        {
+            //Arrange
+            await this.SeedProducts();
+            var repo = new Repository<Product>(this.Db);
+            var service = new CakeService(null, repo, this.Mapper);
+
+            //Act
+
+            //Assert
+            await Assert.ThrowsAsync<InvalidOperationException>(async () => await service.AddRatingToCake(3, -5));
+        }
+
     }
 }
