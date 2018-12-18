@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using CakeItWebApp.Models;
+using CakeItWebApp.Models.Enums;
 using CakeItWebApp.ViewModels;
 using CakeItWebApp.ViewModels.Cakes;
+using CakeItWebApp.ViewModels.CustomCake;
 using CakeItWebApp.ViewModels.Orders;
 using System;
 using System.Collections.Generic;
@@ -24,6 +26,12 @@ namespace CakeWebApp.Services.Common.Mapping
             CreateMap<OrderDetails, OrderDetailsViewModel>().ReverseMap();
 
             CreateMap<ShoppingCartItem, OrderedProductsViewModel>().ReverseMap();
+
+            CreateMap<CustomCakeImg, CustomCakeImgViewModel>().ReverseMap();
+
+            CreateMap<CustomCakeOrderViewModel, Ingredients>()
+            .ForMember(x => x.Sponge, x => x.MapFrom(y => Enum.Parse(typeof(SpongeType), y.Sponge)))
+            .ReverseMap();
         }
     }
 }

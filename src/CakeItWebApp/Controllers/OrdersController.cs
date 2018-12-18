@@ -18,16 +18,19 @@ namespace CakeItWebApp.Controllers
         private readonly IShoppingCartService shoppingCartService;
         private readonly IOrderDetailsService orderDetailsService;
         private readonly IErrorService errorService;
+        private readonly ICakeService cakeService;
+
 
         public OrdersController(ILogger<OrdersController> logger, 
             IOrderService orderService, 
-            IShoppingCartService shoppingCartService, IOrderDetailsService orderDetailsService, IErrorService errorService)
+            IShoppingCartService shoppingCartService, IOrderDetailsService orderDetailsService, IErrorService errorService, ICakeService cakeService)
         {
             this.logger = logger;
             this.orderService = orderService;
             this.shoppingCartService = shoppingCartService;
             this.orderDetailsService = orderDetailsService;
             this.errorService = errorService;
+            this.cakeService = cakeService;
         }
 
         public IActionResult Index()
@@ -54,11 +57,11 @@ namespace CakeItWebApp.Controllers
         [HttpPost]
         public async Task <IActionResult> Checkout(OrderDetailsViewModel model)
         {
-            int orderId = 0; 
+            int orderId = 0;
 
             try
             {
-              orderId = await this.orderService.CreateOrder(this.User.Identity.Name);
+                orderId = await this.orderService.CreateOrder(this.User.Identity.Name);
             }
             catch (Exception e)
             {
@@ -78,17 +81,29 @@ namespace CakeItWebApp.Controllers
 
                 return View("Error", errorModel);
             }
-            
+
             int orderDetailsId = await this.orderDetailsService.AddOrderDetails(model);
 
             //TO make OrderOrderDetails Table!!!????
             await this.orderService.SetOrderDetailsId(orderDetailsId);
+
+            await MarkAsDeletedCustomProductsFromDb();
 
             await this.shoppingCartService.ClearShoppingCart();
 
             TempData["FinishedOrder"] = "true";
 
             return this.RedirectToAction("Index", "Orders");
+        }
+
+        private async Task MarkAsDeletedCustomProductsFromDb()
+        {
+            var customProduct = this.shoppingCartService.GetCartItems().Where(i => i.Product.CategoryId == 2);
+
+            foreach (var item in customProduct)
+            {
+               await this.cakeService.SoftDelete(item.Product.Id);
+            }
         }
 
         public IActionResult OrderedProducts(int orderId)

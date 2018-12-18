@@ -21,7 +21,7 @@ body {
 
     .btn-link:hover {
         color: rgba(255,255,255,.75);
-        text-decoration-line:underline;
+        text-decoration-line: underline;
         text-decoration-style: double;
     }
 
@@ -42,11 +42,11 @@ body {
     color: black;
 }
 
-.list-group-item.active {
-    color: black;
-    background-color: white;
-    border-color: rgba(0,0,0,.125);
-}
+    .list-group-item.active {
+        color: black;
+        background-color: white;
+        border-color: rgba(0,0,0,.125);
+    }
 
 .navbar-dark .navbar-nav .nav-link {
     color: rgb(137, 230, 28);
@@ -60,29 +60,73 @@ body {
     padding: 30px 20px;
 }
 
- .cart-summary h5 {
-    font-size: 18px;
-    margin-bottom: 0;
-}
-
- .cart-summary .summary-table {
-    margin-top: 30px;
-}
-
-.cart-summary .summary-table li {
-        display: -webkit-box;
-        display: -ms-flexbox;
-        display: flex;
-        -webkit-box-pack: justify;
-        -ms-flex-pack: justify;
-        justify-content: space-between;
-        margin-bottom: 30px;
-        text-transform: capitalize;
+    .cart-summary h5 {
+        font-size: 18px;
+        margin-bottom: 0;
     }
-.cart-summary .summary-table li span {
-            color: #6b6b6b;
-            font-size: 1rem;
+
+    .cart-summary .summary-table {
+        margin-top: 30px;
+    }
+
+        .cart-summary .summary-table li {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-pack: justify;
+            -ms-flex-pack: justify;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            text-transform: capitalize;
         }
-.cakeit-btn{
+
+            .cart-summary .summary-table li span {
+                color: #6b6b6b;
+                font-size: 1rem;
+            }
+
+.cakeit-btn {
     background-color: forestgreen;
+}
+
+.customCakeContainer {
+    background: url("../images/customCake_background.jpg");
+    margin-top: 3rem;
+    margin-left: 2rem;
+}
+
+
+.cakeItDropBtn {
+    text-align: left;
+    background-color: wheat;
+    color: saddlebrown;
+    border: 2px solid;
+}
+
+    .cakeItDropBtn:focus {
+        box-shadow: none;
+    }
+
+    .cakeItDropMenu{
+        background-color:saddlebrown;
+        color: white;
+    }
+
+    .cakeItDropMenu ul{
+        background-color: saddlebrown;
+        color: white;
+    }
+
+.cakeItForm-check {
+    margin-bottom: 2rem;
+    padding-left: 2rem;
+    color: white;
+}
+
+select .form-control :focus {
+    color: white;
+    background-color: saddlebrown;
+    border-color: none;
+    outline: 0;
+    box-shadow: none;
 }

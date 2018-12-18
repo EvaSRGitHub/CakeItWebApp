@@ -20,6 +20,7 @@ using CakeWebApp.Services.Common.CommonServices;
 using CakeItWebApp.Services.Common.Repository;
 using AutoMapper;
 using CakeWebApp.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace CakeItWebApp
 {
@@ -64,6 +65,11 @@ namespace CakeItWebApp
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Identity/Account/Login";
+            });
+
             services.AddAutoMapper();
 
             services.AddLogging();
@@ -103,6 +109,8 @@ namespace CakeItWebApp
             services.AddScoped<IOrderService, OrderService>();
 
             services.AddScoped<IOrderDetailsService, OrderDetailsService>();
+
+            services.AddScoped<ICustomCakeService, CustomCakeService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

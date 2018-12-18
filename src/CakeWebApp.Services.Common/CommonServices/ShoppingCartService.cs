@@ -52,6 +52,7 @@ namespace CakeWebApp.Services.Common.CommonServices
 
             if (shoppingCartItem == null)
             {
+                var scID = shoppingCart.Id;
                 shoppingCartItem = new ShoppingCartItem
                 {
                     ShoppingCartId = shoppingCart.Id,

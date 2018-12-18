@@ -32,7 +32,6 @@ namespace CakeItWebApp.Models
         [Range(typeof(decimal), "0.01", "79228162514264337593543950335", ErrorMessage = "Price should be positive value grater than 0.")]
         public decimal Price { get; set; }
 
-        [Required]
         public string Description { get; set; }
 
         [Required]

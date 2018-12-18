@@ -35,6 +35,8 @@ namespace CakeItWebApp.Data
 
         public DbSet<OrderProduct> OrderProducts { get; set; }
 
+        public DbSet<CustomCakeImg> CustomCakesImg { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

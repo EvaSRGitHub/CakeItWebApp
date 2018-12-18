@@ -8,11 +8,11 @@ namespace CakeItWebApp.Models.Enums
     {
         Habana = 1,
         WhiteSwirl = 2,
-        DarkSwirl = 3,
-        WhiteCream = 4, 
-        DarkCream = 5,
-        StrawberriesAndChocolate = 6,
-        GlaszedBerries = 7,
+        Dark_Swirl = 3,
+        White_Cream = 4, 
+        Dark_Cream = 5,
+        Strawberries_And_Chocolate = 6,
+        Glaszed_Berries = 7,
         Strawberries = 8
     }
 }

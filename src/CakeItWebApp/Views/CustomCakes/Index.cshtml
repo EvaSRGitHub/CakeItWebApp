@@ -1,0 +1,149 @@
+﻿@model CakeItWebApp.ViewModels.CustomCake.CustomCakeOrderViewModel
+
+@{
+    var slices = new List<int> { 6, 8, 10, 12, 18, 20 };
+}
+
+<main class="container">
+    <div class="row">
+        <div class="col-md-12 customCakeContainer">
+            <h1 class="text-center" style="color:saddlebrown">Create Cake</h1>
+            <hr style="border-color: saddlebrown" />
+            <h5 style="color:saddlebrown">About our fillings</h5>
+            <h5 style="color:saddlebrown">
+                Please note that fruit and nuts fillings, if selected, are only added to the first layer of cream.
+            </h5>
+            <form method="post">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <!--Sponge-->
+                <div class="form-row dropdown justify-content-center mb-3">
+                    <button type="button" class="btn dropdown-toggle w-100 cakeItDropBtn" data-toggle="dropdown">
+                        <img src="~/images/spongeicon1.png" />
+                        Sponge
+                    </button>
+                    <div class="dropdown-menu w-100 cakeItDropMenu">
+                        @Model.
+
+                        @foreach (var item in Enum.GetValues(typeof(CakeItWebApp.Models.Enums.SpongeType)))
+                        {
+                            <div class="form-check cakeItForm-check">
+                                <a href="#">
+                                    <label asp-for="Sponge" class="form-check-label">
+                                        <input asp-for="Sponge" type="radio" class="form-check-input" value="@item" checked>@item
+                                    </label>
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <!--First Layer Cream-->
+                <div class="form-row dropdown justify-content-center mb-3">
+                    <button type="button" class="btn dropdown-toggle w-100 cakeItDropBtn" data-toggle="dropdown">
+                        <img src="~/images/creamicon.jpg" />
+                        First Layer Cream
+                    </button>
+                    <div class="dropdown-menu w-100 cakeItDropMenu">
+                        @foreach (var item in Enum.GetValues(typeof(CakeItWebApp.Models.Enums.CreamType)))
+                        {
+                            <div class="form-check cakeItForm-check">
+                                <label asp-for="FirstLayerCream" class="form-check-label">
+                                    <input asp-for="FirstLayerCream" type="radio" class="form-check-input" value="@item" checked>@item
+                                </label>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <!--Second Layer Cream-->
+                <div class="form-row dropdown justify-content-center  mb-3">
+                    <button type="button" class="btn dropdown-toggle w-100 cakeItDropBtn" data-toggle="dropdown">
+                        <img src="~/images/creamicon.jpg" />
+                        Second Layer Cream
+                    </button>
+                    <div class="dropdown-menu w-100 cakeItDropMenu">
+                        @foreach (var item in Enum.GetValues(typeof(CakeItWebApp.Models.Enums.CreamType)))
+                        {
+                            <div class="form-check cakeItForm-check">
+                                <label asp-for="SecondLayerCream" class="form-check-label">
+                                    <input asp-for="SecondLayerCream" type="radio" class="form-check-input" value="@item" checked>@item
+                                </label>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <!--Fruit Filling-->
+                <div class="form-row dropdown justify-content-center mb-3">
+                    <button type="button" class="btn dropdown-toggle w-100 cakeItDropBtn" data-toggle="dropdown">
+                        <img src="~/images/fruiticon.jpg" />
+                        Fruit Filling
+                    </button>
+                    <div class="dropdown-menu w-100 cakeItDropMenu">
+                        @foreach (var item in Enum.GetValues(typeof(CakeItWebApp.Models.Enums.FillingType)))
+                        {
+                            <div class="form-check cakeItForm-check">
+                                <label asp-for="Filling" class="form-check-label">
+                                    <input asp-for="Filling" type="radio" class="form-check-input" value="@item" checked>@item
+                                </label>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <!--Side Decoration-->
+                <div class="form-row dropdown justify-content-center mb-3">
+                    <button type="button" class="btn dropdown-toggle w-100 cakeItDropBtn" data-toggle="dropdown">
+                        <img src="~/images/sidesicon.png" />
+                        Side Decoration
+                    </button>
+                    <div class="dropdown-menu w-100 cakeItDropMenu">
+                        @foreach (var item in Enum.GetValues(typeof(CakeItWebApp.Models.Enums.SideDecorationType)))
+                        {
+                            <div class="form-check cakeItForm-check">
+                                <label asp-for="SideDecoration" class="form-check-label">
+                                    <input asp-for="SideDecoration" type="radio" class="form-check-input" value="@item" checked>@item
+                                </label>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <!--Top Decoration-->
+                <div class="form-row dropdown justify-content-center mb-3">
+                    <button type="button" class="btn dropdown-toggle w-100 cakeItDropBtn" data-toggle="dropdown">
+                        <img src="~/images/toppingicon.png" />
+                        Top Decoration
+                    </button>
+                    <div class="dropdown-menu w-100 cakeItDropMenu">
+                        @foreach (var item in Enum.GetValues(typeof(CakeItWebApp.Models.Enums.TopDecorationType)))
+                        {
+                            <div class="form-check cakeItForm-check">
+                                <label asp-for="TopDecoration" class="form-check-label">
+                                    <input asp-for="TopDecoration" type="radio" class="form-check-input" value="@item">@item
+                                </label>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <!--Slices-->
+                <div class="form-group w-100">
+                    <select class="form-control" asp-for="NumberOfSlices" style="background-color: wheat; color: saddlebrown; border: 2px solid saddlebrown;">
+                        <option selected>-- Choose Number of Slices --</option>
+                        @for (var i = 0; i < slices.Count(); i++)
+                        {
+                            var number = @slices[i];
+
+                            <option value="@number">@number</option>
+                        }
+                    </select>
+                </div>
+
+                <button type="submit" class="btn" style="background-color: saddlebrown; color:white">Submit</button>
+            </form>
+        </div>
+        @*<div class="col-md-7 mt-3">
+            <img class="img-fluid mt-5 mx-auto d-block" src="http://placehold.it/750x500" alt="">
+        </div>*@
+    </div>
+    <!--div row-->
+</main>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

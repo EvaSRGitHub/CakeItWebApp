@@ -49,8 +49,8 @@ namespace CakeItWebApp.Services.Common.Tests
 
             var cakeService = new CakeService(null, repo, this.Mapper);
 
-            var result1 = await cakeService.AddCakeToDb(cakeModel1);
-            var result2 = await cakeService.AddCakeToDb(cakeModel2);
+           await cakeService.AddCakeToDb(cakeModel1);
+           await cakeService.AddCakeToDb(cakeModel2);
         }
     }
 }

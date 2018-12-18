@@ -64,11 +64,15 @@ namespace CakeItWebApp.Controllers
                 return View("Error", errors);
             }
 
-            var result = await this.cakeService.AddCakeToDb(model);
-
-            if (result != "true")
+            try
             {
-                return View("Error", result);
+                await this.cakeService.AddCakeToDb<CreateCakeViewModel>(model);
+            }
+            catch (Exception e)
+            {
+                ViewData["Errors"] = e.Message;
+
+                return View("Error");
             }
 
             return Redirect("/");

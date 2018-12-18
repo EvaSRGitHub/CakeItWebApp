@@ -12,7 +12,7 @@ namespace CakeWebApp.Services.Common.Contracts
     {
         Task AddRatingToCake(int cakeId, int rating);
 
-        Task<string> AddCakeToDb(CreateCakeViewModel model);
+        Task AddCakeToDb<T>(T model);
 
         IEnumerable<CakeIndexViewModel> GetAllCakes();
 
@@ -23,5 +23,7 @@ namespace CakeWebApp.Services.Common.Contracts
         Task DeleteCake(int id);
 
         Task<CakeIndexViewModel> ShowCakeDetails(int id);
+
+        Task SoftDelete(int id);
     }
 }

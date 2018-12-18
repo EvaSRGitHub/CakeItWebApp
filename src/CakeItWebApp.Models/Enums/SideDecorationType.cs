@@ -7,9 +7,9 @@ namespace CakeItWebApp.Models.Enums
 {
     public enum SideDecorationType
     {
-        MilkChocolate = 1,
-        WhiteChocolate = 2,
-        MilkChocolateCigarettes = 3,
-        WhiteChocolateCigarettes = 4
+        Milk_Chocolate = 1,
+        White_Chocolate = 2,
+        Milk_Chocolate_Cigarettes = 3,
+        White_Chocolate_Cigarettes = 4
     }
 }

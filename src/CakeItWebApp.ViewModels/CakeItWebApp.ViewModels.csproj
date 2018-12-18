@@ -8,8 +8,4 @@
     <ProjectReference Include="..\CakeItWebApp.Models\CakeItWebApp.Models.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="CustomCake\" />
-  </ItemGroup>
-
 </Project>

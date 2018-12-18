@@ -1,0 +1,43 @@
+﻿@using System.Collections.Generic
+@using CakeItWebApp.ViewModels.CustomCake
+@model ICollection<CustomCakeImgViewModel>
+
+@{
+    var count = 0;
+}
+<main class="container">
+    <div class="row">
+        <div class="col-12 col-md-8 m-2">
+            <h1>Custom Cakes Images</h1>
+            <hr class="hr-2" style="background-color: forestgreen">
+            <table class="table table-hover">
+                <thead>
+                    <tr class="row">
+                        <th scope="col" class="col-md-1 d-flex"><h3>#</h3></th>
+                        <th scope="col" class="col-md-3 d-flex"><h3>Name</h3></th>
+                        <th scope="col" class="col-md-3 d-flex"><h3>Side</h3></th>
+                        <th scope="col" class="col-md-2 d-flex"><h3>Top</h3></th>
+                        <th scope="col" class="col-md-3 d-flex"><h3>Img</h3></th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        count++;
+                    <tr class="row">
+                        <th scope="row" class="col-md-1 d-flex"><h5>@count</h5></th>
+                        <td class="col-md-3 d-flex"><h5>@item.Name</h5></td>
+                        <td class="col-md-3 d-flex"><h5>@item.Side</h5></td>
+                        <td class="col-md-2 d-flex"><h5>@item.Top</h5></td>
+                        <td class="col-md-3 d-flex"><h5>@item.Img</h5>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+            <div class="justify-content-right">
+                <a href="javascript:void(0);" onclick="history.go(-1);" class="btn btn-info" role="button">Back</a>
+            </div>
+        </div>
+    </div>
+</main>

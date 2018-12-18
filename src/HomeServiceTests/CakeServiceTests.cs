@@ -28,10 +28,11 @@ namespace CakeItWebApp.Services.Common.Tests
             var cakeService = new CakeService(null, repo, this.Mapper);
 
             //Act
-            var result = await cakeService.AddCakeToDb(cakeModel);
+            await cakeService.AddCakeToDb(cakeModel);
+            var actualName = repo.All().LastOrDefault().Name;
 
             //Assert
-            Assert.Equal("true", result);
+            Assert.Equal("Chocolate Peanut Cake", actualName);
         }
 
         [Fact]
@@ -47,11 +48,10 @@ namespace CakeItWebApp.Services.Common.Tests
             var cakeService = new CakeService(null, repo, this.Mapper);
 
             //Act
-            var result1 = await cakeService.AddCakeToDb(cakeModel1);
-            var result2 = await cakeService.AddCakeToDb(cakeModel2);
-
+            await cakeService.AddCakeToDb(cakeModel1);
+            
             //Assert
-            Assert.NotEqual("true", result2);
+            await Assert.ThrowsAsync<InvalidOperationException>(async () => await cakeService.AddCakeToDb(cakeModel2));
         }
 
         [Fact]
@@ -81,8 +81,8 @@ namespace CakeItWebApp.Services.Common.Tests
 
             var cakeService = new CakeService(null, repo, this.Mapper);
 
-            var result1 = await cakeService.AddCakeToDb(cakeModel1);
-            var result2 = await cakeService.AddCakeToDb(cakeModel2);
+            await cakeService.AddCakeToDb(cakeModel1);
+            await cakeService.AddCakeToDb(cakeModel2);
 
             //Act
 
@@ -104,8 +104,8 @@ namespace CakeItWebApp.Services.Common.Tests
 
             var cakeService = new CakeService(null, repo, this.Mapper);
 
-            var result1 = await cakeService.AddCakeToDb(cakeModel1);
-            var result2 = await cakeService.AddCakeToDb(cakeModel2);
+            await cakeService.AddCakeToDb(cakeModel1);
+            await cakeService.AddCakeToDb(cakeModel2);
 
             //Act
             var result = await cakeService.GetCakeById(1);
@@ -126,7 +126,7 @@ namespace CakeItWebApp.Services.Common.Tests
 
             var cakeService = new CakeService(null, repo, this.Mapper);
 
-            var productToDb = await cakeService.AddCakeToDb(cakeModel);
+            await cakeService.AddCakeToDb(cakeModel);
 
             //Act
             var result = await (cakeService.GetCakeById(2));
@@ -153,7 +153,7 @@ namespace CakeItWebApp.Services.Common.Tests
 
             entity.Price = 45.00m;
 
-           //Act
+            //Act
             var result = await cakeService.UpdateCake(this.Mapper.Map<Product, EditAndDeleteViewModel>(entity));
 
             var actual = await cakeService.GetCakeById(1);
@@ -184,7 +184,7 @@ namespace CakeItWebApp.Services.Common.Tests
             this.Db.Entry(entity).State = EntityState.Detached;
 
             var model = this.Mapper.Map<Product, EditAndDeleteViewModel>(entity);
-                model.Name = "Chocolate Cake";
+            model.Name = "Chocolate Cake";
 
             //Act
             var result = await cakeService.UpdateCake(model);

@@ -26,13 +26,13 @@ namespace CakeWebApp.Services.Common.CommonServices
             this.mapper = mapper;
         }
 
-        public async Task<string> AddCakeToDb(CreateCakeViewModel model)
+        public async Task AddCakeToDb<T>(T model)
         {
-            var product = this.mapper.Map<CreateCakeViewModel, Product>(model);
+            var product = this.mapper.Map<T, Product>(model);
 
-            if (this.repository.All().Any(p => p.Name == product.Name))
+            if (this.repository.All().Any(p => p.Name == product.Name && product.IsDeleted == true))
             {
-                return "Cake with such name alreadey exist in the data base."; ;
+                throw new InvalidOperationException("Cake with such name alreadey exist in the data base."); 
             }
 
             this.repository.Add(product);
@@ -41,13 +41,10 @@ namespace CakeWebApp.Services.Common.CommonServices
             {
                 await this.repository.SaveChangesAsync();
 
-                return "true";
             }
             catch (Exception e)
             {
-                //this.logger.LogError(e.InnerException.ToString());
-
-                return e.InnerException.ToString();
+                throw new InvalidOperationException( e.InnerException.Message);
             }
         }
 
@@ -94,9 +91,9 @@ namespace CakeWebApp.Services.Common.CommonServices
             await this.repository.SaveChangesAsync();
         }
 
-        public IEnumerable<CakeIndexViewModel> GetAllCakes()
+        public IEnumerable<CakeIndexViewModel> GetAllCakes() 
         {
-            return mapper.ProjectTo<CakeIndexViewModel>(this.repository.All()).ToList();
+            return mapper.ProjectTo<CakeIndexViewModel>(this.repository.All().Where(c => c.IsDeleted == false)) .ToList();
         }
 
         public async Task<EditAndDeleteViewModel> GetCakeById(int id)
@@ -142,6 +139,20 @@ namespace CakeWebApp.Services.Common.CommonServices
                 return e.InnerException.ToString();
             }
             return "true";
+        }
+
+        public async Task SoftDelete(int id)
+        {
+            if (!this.repository.All().Any(p => p.Id == id))
+            {
+                return;
+            }
+
+            var product = await this.repository.GetByIdAsync(id);
+
+            product.IsDeleted = true;
+
+            await this.repository.SaveChangesAsync();
         }
     }
 }
