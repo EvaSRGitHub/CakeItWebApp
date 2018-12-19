@@ -7,32 +7,32 @@
 
 <main class="container">
     <div class="row">
-        <div class="col-md-4 customCakeContainer">
+        <div class="col-md-4 customCakeContainer ml-5">
             <h1 class="text-center" style="color:saddlebrown">Your Custom Cake</h1>
             <hr style="border-color: saddlebrown" />
             <p>
-                <em>Sponge:</em> @Model.Sponge Sponge
+                <em>Sponge:</em> <strong>@Model.Sponge Sponge</strong>
             </p>
             <p>
-                <em>First Layer Cream:</em> @Model.FirstLayerCream Cream
+                <em>First Layer Cream:</em> <strong>@Model.FirstLayerCream Cream</strong>
             </p>
             <p>
-                <em>Second Layer Cream:</em> @Model.SecondLayerCream Cream
+                <em>Second Layer Cream:</em> <strong>@Model.SecondLayerCream Cream</strong>
             </p>
             <p>
-                <em>Fillings:</em> @Model.Filling
+                <em>Fillings:</em> <strong>@Model.Filling</strong>
             </p>
             <p>
-                <em>Side Decoration:</em> @Model.SideDecoration
+                <em>Side Decoration:</em> <strong>@Model.SideDecoration</strong>
             </p>
             <p>
-                <em>Top Decoration:</em> @Model.TopDecoration
+                <em>Top Decoration:</em> <strong>@Model.TopDecoration</strong>
             </p>
             <p>
-                <em>Number of Slices:</em> @Model.NumberOfSlices
+                <em>Number of Slices:</em> <strong>@Model.NumberOfSlices</strong>
             </p>
             <p>
-                <em>Price:</em> @Model.Price
+                <em>Price:</em> <strong>$@Model.Price</strong> 
             </p>
             <div class="d-inline justify-content-end">
                 <a href="/CustomCakes/AddToCart" class="btn" style="background-color: saddlebrown; color:white">Add to Cart</a>

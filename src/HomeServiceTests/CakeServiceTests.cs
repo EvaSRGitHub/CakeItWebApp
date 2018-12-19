@@ -49,7 +49,7 @@ namespace CakeItWebApp.Services.Common.Tests
 
             //Act
             await cakeService.AddCakeToDb(cakeModel1);
-            
+
             //Assert
             await Assert.ThrowsAsync<InvalidOperationException>(async () => await cakeService.AddCakeToDb(cakeModel2));
         }
@@ -410,6 +410,25 @@ namespace CakeItWebApp.Services.Common.Tests
 
             //Assert
             await Assert.ThrowsAsync<InvalidOperationException>(async () => await service.AddRatingToCake(3, -5));
+        }
+
+        [Fact]
+        public async Task SoftDelete_WithValidId_ShouldMarkCakeAsIsDeleted()
+        {
+            //Arrange
+            await this.SeedProducts();
+
+            var repo = new Repository<Product>(this.Db);
+
+            var service = new CakeService(null, repo, this.Mapper);
+
+            //Act
+            await service.SoftDelete(1);
+            var expected = true;
+            var actual = repo.All().SingleOrDefault(p => p.Id == 1).IsDeleted;
+
+            //Assert
+            Assert.Equal(expected, actual);
         }
 
     }

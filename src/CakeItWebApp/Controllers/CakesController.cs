@@ -15,11 +15,13 @@ namespace CakeItWebApp.Controllers
     {
         private readonly ILogger<CakesController> logger;
         private readonly ICakeService cakeService;
+        private readonly IErrorService errorService;
 
-        public CakesController(ILogger<CakesController> logger, ICakeService cakeService)
+        public CakesController(ILogger<CakesController> logger, ICakeService cakeService, IErrorService errorService)
         {
             this.logger = logger;
             this.cakeService = cakeService;
+            this.errorService = errorService;
         }
 
         public IActionResult Index(int? page)
@@ -61,7 +63,9 @@ namespace CakeItWebApp.Controllers
 
                 var errors = this.ModelState.Values.SelectMany(p => p.Errors).Select(e => e.ErrorMessage).ToList();
 
-                return View("Error", errors);
+                var errorModel = this.errorService.GetErrorModel(errors);
+
+                return View("Error", errorModel);
             }
 
             try
@@ -131,6 +135,7 @@ namespace CakeItWebApp.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Rate(int cakeId, int rating)
         {
             try

@@ -9,7 +9,7 @@ namespace CakeWebApp.Services.Common.Contracts
 {
     public interface ICustomCakeService
     {
-        CustomCakeOrderViewModel CalculatePrice(CustomCakeOrderViewModel model);
+        CustomCakeOrderViewModel AssignImgAndPrice(CustomCakeOrderViewModel model);
 
         Task AddCustomCakeImg(CustomCakeImgViewModel model);
 

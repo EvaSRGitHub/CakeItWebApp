@@ -29,9 +29,8 @@ namespace CakeWebApp.Services.Common.Mapping
 
             CreateMap<CustomCakeImg, CustomCakeImgViewModel>().ReverseMap();
 
-            CreateMap<CustomCakeOrderViewModel, Ingredients>()
-            .ForMember(x => x.Sponge, x => x.MapFrom(y => Enum.Parse(typeof(SpongeType), y.Sponge)))
-            .ReverseMap();
+            CreateMap<CustomCakeOrderViewModel, Ingredients>().ReverseMap();
+           //  .ForMember(x => x.Sponge, x => x.MapFrom(y => Enum.Parse(typeof(SpongeType), y.Sponge)))
         }
     }
 }

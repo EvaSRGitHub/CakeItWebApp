@@ -17,28 +17,48 @@ namespace CakeItWebApp.Controllers
     {
         private readonly ICustomCakeService customCakeService;
         private readonly ICakeService cakeService;
+        private readonly IErrorService errorService;
         private readonly ILogger<CustomCakesController> logger;
 
-        public CustomCakesController(ICustomCakeService customCakeService, ICakeService cakeService, ILogger<CustomCakesController> logger)
+        public CustomCakesController(ICustomCakeService customCakeService, ICakeService cakeService, IErrorService errorService, ILogger<CustomCakesController> logger)
         {
             this.customCakeService = customCakeService;
             this.cakeService = cakeService;
+            this.errorService = errorService;
             this.logger = logger;
         }
 
         public IActionResult Index()
         {
-            if (!this.User.Identity.IsAuthenticated)
-            {
-                return RedirectToPage("Login");
-            }
             return View();
         }
 
         [HttpPost]
         public IActionResult Index(CustomCakeOrderViewModel model)
         {
-            var result = this.customCakeService.CalculatePrice(model);
+            if (!ModelState.IsValid)
+            {
+                this.logger.LogError("Model is not valid.");
+
+                var errors = this.ModelState.Values.SelectMany(p => p.Errors).Select(e => e.ErrorMessage).ToList();
+
+               var errorModel = this.errorService.GetErrorModel(errors);
+
+                return View("Error", errorModel);
+            }
+
+            CustomCakeOrderViewModel result = null;
+
+            try
+            {
+                result = this.customCakeService.AssignImgAndPrice(model);
+            }
+            catch (Exception e)
+            {
+                ViewData["Errors"] = e.Message;
+
+                return this.View("Error");
+            }
 
             return this.View("CustomCakeDetails", result);
         }
@@ -49,14 +69,14 @@ namespace CakeItWebApp.Controllers
 
             if (TempData["OrderCustomCake"] != null)
             {
-               model = JsonConvert.DeserializeObject<CustomCakeOrderViewModel>(TempData["OrderCustomCake"].ToString());
+                model = JsonConvert.DeserializeObject<CustomCakeOrderViewModel>(TempData["OrderCustomCake"].ToString());
             }
 
             Product product = null;
 
             try
             {
-               product = this.customCakeService.CreateCustomProduct(model);
+                product = this.customCakeService.CreateCustomProduct(model);
             }
             catch (Exception e)
             {
@@ -71,12 +91,19 @@ namespace CakeItWebApp.Controllers
 
                 var errors = this.ModelState.Values.SelectMany(p => p.Errors).Select(e => e.ErrorMessage).ToList();
 
-                return View("Error", errors);
+                var errorModel = this.errorService.GetErrorModel(errors);
+
+                return View("Error", errorModel);
             }
+
+
+            int? customProductId = null;
 
             try
             {
-               await this.cakeService.AddCakeToDb(product);
+                await this.cakeService.AddCakeToDb(product);
+
+                customProductId = await this.customCakeService.GetProductId();
             }
             catch (Exception e)
             {
@@ -85,18 +112,12 @@ namespace CakeItWebApp.Controllers
                 return this.View("Error");
             }
 
-            int? customProductId = await this.customCakeService.GetProductId();
 
-            if(customProductId == null)
-            {
-                ViewData["Errors"] = "Product not Found";
-
-                return this.View("Error");
-            }
+           
 
             return RedirectToAction("AddToCart", "ShoppingCart", new { Id = customProductId });
-        }   
-        
+        }
+
         [Authorize(Roles = "Admin")]
         public IActionResult AddCustomCakeImg()
         {
@@ -112,7 +133,9 @@ namespace CakeItWebApp.Controllers
 
                 var errors = this.ModelState.Values.SelectMany(p => p.Errors).Select(e => e.ErrorMessage).ToList();
 
-                return View("Error", errors);
+                var errorModel = this.errorService.GetErrorModel(errors);
+
+                return View("Error", errorModel);
             }
 
             try

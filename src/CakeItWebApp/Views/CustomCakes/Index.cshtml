@@ -6,7 +6,7 @@
 
 <main class="container">
     <div class="row">
-        <div class="col-md-12 customCakeContainer">
+        <div class="col-md-8 offset-md-2 customCakeContainer">
             <h1 class="text-center" style="color:saddlebrown">Create Cake</h1>
             <hr style="border-color: saddlebrown" />
             <h5 style="color:saddlebrown">About our fillings</h5>
@@ -27,11 +27,9 @@
                         @foreach (var item in Enum.GetValues(typeof(CakeItWebApp.Models.Enums.SpongeType)))
                         {
                             <div class="form-check cakeItForm-check">
-                                <a href="#">
-                                    <label asp-for="Sponge" class="form-check-label">
-                                        <input asp-for="Sponge" type="radio" class="form-check-input" value="@item" checked>@item
-                                    </label>
-                                </a>
+                                <label asp-for="Sponge" class="form-check-label">
+                                    <input asp-for="Sponge" type="radio" class="form-check-input" value="@item">@item
+                                </label>
                             </div>
                         }
                     </div>
@@ -47,7 +45,7 @@
                         {
                             <div class="form-check cakeItForm-check">
                                 <label asp-for="FirstLayerCream" class="form-check-label">
-                                    <input asp-for="FirstLayerCream" type="radio" class="form-check-input" value="@item" checked>@item
+                                    <input asp-for="FirstLayerCream" type="radio" class="form-check-input" value="@item">@item
                                 </label>
                             </div>
                         }
@@ -64,7 +62,7 @@
                         {
                             <div class="form-check cakeItForm-check">
                                 <label asp-for="SecondLayerCream" class="form-check-label">
-                                    <input asp-for="SecondLayerCream" type="radio" class="form-check-input" value="@item" checked>@item
+                                    <input asp-for="SecondLayerCream" type="radio" class="form-check-input" value="@item">@item
                                 </label>
                             </div>
                         }
@@ -76,12 +74,12 @@
                         <img src="~/images/fruiticon.jpg" />
                         Fruit Filling
                     </button>
-                    <div class="dropdown-menu w-100 cakeItDropMenu">
+                    <div class="dropdown-menu w-100 cakeItDropMenu" x-placement="bottom-start">
                         @foreach (var item in Enum.GetValues(typeof(CakeItWebApp.Models.Enums.FillingType)))
                         {
                             <div class="form-check cakeItForm-check">
                                 <label asp-for="Filling" class="form-check-label">
-                                    <input asp-for="Filling" type="radio" class="form-check-input" value="@item" checked>@item
+                                    <input asp-for="Filling" type="radio" class="form-check-input" value="@item">@item
                                 </label>
                             </div>
                         }
@@ -98,7 +96,7 @@
                         {
                             <div class="form-check cakeItForm-check">
                                 <label asp-for="SideDecoration" class="form-check-label">
-                                    <input asp-for="SideDecoration" type="radio" class="form-check-input" value="@item" checked>@item
+                                    <input asp-for="SideDecoration" type="radio" class="form-check-input" value="@item">@item
                                 </label>
                             </div>
                         }
@@ -138,8 +136,8 @@
             </form>
         </div>
         @*<div class="col-md-7 mt-3">
-            <img class="img-fluid mt-5 mx-auto d-block" src="http://placehold.it/750x500" alt="">
-        </div>*@
+                <img class="img-fluid mt-5 mx-auto d-block" src="http://placehold.it/750x500" alt="">
+            </div>*@
     </div>
     <!--div row-->
 </main>

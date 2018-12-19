@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -25,20 +26,31 @@ namespace CakeWebApp.Services.Common.CommonServices
             this.mapper = mapper;
         }
 
-        public CustomCakeOrderViewModel CalculatePrice(CustomCakeOrderViewModel model)
+        public CustomCakeOrderViewModel AssignImgAndPrice(CustomCakeOrderViewModel model)
         {
             var side = model.SideDecoration.ToLower();
+
             var top = model.TopDecoration.ToLower();
+
             var img = customCakeImgRepo.All().SingleOrDefault(c => c.Side.ToLower() == side && c.Top.ToLower() == top).Img;
+
             model.Img = img;
 
+            if(!Uri.TryCreate(model.Img, UriKind.Absolute, out Uri result))
+            {
+                throw new InvalidOperationException("Sorry. Error occurred while processing your order. Please, contact us.");
+            }
+           
             return model;
         }
 
-        //if customer approve the cake CreateProduct - add to Db and make Order
-
         public async Task AddCustomCakeImg(CustomCakeImgViewModel model)
         {
+            if(this.customCakeImgRepo.All().Any(c => c.Name == model.Name))
+            {
+                throw new InvalidOperationException("Cake with such name already exists.");
+            }
+
             var customCakeImg = this.mapper.Map<CustomCakeImgViewModel, CustomCakeImg>(model);
 
             this.customCakeImgRepo.Add(customCakeImg);
@@ -60,7 +72,7 @@ namespace CakeWebApp.Services.Common.CommonServices
 
             if(ingredients == null)
             {
-                throw new InvalidOperationException("Ingredients not set.");
+                throw new AutoMapperMappingException("Ingredients not set.");
             }
 
             var product = new Product
@@ -79,7 +91,14 @@ namespace CakeWebApp.Services.Common.CommonServices
         {
             var product = await this.repository.All().LastOrDefaultAsync();
 
-            return product.Id;
+            int? id = product.Id;
+
+            if (id == null)
+            {
+                throw new NullReferenceException("Product not Found");
+            }
+
+            return id;
         }
     }
 }

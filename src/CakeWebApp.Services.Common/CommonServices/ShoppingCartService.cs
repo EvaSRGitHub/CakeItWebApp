@@ -101,6 +101,11 @@ namespace CakeWebApp.Services.Common.CommonServices
                     this.repository.All().SingleOrDefault(
                         s => s.Product.Id == id && s.ShoppingCartId == this.shoppingCart.Id);
 
+            if (product.CategoryId == 2)
+            {
+                this.productsRepo.Delete(product);
+            }
+
             if (shoppingCartItem != null)
             {
                 if (shoppingCartItem.Quantity > 1)
