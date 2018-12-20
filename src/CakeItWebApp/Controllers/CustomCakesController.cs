@@ -155,7 +155,9 @@ namespace CakeItWebApp.Controllers
         [Authorize(Roles = "Admin")]
         public IActionResult AllCustomCakeImg()
         {
-            return this.View();
+            var allCustomCakeImges = this.customCakeService.GetAllCustomCakesImg().ToList();
+
+            return this.View(allCustomCakeImges);
         }
     }
 }

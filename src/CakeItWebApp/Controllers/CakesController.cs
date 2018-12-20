@@ -89,9 +89,9 @@ namespace CakeItWebApp.Controllers
             
             if(model == null)
             {
-                var errorMessage = "Product not found.";
+                ViewData["Errors"] = "Product not found.";
 
-                return this.View("Error", errorMessage);
+                return this.View("Error");
             }
 
             return this.View(model);
@@ -101,6 +101,15 @@ namespace CakeItWebApp.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(EditAndDeleteViewModel model)
         {
+            if (!ModelState.IsValid)
+            {
+                var errors = this.ModelState.Values.SelectMany(p => p.Errors).Select(e => e.ErrorMessage).ToList();
+
+                var errorModel = this.errorService.GetErrorModel(errors);
+
+                return View("Error", errorModel);
+            }
+
            var successMessage = await this.cakeService.UpdateCake(model);
 
             if (successMessage != "true")
@@ -108,7 +117,7 @@ namespace CakeItWebApp.Controllers
                 return this.View("Error", successMessage);
             }
 
-            return Redirect("/Cakes/Index");
+            return RedirectToAction("Index");
         }
 
         [HttpPost]

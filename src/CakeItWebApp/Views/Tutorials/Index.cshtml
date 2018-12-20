@@ -1,55 +1,133 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@using X.PagedList
+@using X.PagedList.Mvc.Core
+@using System.Collections.Generic
+@using CakeItWebApp.ViewModels.Tutorials
+
+@model IPagedList<TutorialIndexViewModel>
+
 @{
+    ViewData["Title"] = "Home Page";
+    var currentRating = 0;
+    var fullStars = new string((char)9733, currentRating);
+    var emptyStars = new string((char)9734, (5 - currentRating));
+    var rating = 0;
 }
-<main class="container>"
-<!-- Portfolio Item Heading -->
-<h1 class="my-4">
-    Page Heading
-    <small>Secondary Text</small>
-</h1>
-<!-- Portfolio Item Row -->
-<div class="row">
-    <div class="col-md-8">
-        <img class="img-fluid" src="http://placehold.it/750x500" alt="">
+
+@if (TempData["Rate"] != null)
+{
+    <div class="alert alert-warning alert-dismissible fade show m-4" role="alert">
+        <strong style="font-size:2rem; color: forestgreen">@TempData["Rate"]</strong>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
     </div>
-    <div class="col-md-4">
-        <h3 class="my-3">Project Description</h3>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam viverra euismod odio, gravida pellentesque urna varius vitae. Sed dui lorem, adipiscing in adipiscing et, interdum nec metus. Mauris ultricies, justo eu convallis placerat, felis enim.</p>
-        <h3 class="my-3">Project Details</h3>
-        <ul>
-            <li>Lorem Ipsum</li>
-            <li>Dolor Sit Amet</li>
-            <li>Consectetur</li>
-            <li>Adipiscing Elit</li>
-        </ul>
+}
+
+<main class="container">
+    <!-- Portfolio Item Heading -->
+    <h1 class="my-4">
+        Tutorials
+    </h1>
+
+    <div class="row justify-content-around">
+        @for (int i = 0; i < Model.Count; i++)
+        {
+            currentRating = (int)Model[i].Rating == 0 ? 0 : (int)Model[i].Rating / Model[i].RatingVotes;
+
+            <div class="col-lg-4 col-sm-6 portfolio-item">
+                <div class="card h-100">
+                    <div class="embed-responsive embed-responsive-16by9">
+                        <video class="embed-responsive-item" controls>
+                            <source src="@Model[i].Url" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="card-body">
+                        <h4 class="card-title">
+                            @Model[i].Title
+                        </h4>
+                        <p class="card-text">@Html.Raw(Model[i].Description)</p>
+
+                        <span class="text-warning">
+                            @string.Concat(fullStars, emptyStars)
+                        </span>
+
+                        <form asp-controller="Tutorials" asp-action="Rate" method="post" asp-route-tutorialId="@Model[i].Id" class="d-inline ml-5">
+                            <input type="number" name="rating" min="1" max="5" value="@rating" class="p-1" style="border-radius: 1px" />
+                            <button class="btn btn-warning">Rate</button>
+                        </form>
+                    </div>
+
+                    @if (this.User.IsInRole("Admin"))
+                    {
+                        <div class="button-holder d-flex justify-content-around">
+                            <a asp-controller="Tutorials" asp-action="Edit" asp-route-id="@Model[i].Id" class="btn btn-info text-white mb-3">Edit</a>
+                            <a asp-controller="Tutorials" asp-action="Delete" asp-route-id="@Model[i].Id" class="btn btn-danger text-white mb-3">Delete</a>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
     </div>
-</div>
-<!-- /.row -->
-<!-- Related Projects Row -->
-<h3 class="my-4">Related Projects</h3>
-<div class="row">
-    <div class="col-md-3 col-sm-6 mb-4">
-        <a href="#">
-            <img class="img-fluid" src="http://placehold.it/500x300" alt="">
-        </a>
-    </div>
-    <div class="col-md-3 col-sm-6 mb-4">
-        <a href="#">
-            <img class="img-fluid" src="http://placehold.it/500x300" alt="">
-        </a>
-    </div>
-    <div class="col-md-3 col-sm-6 mb-4">
-        <a href="#">
-            <img class="img-fluid" src="http://placehold.it/500x300" alt="">
-        </a>
-    </div>
-    <div class="col-md-3 col-sm-6 mb-4">
-        <a href="#">
-            <img class="img-fluid" src="http://placehold.it/500x300" alt="">
-        </a>
-    </div>
-</div>
-<!-- /.row -->
+    <!-- /.row -->
+    <!-- Pagination -->
+
+    @Html.PagedListPager(Model, page => Url.Action("Index", new { page = page }), new X.PagedList.Mvc.Common.PagedListRenderOptionsBase {
+        LiElementClasses = new string[] { "page-item" },
+        PageClasses = new string[] { "page-link" }
+})
+
 </main>
+
+@*@foreach (var item in Model)
+    {
+        <div class="row">
+            <h3 class="pl-3">@item.Title</h3>
+        </div>
+        <div class="row">
+            <div class="col-md-8 embed-responsive embed-responsive-16by9">
+                <video class="embed-responsive-item" controls>
+                    <source src="@item.Url" type="video/mp4">
+                </video>
+            </div>
+            <div class="col-md-4">
+                <h3 class="my-3">Description</h3>
+                <p>@Html.Raw(item.Description)</p>
+            </div>
+        </div>
+    }
+
+
+    <!-- /.row -->
+    <!-- Related Projects Row -->
+    <h3 class="my-4">More Tutorials</h3>
+    <div class="row">
+        <div class="col-md-3 col-sm-6 mb-4 embed-responsive embed-responsive-16by9">
+            <a href="">
+                <video class="embed-responsive-item" controls>
+                    <source src="https://res.cloudinary.com/cakeit/video/upload/v1545291406/How_to_Make_Edible_Glasses.mp4" type="video/mp4">
+                </video>
+            </a>
+        </div>
+        @*<div class="col-md-3 col-sm-6 mb-4">
+                <a href="#">
+                    <img class="img-fluid" src="http://placehold.it/500x300" alt="">
+                </a>
+            </div>
+        <div class="col-md-3 col-sm-6 mb-4">
+            <a href="#">
+                <img class="img-fluid" src="http://placehold.it/500x300" alt="">
+            </a>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4">
+            <a href="#">
+                <img class="img-fluid" src="http://placehold.it/500x300" alt="">
+            </a>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-4">
+            <a href="#">
+                <img class="img-fluid" src="http://placehold.it/500x300" alt="">
+            </a>
+        </div>
+    </div>
+     /.row
+    </main>*@

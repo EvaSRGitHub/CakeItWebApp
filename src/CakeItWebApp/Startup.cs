@@ -111,6 +111,8 @@ namespace CakeItWebApp
             services.AddScoped<IOrderDetailsService, OrderDetailsService>();
 
             services.AddScoped<ICustomCakeService, CustomCakeService>();
+
+            services.AddScoped<ITutorialService, TutorialService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

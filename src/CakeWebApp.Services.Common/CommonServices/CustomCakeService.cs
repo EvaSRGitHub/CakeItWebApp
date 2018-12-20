@@ -100,5 +100,10 @@ namespace CakeWebApp.Services.Common.CommonServices
 
             return id;
         }
+
+        public IEnumerable<CustomCakeImgViewModel> GetAllCustomCakesImg()
+        {
+            return this.mapper.ProjectTo<CustomCakeImgViewModel>(this.customCakeImgRepo.All());
+        }
     }
 }
