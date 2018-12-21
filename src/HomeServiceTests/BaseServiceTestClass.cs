@@ -6,6 +6,7 @@ using CakeItWebApp.ViewModels;
 using CakeItWebApp.ViewModels.Cakes;
 using CakeItWebApp.ViewModels.CustomCake;
 using CakeItWebApp.ViewModels.Orders;
+using CakeItWebApp.ViewModels.Tutorials;
 using CakeWebApp.Services.Common.CommonServices;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -29,6 +30,8 @@ namespace CakeItWebApp.Services.Common.Tests
                     config.CreateMap<OrderDetails, OrderDetailsViewModel>().ReverseMap();
                     config.CreateMap<CustomCakeImgViewModel, CustomCakeImg>().ReverseMap();
                     config.CreateMap<CustomCakeOrderViewModel, Ingredients>().ReverseMap();
+                    config.CreateMap<AddTutorialViewModel, Tutorial>().ReverseMap();
+                    config.CreateMap<TutorialIndexViewModel, Tutorial>().ReverseMap();
                 }));
 
             this.Options = new DbContextOptionsBuilder<CakeItDbContext>().UseInMemoryDatabase(databaseName: "CakeItInMemory").Options;

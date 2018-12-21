@@ -62,7 +62,7 @@ namespace CakeItWebApp.Controllers
         {
             try
             {
-                await this.tutorialService.AddRatingToCake(tutorialId, rating);
+                await this.tutorialService.AddRatingToTutorial(tutorialId, rating);
             }
             catch (Exception e)
             {
@@ -79,11 +79,15 @@ namespace CakeItWebApp.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id)
         {
-            var model = await this.tutorialService.GetCakeById(id);
+            AddTutorialViewModel model;
 
-            if (model == null)
+            try
             {
-                ViewData["Errors"] = "Product not found.";
+               model = await this.tutorialService.GetTutorialById(id);
+            }
+            catch (Exception e)
+            {
+                ViewData["Errors"] = e.Message;
 
                 return this.View("Error");
             }
@@ -105,8 +109,27 @@ namespace CakeItWebApp.Controllers
             }
 
             try
+
             {
-                await this.tutorialService.UpdateCake(model);
+                await this.tutorialService.UpdateTutorial(model);
+            }
+            catch (Exception e)
+            {
+                ViewData["Errors"] = e.Message;
+
+                return this.View("Error");
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            try
+            {
+                await this.tutorialService.DeleteTutorial(id);
             }
             catch (Exception e)
             {

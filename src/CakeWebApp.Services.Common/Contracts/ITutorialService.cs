@@ -12,11 +12,12 @@ namespace CakeWebApp.Services.Common.Contracts
 
         ICollection<TutorialIndexViewModel> GetTutorials();
 
-        Task AddRatingToCake(int tutorialId, int rating);
+        Task AddRatingToTutorial(int tutorialId, int rating);
 
-       Task<AddTutorialViewModel> GetCakeById(int id);
+       Task<AddTutorialViewModel> GetTutorialById(int id);
 
-        Task UpdateCake(AddTutorialViewModel model);
+        Task UpdateTutorial(AddTutorialViewModel model);
 
+        Task DeleteTutorial(int id);
     }
 }

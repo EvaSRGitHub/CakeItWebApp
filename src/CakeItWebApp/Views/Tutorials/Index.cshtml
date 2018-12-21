@@ -48,6 +48,11 @@
                         <p class="card-text">@Html.Raw(Model[i].Description)</p>
 
                         <span class="text-warning">
+                            @{ 
+                                currentRating = (int)Model[i].Rating == 0 ? 0 : (int)Model[i].Rating / Model[i].RatingVotes;
+                                fullStars = new string((char)9733, currentRating);
+                                emptyStars = new string((char)9734, (5 - currentRating)); }
+
                             @string.Concat(fullStars, emptyStars)
                         </span>
 

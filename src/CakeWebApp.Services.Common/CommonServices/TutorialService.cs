@@ -22,7 +22,7 @@ namespace CakeWebApp.Services.Common.CommonServices
             this.mapper = mapper;
         }
 
-        public async Task AddRatingToCake(int tutorialId, int rating)
+        public async Task AddRatingToTutorial(int tutorialId, int rating)
         {
             var tutorial = this.repository.All().FirstOrDefault(c => c.Id == tutorialId);
 
@@ -77,9 +77,35 @@ namespace CakeWebApp.Services.Common.CommonServices
             }
         }
 
-        public async Task<AddTutorialViewModel> GetCakeById(int id)
+        public async Task DeleteTutorial(int id)
         {
             var tutorial = await this.repository.GetByIdAsync(id);
+
+            if(tutorial == null)
+            {
+                throw new InvalidOperationException("Tutorial not found.");
+            }
+
+            this.repository.Delete(tutorial);
+
+            try
+            {
+                await this.repository.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                throw new InvalidProgramException(e.Message);
+            }
+        }
+
+        public async Task<AddTutorialViewModel> GetTutorialById(int id)
+        {
+            var tutorial = await this.repository.GetByIdAsync(id);
+
+            if (tutorial == null)
+            {
+                throw new InvalidOperationException("Tutorial not found.");
+            }
 
             var model = this.mapper.Map<Tutorial, AddTutorialViewModel>(tutorial);
 
@@ -93,7 +119,7 @@ namespace CakeWebApp.Services.Common.CommonServices
             return allTutorials.ToList();
         }
 
-        public async Task UpdateCake(AddTutorialViewModel model)
+        public async Task UpdateTutorial(AddTutorialViewModel model)
         {
             if (this.repository.All().Any(t => t.Title == model.Title && t.Id != model.Id))
             {
