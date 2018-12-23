@@ -4,6 +4,7 @@ using CakeItWebApp.Services.Common.Repository;
 using CakeItWebApp.ViewModels.CustomCake;
 using CakeWebApp.Services.Common.Contracts;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,12 +19,14 @@ namespace CakeWebApp.Services.Common.CommonServices
         private readonly IRepository<Product> repository;
         private readonly IRepository<CustomCakeImg> customCakeImgRepo;
         private readonly IMapper mapper;
+        private readonly ILogger<CustomCakeService> logger;
 
-        public CustomCakeService(IRepository<Product> repository, IRepository<CustomCakeImg> customCakeImgRepo, IMapper mapper)
+        public CustomCakeService(IRepository<Product> repository, IRepository<CustomCakeImg> customCakeImgRepo, IMapper mapper, ILogger<CustomCakeService> logger)
         {
             this.repository = repository;
             this.customCakeImgRepo = customCakeImgRepo;
             this.mapper = mapper;
+            this.logger = logger;
         }
 
         public CustomCakeOrderViewModel AssignImgAndPrice(CustomCakeOrderViewModel model)
@@ -61,7 +64,8 @@ namespace CakeWebApp.Services.Common.CommonServices
             }
             catch (Exception e)
             {
-                throw new InvalidProgramException(e.Message);
+                this.logger.LogError(e.Message);
+                throw new InvalidOperationException("Sorry, an error occurred and your request couldn't be processed.");
             }
 
         }
@@ -104,6 +108,70 @@ namespace CakeWebApp.Services.Common.CommonServices
         public IEnumerable<CustomCakeImgViewModel> GetAllCustomCakesImg()
         {
             return this.mapper.ProjectTo<CustomCakeImgViewModel>(this.customCakeImgRepo.All());
+        }
+
+        public async Task<CustomCakeImgViewModel> GetCustomCakeImgById(int id)
+        {
+            var customCakeImg = await this.customCakeImgRepo.GetByIdAsync(id);
+
+            if (customCakeImg == null)
+            {
+                throw new InvalidOperationException("Custom cake image not found.");
+            }
+
+            var model = this.mapper.Map<CustomCakeImg, CustomCakeImgViewModel>(customCakeImg);
+
+            return model;
+        }
+
+        public async Task UpdateCustomCakeImg(CustomCakeImgViewModel model)
+        {
+            if (this.customCakeImgRepo.All().Any(t => t.Name == model.Name && t.Id != model.Id))
+            {
+                throw new InvalidOperationException("Custom Cake with such name already exists.");
+            }
+
+            if (this.customCakeImgRepo.All().Any(p => p.Img == model.Img && p.Id != model.Id))
+            {
+                throw new InvalidOperationException("Custom Cake with such image url already exists.");
+            }
+
+            var customCakeImg = this.mapper.Map<CustomCakeImgViewModel, CustomCakeImg>(model);
+
+            this.customCakeImgRepo.Update(customCakeImg);
+
+            try
+            {
+                await this.customCakeImgRepo.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                this.logger.LogError(e.Message);
+                throw new InvalidOperationException("Sorry, an error occurred and your request couldn't be processed.");
+            }
+        }
+
+        public async Task DeleteCustomCakeImg(int id)
+        {
+            var customCakeImg = await this.customCakeImgRepo.GetByIdAsync(id);
+
+            if (customCakeImg == null)
+            {
+                throw new InvalidOperationException("Tutorial not found.");
+            }
+
+            this.customCakeImgRepo.Delete(customCakeImg);
+
+            try
+            {
+                await this.customCakeImgRepo.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                this.logger.LogError(e.Message);
+
+                throw new InvalidOperationException("Sorry, an error occurred and your request couldn't be processed.");
+            }
         }
     }
 }

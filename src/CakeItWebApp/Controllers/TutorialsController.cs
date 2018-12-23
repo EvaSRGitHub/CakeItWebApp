@@ -58,6 +58,7 @@ namespace CakeItWebApp.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Rate(int tutorialId, int rating)
         {
             try

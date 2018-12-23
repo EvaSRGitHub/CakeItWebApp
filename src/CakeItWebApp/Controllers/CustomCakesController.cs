@@ -125,6 +125,7 @@ namespace CakeItWebApp.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddCustomCakeImg(CustomCakeImgViewModel model)
         {
             if (!ModelState.IsValid)
@@ -158,6 +159,71 @@ namespace CakeItWebApp.Controllers
             var allCustomCakeImges = this.customCakeService.GetAllCustomCakesImg().ToList();
 
             return this.View(allCustomCakeImges);
+        }
+
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Edit(int id)
+        {
+            CustomCakeImgViewModel model;
+
+            try
+            {
+                model = await this.customCakeService.GetCustomCakeImgById(id);
+            }
+            catch (Exception e)
+            {
+                ViewData["Errors"] = e.Message;
+
+                return this.View("Error");
+            }
+
+            return this.View(model);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Edit(CustomCakeImgViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var errors = this.ModelState.Values.SelectMany(p => p.Errors).Select(e => e.ErrorMessage).ToList();
+
+                var errorModel = this.errorService.GetErrorModel(errors);
+
+                return View("Error", errorModel);
+            }
+
+            try
+
+            {
+                await this.customCakeService.UpdateCustomCakeImg(model);
+            }
+            catch (Exception e)
+            {
+                ViewData["Errors"] = e.Message;
+
+                return this.View("Error");
+            }
+
+            return RedirectToAction("AllCustomCakeImg");
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            try
+            {
+                await this.customCakeService.DeleteCustomCakeImg(id);
+            }
+            catch (Exception e)
+            {
+                ViewData["Errors"] = e.Message;
+
+                return this.View("Error");
+            }
+
+            return RedirectToAction("AllCustomCakeImg");
         }
     }
 }

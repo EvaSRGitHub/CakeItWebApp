@@ -5,6 +5,7 @@ using CakeItWebApp.ViewModels;
 using CakeItWebApp.ViewModels.Cakes;
 using CakeItWebApp.ViewModels.CustomCake;
 using CakeItWebApp.ViewModels.Orders;
+using CakeItWebApp.ViewModels.Tags;
 using CakeItWebApp.ViewModels.Tutorials;
 using System;
 using System.Collections.Generic;
@@ -35,6 +36,9 @@ namespace CakeWebApp.Services.Common.Mapping
             CreateMap<Tutorial, AddTutorialViewModel>().ReverseMap();
 
             CreateMap<Tutorial, TutorialIndexViewModel>().ReverseMap();
+
+            CreateMap<Tag, TagInputViewModel>().ReverseMap();
+
 
         }
     }

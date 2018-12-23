@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CakeItWebApp.Controllers
 {
-    public class BooksController : Controller
+    public class ForumController : Controller
     {
         public IActionResult Index()
         {

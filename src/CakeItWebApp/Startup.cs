@@ -63,7 +63,9 @@ namespace CakeItWebApp
                 .AddEntityFrameworkStores<CakeItDbContext>()
                 .AddDefaultTokenProviders();
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc(options => {
+                options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+            }).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.ConfigureApplicationCookie(options =>
             {
@@ -113,6 +115,11 @@ namespace CakeItWebApp
             services.AddScoped<ICustomCakeService, CustomCakeService>();
 
             services.AddScoped<ITutorialService, TutorialService>();
+
+            services.AddScoped<ITagService, TagService>();
+
+            services.AddScoped<IForumService, ForumService>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

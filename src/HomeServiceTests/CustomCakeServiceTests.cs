@@ -3,6 +3,8 @@ using CakeItWebApp.Models;
 using CakeItWebApp.Services.Common.Repository;
 using CakeItWebApp.ViewModels.CustomCake;
 using CakeWebApp.Services.Common.CommonServices;
+using Microsoft.Extensions.Logging;
+using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,16 +19,29 @@ namespace CakeItWebApp.Services.Common.Tests
         private async Task SeedCustomCakeImg()
         {
             var repo = new Repository<CustomCakeImg>(this.Db);
-            var service = new CustomCakeService(null, repo, this.Mapper);
-            CustomCakeImgViewModel model = new CustomCakeImgViewModel
+            var mock = new Mock<ILogger<CustomCakeService>>();
+            ILogger<CustomCakeService> logger = mock.Object;
+            var service = new CustomCakeService(null, repo, this.Mapper, logger);
+
+            CustomCakeImgViewModel model1 = new CustomCakeImgViewModel
             {
                 Side = "White Cigarettes",
                 Top = "Habana",
                 Name = "Habana" + " " + "White Cigarettes",
-                Img = "https://res.cloudinary.com/cakeit/image/upload/v1545083551/Top_Habana_WhiteCigarettes.png"
+                Img = "https://someurl.bg"
             };
 
-            await service.AddCustomCakeImg(model);
+            await service.AddCustomCakeImg(model1);
+
+            CustomCakeImgViewModel model2 = new CustomCakeImgViewModel
+            {
+                Side = "Dark Cigarettes",
+                Top = "Meksiko",
+                Name = "Meksiko" + " " + "Dark Cigarettes",
+                Img = "https://otherurl.bg"
+            };
+
+            await service.AddCustomCakeImg(model2);
         }
 
         [Fact]
@@ -34,7 +49,9 @@ namespace CakeItWebApp.Services.Common.Tests
         {
             //Arrange
             var repo = new Repository<CustomCakeImg>(this.Db);
-            var service = new CustomCakeService(null, repo, this.Mapper);
+            var mock = new Mock<ILogger<CustomCakeService>>();
+            ILogger<CustomCakeService> logger = mock.Object;
+            var service = new CustomCakeService(null, repo, this.Mapper, logger);
 
             CustomCakeImgViewModel model = new CustomCakeImgViewModel
             {
@@ -58,7 +75,9 @@ namespace CakeItWebApp.Services.Common.Tests
         {
             //Arrange
             var repo = new Repository<CustomCakeImg>(this.Db);
-            var service = new CustomCakeService(null, repo, this.Mapper);
+            var mock = new Mock<ILogger<CustomCakeService>>();
+            ILogger<CustomCakeService> logger = mock.Object;
+            var service = new CustomCakeService(null, repo, this.Mapper, logger);
 
             CustomCakeImgViewModel model1 = new CustomCakeImgViewModel
             {
@@ -89,7 +108,9 @@ namespace CakeItWebApp.Services.Common.Tests
             //Arrange
             await this.SeedCustomCakeImg();
             var repo = new Repository<CustomCakeImg>(this.Db);
-            var service = new CustomCakeService(null, repo, this.Mapper);
+            var mock = new Mock<ILogger<CustomCakeService>>();
+            ILogger<CustomCakeService> logger = mock.Object;
+            var service = new CustomCakeService(null, repo, this.Mapper, logger);
 
             CustomCakeOrderViewModel model = new CustomCakeOrderViewModel
             {
@@ -119,7 +140,9 @@ namespace CakeItWebApp.Services.Common.Tests
         {
             //Arrange
             var repo = new Repository<CustomCakeImg>(this.Db);
-            var service = new CustomCakeService(null, repo, this.Mapper);
+            var mock = new Mock<ILogger<CustomCakeService>>();
+            ILogger<CustomCakeService> logger = mock.Object;
+            var service = new CustomCakeService(null, repo, this.Mapper, logger);
 
             CustomCakeImgViewModel imgModel = new CustomCakeImgViewModel
             {
@@ -154,7 +177,9 @@ namespace CakeItWebApp.Services.Common.Tests
         {
             //Arrange
             var repo = new Repository<CustomCakeImg>(this.Db);
-            var service = new CustomCakeService(null, repo, this.Mapper);
+            var mock = new Mock<ILogger<CustomCakeService>>();
+            ILogger<CustomCakeService> logger = mock.Object;
+            var service = new CustomCakeService(null, repo, this.Mapper, logger);
 
             CustomCakeOrderViewModel model = new CustomCakeOrderViewModel
             {
@@ -181,7 +206,9 @@ namespace CakeItWebApp.Services.Common.Tests
         {
             //Arrange
             var repo = new Repository<CustomCakeImg>(this.Db);
-            var service = new CustomCakeService(null, repo, this.Mapper);
+            var mock = new Mock<ILogger<CustomCakeService>>();
+            ILogger<CustomCakeService> logger = mock.Object;
+            var service = new CustomCakeService(null, repo, this.Mapper, logger);
 
             CustomCakeOrderViewModel model = new CustomCakeOrderViewModel
             {
@@ -206,9 +233,11 @@ namespace CakeItWebApp.Services.Common.Tests
         public async Task GetProductId_ShouldReturnTheIdOfTheLastAddedProduct()
         {
             //Arrange
-            var repo = new Repository<CustomCakeImg>(this.Db);
             var productRepo = new Repository<Product>(this.Db);
-            var service = new CustomCakeService(null, repo, this.Mapper);
+            var repo = new Repository<CustomCakeImg>(this.Db);
+            var mock = new Mock<ILogger<CustomCakeService>>();
+            ILogger<CustomCakeService> logger = mock.Object;
+            var service = new CustomCakeService(productRepo, repo, this.Mapper, logger);
 
             CustomCakeOrderViewModel model = new CustomCakeOrderViewModel
             {
@@ -239,14 +268,159 @@ namespace CakeItWebApp.Services.Common.Tests
         public void GetProductId_WithEmptyProductDb_ShouldThrow()
         {
             //Arrange
-            var repo = new Repository<CustomCakeImg>(this.Db);
             var productRepo = new Repository<Product>(this.Db);
-            var service = new CustomCakeService(null, repo, this.Mapper);
+            var repo = new Repository<CustomCakeImg>(this.Db);
+            var mock = new Mock<ILogger<CustomCakeService>>();
+            ILogger<CustomCakeService> logger = mock.Object;
+            var service = new CustomCakeService(productRepo, repo, this.Mapper, logger);
 
             //Act
 
             //Assert
             Assert.Throws<NullReferenceException>(() => productRepo.All().LastOrDefault().Id);
+        }
+
+        [Fact]
+        public async Task UpdateCustomCakeImg_WithValidData_ShouldSaveUpdatedEntry()
+        {
+            //Arrange
+            await this.SeedCustomCakeImg();
+            var repo = new Repository<CustomCakeImg>(this.Db);
+            var mock = new Mock<ILogger<CustomCakeService>>();
+            ILogger<CustomCakeService> logger = mock.Object;
+            var service = new CustomCakeService(null, repo, this.Mapper, logger);
+
+            var customCakeImg = await repo.GetByIdAsync(2);
+           this.Db.Entry(customCakeImg).State = Microsoft.EntityFrameworkCore.EntityState.Detached;
+            var model = this.Mapper.Map<CustomCakeImg, CustomCakeImgViewModel>(customCakeImg);
+            model.Name = "Golden leaf";
+
+            //Act
+            await service.UpdateCustomCakeImg(model);
+
+            var expectedTitle = "Golden leaf";
+            var actualTitle = repo.All().SingleOrDefault(t => t.Id == 2).Name;
+
+            //Assert
+            Assert.Equal(expectedTitle, actualTitle);
+        }
+
+        [Fact]
+        public async Task UpdateCustomCakeImg_WithDuplicateTitle_ShouldSaveUpdatedTurorialThrow()
+        {
+            //Arrange
+            await this.SeedCustomCakeImg();
+            var repo = new Repository<CustomCakeImg>(this.Db);
+            var mock = new Mock<ILogger<CustomCakeService>>();
+            ILogger<CustomCakeService> logger = mock.Object;
+            var service = new CustomCakeService(null, repo, this.Mapper, logger);
+
+            var customCakeImg = await repo.GetByIdAsync(2);
+            this.Db.Entry(customCakeImg).State = Microsoft.EntityFrameworkCore.EntityState.Detached;
+            var model = this.Mapper.Map<CustomCakeImg, CustomCakeImgViewModel>(customCakeImg);
+            model.Name = "Habana White Cigarettes";
+
+            //Act
+
+            //Assert
+            await Assert.ThrowsAsync<InvalidOperationException>(async () => await service.UpdateCustomCakeImg(model));
+        }
+
+        [Fact]
+        public async Task UpdateCustomCakeImg_WithDuplicateImgUrl_ShouldSaveUpdatedTurorialThrow()
+        {
+            //Arrange
+            await this.SeedCustomCakeImg();
+            var repo = new Repository<CustomCakeImg>(this.Db);
+            var mock = new Mock<ILogger<CustomCakeService>>();
+            ILogger<CustomCakeService> logger = mock.Object;
+            var service = new CustomCakeService(null, repo, this.Mapper, logger);
+
+            var customCakeImg = await repo.GetByIdAsync(2);
+           this.Db.Entry(customCakeImg).State = Microsoft.EntityFrameworkCore.EntityState.Detached;
+            var model = this.Mapper.Map<CustomCakeImg, CustomCakeImgViewModel>(customCakeImg);
+            model.Img = "https://someurl.bg";
+
+            //Act
+
+            //Assert
+            await Assert.ThrowsAsync<InvalidOperationException>(async () => await service.UpdateCustomCakeImg(model));
+        }
+
+        [Fact]
+        public async Task DeleteCustomCakeImg_WithValidiD_ShouldDeleteTheTutorial()
+        {
+            //Arrange
+            await this.SeedCustomCakeImg();
+            var repo = new Repository<CustomCakeImg>(this.Db);
+            var mock = new Mock<ILogger<CustomCakeService>>();
+            ILogger<CustomCakeService> logger = mock.Object;
+            var service = new CustomCakeService(null, repo, this.Mapper, logger);
+
+            //Act
+            await service.DeleteCustomCakeImg(1);
+            var expectedRepoCount = 1;
+            var actualRepoCount = repo.All().Count();
+
+            var expectedTutorialId = 2;
+            var actualTutorialId = repo.All().First().Id;
+
+            //Asser
+            Assert.Equal(expectedRepoCount, actualRepoCount);
+            Assert.Equal(expectedTutorialId, actualTutorialId);
+        }
+
+        [Fact]
+        public async Task DeleteCustomCakeImg_WithInValidiD_ShouldDoNating()
+        {
+            //Arrange
+            await this.SeedCustomCakeImg();
+            var repo = new Repository<CustomCakeImg>(this.Db);
+            var mock = new Mock<ILogger<CustomCakeService>>();
+            ILogger<CustomCakeService> logger = mock.Object;
+            var service = new CustomCakeService(null, repo, this.Mapper, logger);
+
+            //Act
+
+            //Asser
+            await Assert.ThrowsAsync<InvalidOperationException>(async () => await service.DeleteCustomCakeImg(3));
+        }
+
+        [Fact]
+        public async Task GetCustomCakeImglById_WithValidId_ShouldReturnModel()
+        {
+            //Arrange
+            await this.SeedCustomCakeImg();
+            var repo = new Repository<CustomCakeImg>(this.Db);
+            var mock = new Mock<ILogger<CustomCakeService>>();
+            ILogger<CustomCakeService> logger = mock.Object;
+            var service = new CustomCakeService(null, repo, this.Mapper, logger);
+
+            //Act
+            var model = await service.GetCustomCakeImgById(2);
+
+            var expectedId = 2;
+            var actualId = model.Id;
+
+            //Assert
+            Assert.NotNull(model);
+            Assert.Equal(expectedId, actualId);
+        }
+
+        [Fact]
+        public async Task GetCustomCakeImglById_WithInValidId_ShouldThrow()
+        {
+            //Arrange
+            await this.SeedCustomCakeImg();
+            var repo = new Repository<CustomCakeImg>(this.Db);
+            var mock = new Mock<ILogger<CustomCakeService>>();
+            ILogger<CustomCakeService> logger = mock.Object;
+            var service = new CustomCakeService(null, repo, this.Mapper, logger);
+
+            //Act
+
+            //Assert
+            await Assert.ThrowsAsync<InvalidOperationException>(async () => await service.GetCustomCakeImgById(3));
         }
     }
 }

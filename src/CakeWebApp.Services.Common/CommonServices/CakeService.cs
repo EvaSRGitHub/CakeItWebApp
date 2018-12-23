@@ -44,7 +44,9 @@ namespace CakeWebApp.Services.Common.CommonServices
             }
             catch (Exception e)
             {
-                throw new InvalidOperationException( e.InnerException.Message);
+                this.logger.LogError(e.Message);
+
+                throw new InvalidOperationException("Sorry, an error occurred and your request couldn't be processed.");
             }
         }
 
@@ -72,8 +74,9 @@ namespace CakeWebApp.Services.Common.CommonServices
             }
             catch (Exception e)
             {
+                this.logger.LogError(e.Message);
 
-                throw new InvalidProgramException(e.Message);
+                throw new InvalidOperationException("Sorry, an error occurred and your request couldn't be processed.");
             }
         }
 
@@ -87,7 +90,7 @@ namespace CakeWebApp.Services.Common.CommonServices
             var product = await this.repository.GetByIdAsync(id);
 
             this.repository.Delete(product);
-
+            
             await this.repository.SaveChangesAsync();
         }
 
@@ -136,7 +139,9 @@ namespace CakeWebApp.Services.Common.CommonServices
             }
             catch (Exception e)
             {
-                return e.InnerException.ToString();
+                this.logger.LogError(e.Message);
+
+                return "Sorry, an error occurred and your request couldn't be processed.";
             }
             return "true";
         }

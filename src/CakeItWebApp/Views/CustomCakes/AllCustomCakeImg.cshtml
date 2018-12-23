@@ -14,10 +14,12 @@
                 <thead>
                     <tr class="row">
                         <th scope="col" class="col-md-1 d-flex"><h3>#</h3></th>
-                        <th scope="col" class="col-md-3 d-flex"><h3>Name</h3></th>
+                        <th scope="col" class="col-md-2 d-flex"><h3>Name</h3></th>
                         <th scope="col" class="col-md-2 d-flex"><h3>Side</h3></th>
-                        <th scope="col" class="col-md-3 d-flex"><h3>Top</h3></th>
+                        <th scope="col" class="col-md-2 d-flex"><h3>Top</h3></th>
                         <th scope="col" class="col-md-3 d-flex"><h3>Img</h3></th>
+                        <th scope="col" class="col-md-1 d-flex"><h3>Edit</h3></th>
+                        <th scope="col" class="col-md-1 d-flex"><h3>Delete</h3></th>
 
                     </tr>
                 </thead>
@@ -27,10 +29,13 @@
                         count++;
                     <tr class="row">
                         <th scope="row" class="col-md-1 d-flex"><h5>@count</h5></th>
-                        <td class="col-md-3 d-flex"><h5>@item.Name</h5></td>
-                        <td class="col-md-2 d-flex"><h5>@item.Side</h5></td>
-                        <td class="col-md-3 d-flex"><h5>@item.Top</h5></td>
-                        <td class="col-md-3 d-flex"><h5>@item.Img</h5>
+                        <td class="col-md-2" style="min-width: 15rem; max-width: 15rem; word-wrap: break-word; white-space:normal"><h5>@item.Name</h5></td>
+                        <td class="col-md-2" style="min-width: 15rem; max-width: 15rem; word-wrap: break-word; white-space:normal"><h5>@item.Side</h5></td>
+                        <td class="col-md-2" style="min-width: 15rem; max-width: 15rem; word-wrap: break-word; white-space:normal"><h5>@item.Top</h5></td>
+                        <td class="col-md-3" style="min-width: 34rem; max-width: 34rem; word-wrap: break-word; white-space:normal"><h5>@item.Img</h5></td>
+                        <td class="col-md-1 d-flex"><h5><a class="btn btn-secondary" asp-controller="CustomCakes" asp-action="Edit" asp-route-id="@item.Id">Edit</a></h5></td>
+                        <td class="col-md-1 d-flex"><h5><a class="btn btn-primary"asp-controller="CustomCakes" asp-action="Delete" asp-route-id="@item.Id">Delete</a></h5></td>
+
                     </tr>
                     }
                 </tbody>

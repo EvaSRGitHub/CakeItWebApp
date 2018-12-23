@@ -18,5 +18,11 @@ namespace CakeWebApp.Services.Common.Contracts
         Task<int?> GetProductId();
 
         IEnumerable<CustomCakeImgViewModel> GetAllCustomCakesImg();
+
+        Task<CustomCakeImgViewModel> GetCustomCakeImgById(int id);
+
+        Task UpdateCustomCakeImg(CustomCakeImgViewModel model);
+
+        Task DeleteCustomCakeImg(int id);
     }
 }

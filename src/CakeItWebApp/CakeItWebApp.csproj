@@ -23,4 +23,8 @@
     <ProjectReference Include="..\Services\CakeItWebApp.Services.Messaging\CakeItWebApp.Services.Messaging.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Views\Forum\" />
+  </ItemGroup>
+
 </Project>

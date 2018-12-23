@@ -33,6 +33,7 @@ namespace CakeItWebApp.Controllers
             this.cakeService = cakeService;
         }
 
+        [Authorize]
         public IActionResult Index()
         {
             ShwoMessageIfOrderHasBeenFinished();
@@ -42,6 +43,7 @@ namespace CakeItWebApp.Controllers
             return View(model);
         }
 
+        [Authorize]
         public IActionResult Checkout()
         {
             if(this.shoppingCartService.GetCartItems().Count == 0)
@@ -55,6 +57,7 @@ namespace CakeItWebApp.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task <IActionResult> Checkout(OrderDetailsViewModel model)
         {
             int orderId = 0;
@@ -106,6 +109,7 @@ namespace CakeItWebApp.Controllers
             }
         }
 
+        [Authorize]
         public IActionResult OrderedProducts(int orderId)
         {
             var model = this.orderService.GetAllItemsPerOrder(orderId);

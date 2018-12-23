@@ -3,6 +3,7 @@ using CakeItWebApp.Models;
 using CakeItWebApp.Services.Common.Repository;
 using CakeItWebApp.ViewModels.Tutorials;
 using CakeWebApp.Services.Common.Contracts;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,11 +16,13 @@ namespace CakeWebApp.Services.Common.CommonServices
     {
         private readonly IRepository<Tutorial> repository;
         private readonly IMapper mapper;
+        private readonly ILogger<TutorialService> logger;
 
-        public TutorialService(IRepository<Tutorial> repository, IMapper mapper)
+        public TutorialService(IRepository<Tutorial> repository, IMapper mapper, ILogger<TutorialService> logger)
         {
             this.repository = repository;
             this.mapper = mapper;
+            this.logger = logger;
         }
 
         public async Task AddRatingToTutorial(int tutorialId, int rating)
@@ -46,8 +49,9 @@ namespace CakeWebApp.Services.Common.CommonServices
             }
             catch (Exception e)
             {
+                this.logger.LogError(e.Message);
 
-                throw new InvalidProgramException(e.Message);
+                throw new InvalidOperationException("Sorry, an error occurred and your request couldn't be processed.");
             }
         }
 
@@ -73,7 +77,9 @@ namespace CakeWebApp.Services.Common.CommonServices
             }
             catch (Exception e)
             {
-                throw new InvalidProgramException(e.Message);
+                this.logger.LogError(e.Message);
+
+                throw new InvalidOperationException("Sorry, an error occurred and your request couldn't be processed.");
             }
         }
 
@@ -94,7 +100,9 @@ namespace CakeWebApp.Services.Common.CommonServices
             }
             catch (Exception e)
             {
-                throw new InvalidProgramException(e.Message);
+                this.logger.LogError(e.Message);
+
+                throw new InvalidOperationException("Sorry, an error occurred and your request couldn't be processed.");
             }
         }
 
@@ -141,7 +149,8 @@ namespace CakeWebApp.Services.Common.CommonServices
             }
             catch (Exception e)
             {
-                throw new InvalidProgramException(e.InnerException.ToString());
+                this.logger.LogError(e.Message);
+                throw new InvalidOperationException("Sorry, an error occurred and your request couldn't be processed.");
             }
         }
     }

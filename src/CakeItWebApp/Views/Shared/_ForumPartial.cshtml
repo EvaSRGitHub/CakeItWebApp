@@ -1,0 +1,13 @@
+﻿@if (this.User.Identity.IsAuthenticated)
+{
+    <li class="nav-item dropdown">
+        <a class="nav-link nav-link-event dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:white">
+           My Forum
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" asp-controller="Forum" asp-action="CreatePost">Create Post</a>
+            <a class="dropdown-item" asp-controller="Forum" asp-action="UserPosts">My Posts</a>
+            <a class="dropdown-item" asp-controller="Forum" asp-action="User Comments">My Comments</a>
+        </div>
+    </li>
+}

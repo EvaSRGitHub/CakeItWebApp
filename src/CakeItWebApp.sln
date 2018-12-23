@@ -21,7 +21,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CakeItWebApp.Services.Commo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CakeWebApp.Services.Common", "CakeWebApp.Services.Common\CakeWebApp.Services.Common.csproj", "{E55972B8-B07C-48BB-822D-830074BB750D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CakeItWebApp.Services.Common.IntegrationTests", "CakeItWebApp.Services.Common.IntegrationTests\CakeItWebApp.Services.Common.IntegrationTests.csproj", "{46919A41-BD06-466D-A867-683F4BF03FE4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CakeItWebApp.Services.Common.IntegrationTests", "CakeItWebApp.Services.Common.IntegrationTests\CakeItWebApp.Services.Common.IntegrationTests.csproj", "{46919A41-BD06-466D-A867-683F4BF03FE4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

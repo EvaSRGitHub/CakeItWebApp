@@ -1,0 +1,40 @@
+﻿@using System.Collections.Generic
+@using CakeItWebApp.ViewModels.Tags
+
+@model ICollection<TagInputViewModel>
+
+@{
+    var count = 0;
+}
+<main>
+    <div class="row">
+        <div class="col-md-6 offset-md-3 mt-2">
+            <h1>Tags</h1>
+            <hr class="hr-2" style="background-color: forestgreen">
+            <table class="table table-hover">
+                <thead>
+                    <tr class="row">
+                        <th scope="col" class="col-md-1 d-flex"><h3>#</h3></th>
+                        <th scope="col" class="col-md-2 d-flex"><h3>Id</h3></th>
+                        <th scope="col" class="col-md-4 d-flex"><h3>Name</h3></th>
+                        <th scope="col" class="col-md-2 d-flex"><h3>Is deleted</h3></th>
+                        <th scope="col" class="col-md-3 d-flex"><h3>Edit</h3></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        count++;
+                        <tr class="row">
+                            <th scope="row" class="col-md-1 d-flex"><h5>@count</h5></th>
+                            <td class="col-md-2 d-flex"><h5>@item.Id</h5></td>
+                            <td class="col-md-4 d-flex"><h5>@item.Name</h5></td>
+                            <td class="col-md-2 d-flex"><h5>@item.IsDeleted</h5></td>
+                            <td class="col-md-3 d-flex"><h5><a class="btn btn-secondary" asp-controller="Tags" asp-action="Edit" asp-route-id="@item.Id">Edit</a></h5></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>

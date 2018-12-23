@@ -37,6 +37,15 @@ namespace CakeItWebApp.Data
 
         public DbSet<CustomCakeImg> CustomCakesImg { get; set; }
 
+        public DbSet<Tag> Tags { get; set; }
+
+        public DbSet<Post> Posts { get; set; }
+
+        public DbSet<TagPosts> TagPosts { get; set; }
+
+        public DbSet<Comment> Comments { get; set; }
+
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -70,6 +79,14 @@ namespace CakeItWebApp.Data
                 entity.HasOne(e => e.Order).WithMany(o => o.Products).HasForeignKey(e => e.OrderId);
 
                 entity.HasOne(e => e.Product).WithMany(p => p.Orders).HasForeignKey(e => e.ProductId);
+            });
+
+            builder.Entity<TagPosts>(entity => {
+                entity.HasKey(e => new { e.TagId, e.PostId });
+
+                entity.HasOne(e => e.Tag).WithMany(t => t.Posts).HasForeignKey(e => e.TagId);
+
+                entity.HasOne(e => e.Post).WithMany(p => p.Tags).HasForeignKey(e => e.PostId);
             });
         }
     }

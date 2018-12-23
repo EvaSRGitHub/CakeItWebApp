@@ -29,7 +29,7 @@ namespace CakeItWebApp.Services.Common.Tests
         {
             //Arrange
             var repo = new Repository<Tutorial>(this.Db);
-            var service = new TutorialService(repo, this.Mapper);
+            var service = new TutorialService(repo, this.Mapper,null);
 
             var model = new AddTutorialViewModel { Title = "Lotus Flower", Description = "Lotus Test Descripion", Url = "https://someurl.bg" };
 
@@ -47,7 +47,7 @@ namespace CakeItWebApp.Services.Common.Tests
         {
             //Arrange
             var repo = new Repository<Tutorial>(this.Db);
-            var service = new TutorialService(repo, this.Mapper);
+            var service = new TutorialService(repo, this.Mapper, null);
 
             var model1 = new AddTutorialViewModel { Title = "Lotus Flower", Description = "Lotus Test Descripion", Url = "https://someurl.bg" };
             var model2 = new AddTutorialViewModel { Title = "Flower", Description = "Lotus Test Descripion", Url = "https://someurl.bg" };
@@ -64,7 +64,7 @@ namespace CakeItWebApp.Services.Common.Tests
         {
             //Arrange
             var repo = new Repository<Tutorial>(this.Db);
-            var service = new TutorialService(repo, this.Mapper);
+            var service = new TutorialService(repo, this.Mapper, null);
 
             var model1 = new AddTutorialViewModel { Title = "Lotus Flower", Description = "Lotus Test Descripion", Url = "https://someurl.bg" };
             var model2 = new AddTutorialViewModel { Title = "Lotus Flower", Description = "Lotus Test Descripion", Url = "https://otherurl.bg" };
@@ -82,7 +82,7 @@ namespace CakeItWebApp.Services.Common.Tests
             //Arrange
             await this.SeedTutorials();
             var repo = new Repository<Tutorial>(this.Db);
-            var service = new TutorialService(repo, this.Mapper);
+            var service = new TutorialService(repo, this.Mapper, null);
 
             var tutorial = await repo.GetByIdAsync(2);
             this.Db.Entry(tutorial).State = Microsoft.EntityFrameworkCore.EntityState.Detached;
@@ -105,7 +105,7 @@ namespace CakeItWebApp.Services.Common.Tests
             //Arrange
             await this.SeedTutorials();
             var repo = new Repository<Tutorial>(this.Db);
-            var service = new TutorialService(repo, this.Mapper);
+            var service = new TutorialService(repo, this.Mapper, null);
 
             var tutorial = await repo.GetByIdAsync(2);
             this.Db.Entry(tutorial).State = Microsoft.EntityFrameworkCore.EntityState.Detached;
@@ -124,7 +124,7 @@ namespace CakeItWebApp.Services.Common.Tests
             //Arrange
             await this.SeedTutorials();
             var repo = new Repository<Tutorial>(this.Db);
-            var service = new TutorialService(repo, this.Mapper);
+            var service = new TutorialService(repo, this.Mapper, null);
 
             var tutorial = await repo.GetByIdAsync(2);
             this.Db.Entry(tutorial).State = Microsoft.EntityFrameworkCore.EntityState.Detached;
@@ -144,7 +144,7 @@ namespace CakeItWebApp.Services.Common.Tests
             //Arrange
             await this.SeedTutorials();
             var repo = new Repository<Tutorial>(this.Db);
-            var service = new TutorialService(repo, this.Mapper);
+            var service = new TutorialService(repo, this.Mapper, null);
 
             //Act
             await service.DeleteTutorial(1);
@@ -165,7 +165,7 @@ namespace CakeItWebApp.Services.Common.Tests
             //Arrange
             await this.SeedTutorials();
             var repo = new Repository<Tutorial>(this.Db);
-            var service = new TutorialService(repo, this.Mapper);
+            var service = new TutorialService(repo, this.Mapper, null);
 
             //Act
 
@@ -179,7 +179,7 @@ namespace CakeItWebApp.Services.Common.Tests
             //Arrange
             await this.SeedTutorials();
             var repo = new Repository<Tutorial>(this.Db);
-            var service = new TutorialService(repo, this.Mapper);
+            var service = new TutorialService(repo, this.Mapper, null);
 
             //Act
             var model = await service.GetTutorialById(2);
@@ -198,7 +198,7 @@ namespace CakeItWebApp.Services.Common.Tests
             //Arrange
             await this.SeedTutorials();
             var repo = new Repository<Tutorial>(this.Db);
-            var service = new TutorialService(repo, this.Mapper);
+            var service = new TutorialService(repo, this.Mapper, null);
 
             //Act
 
@@ -212,7 +212,7 @@ namespace CakeItWebApp.Services.Common.Tests
             //Arrange
             await this.SeedTutorials();
             var repo = new Repository<Tutorial>(this.Db);
-            var service = new TutorialService(repo, this.Mapper);
+            var service = new TutorialService(repo, this.Mapper, null);
 
             //Act
             await service.AddRatingToTutorial(2, 5);
@@ -230,7 +230,7 @@ namespace CakeItWebApp.Services.Common.Tests
             //Arrange
             await this.SeedTutorials();
             var repo = new Repository<Tutorial>(this.Db);
-            var service = new TutorialService(repo, this.Mapper);
+            var service = new TutorialService(repo, this.Mapper, null);
 
             //Act
             await service.AddRatingToTutorial(2, 5);
@@ -248,7 +248,7 @@ namespace CakeItWebApp.Services.Common.Tests
             //Arrange
             await this.SeedTutorials();
             var repo = new Repository<Tutorial>(this.Db);
-            var service = new TutorialService(repo, this.Mapper);
+            var service = new TutorialService(repo, this.Mapper, null);
 
             //Act
             await service.AddRatingToTutorial(2, 5);
@@ -267,7 +267,7 @@ namespace CakeItWebApp.Services.Common.Tests
             //Arrange
             await this.SeedTutorials();
             var repo = new Repository<Tutorial>(this.Db);
-            var service = new TutorialService(repo, this.Mapper);
+            var service = new TutorialService(repo, this.Mapper, null);
 
             //Act
             await service.AddRatingToTutorial(2, 5);
@@ -286,7 +286,7 @@ namespace CakeItWebApp.Services.Common.Tests
             //Arrange
             await this.SeedTutorials();
             var repo = new Repository<Tutorial>(this.Db);
-            var service = new TutorialService(repo, this.Mapper);
+            var service = new TutorialService(repo, this.Mapper, null);
 
             //Act
 
@@ -300,7 +300,7 @@ namespace CakeItWebApp.Services.Common.Tests
             //Arrange
             await this.SeedTutorials();
             var repo = new Repository<Tutorial>(this.Db);
-            var service = new TutorialService(repo, this.Mapper);
+            var service = new TutorialService(repo, this.Mapper, null);
 
             //Act
 
@@ -314,7 +314,7 @@ namespace CakeItWebApp.Services.Common.Tests
             //Arrange
             await this.SeedTutorials();
             var repo = new Repository<Tutorial>(this.Db);
-            var service = new TutorialService(repo, this.Mapper);
+            var service = new TutorialService(repo, this.Mapper, null);
 
             //Act
             var tutorials = service.GetTutorials();
@@ -328,7 +328,7 @@ namespace CakeItWebApp.Services.Common.Tests
         {
             //Arrange
             var repo = new Repository<Tutorial>(this.Db);
-            var service = new TutorialService(repo, this.Mapper);
+            var service = new TutorialService(repo, this.Mapper, null);
 
             //Act
             var tutorials = service.GetTutorials();

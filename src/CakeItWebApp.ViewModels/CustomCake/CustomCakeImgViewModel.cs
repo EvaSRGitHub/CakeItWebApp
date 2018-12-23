@@ -7,6 +7,8 @@ namespace CakeItWebApp.ViewModels.CustomCake
 {
     public class CustomCakeImgViewModel
     {
+        public int Id { get; set; }
+
         [Required]
         public string Name { get; set; }
 
