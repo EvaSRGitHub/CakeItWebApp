@@ -21,6 +21,7 @@ using CakeItWebApp.Services.Common.Repository;
 using AutoMapper;
 using CakeWebApp.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using CakeWebApp.Services.Common.Sanitizer;
 
 namespace CakeItWebApp
 {
@@ -119,6 +120,9 @@ namespace CakeItWebApp
             services.AddScoped<ITagService, TagService>();
 
             services.AddScoped<IForumService, ForumService>();
+
+            services.AddScoped<ISanitizer, HtmlSanitizerAdapter>();
+
 
         }
 

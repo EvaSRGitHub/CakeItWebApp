@@ -1,0 +1,68 @@
+﻿@model CakeItWebApp.ViewModels.Forum.PostInputViewModel
+
+@{
+    var tags = ViewData["Tags"] as string;
+}
+
+<main class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <section>
+                <h1 class="text-center">Edit Post</h1>
+                <hr class="bg-panda hr-2" />
+                <form method="post">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                    <input asp-for="Author" class="form-control d-none" value="@Model.Author">
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label asp-for="Title" class="text-center"></label>
+                            <input asp-for="Title" class="form-control" placeholder="Title" value="@Model.Title">
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label asp-for="FullContent" class="text-center"></label>
+                            <textarea id="mytextarea" asp-for="FullContent" class="form-control" placeholder="Content" value="@Model.FullContent"></textarea>
+                            <span asp-validation-for="FullContent" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label asp-for="Tags" class="text-center"></label>
+                            <input asp-for="Tags" class="form-control" placeholder="Enter Tags, separated by comma" value="@Model.Tags">
+                            <span asp-validation-for="Tags" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <hr class="bg-panda hr-2" />
+                    <div class="button-holder d-flex justify-content-center">
+                        <button type="submit" class="btn btn-success">Edit Post</button>
+                    </div>
+                </form>
+            </section>
+        </div>
+        <div class="col-md-4">
+            <div class="card my-4">
+                <h5 class="card-header">Tags</h5>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <ul class="list-unstyled mb-0">
+                                @foreach (var tag in tags.Split(','))
+                                {
+                                    <li>
+                                        <a asp-controller="Forum" asp-action="PostsByTag" asp-route-tag="@tag">@tag</a>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+@section Scripts {
+    <script>tinymce.init({ selector: '#mytextarea' });</script>
+    <partial name="_ValidationScriptsPartial" />
+}

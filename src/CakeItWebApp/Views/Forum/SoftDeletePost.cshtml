@@ -1,0 +1,50 @@
+﻿@model CakeItWebApp.ViewModels.Forum.PostInputViewModel
+
+@{
+    var tags = ViewData["Tags"] as string;
+}
+
+<main class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <section>
+                <h1 class="text-center">Delete Post</h1>
+                <hr class="bg-panda hr-2" />
+                <form method="post" asp-controller="Forum" asp-action="SoftDeletePost">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                    <input asp-for="Author" class="form-control d-none" value="@this.User.Identity.Name" disabled>
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label asp-for="Title" class="text-center"></label>
+                            <input asp-for="Title" class="form-control" placeholder="Title" disabled>
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label asp-for="FullContent" class="text-center"></label>
+                            <textarea id="mytextarea" asp-for="FullContent" class="form-control" placeholder="Content" disabled></textarea>
+                            <span asp-validation-for="FullContent" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label asp-for="Tags" class="text-center"></label>
+                            <input asp-for="Tags" class="form-control" placeholder="Enter Tags, separated by comma" disabled>
+                            <span asp-validation-for="Tags" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <hr class="bg-panda hr-2" />
+                    <div class="button-holder d-flex justify-content-center">
+                        <button type="submit" class="btn btn-success">Delete Post</button>
+                    </div>
+                </form>
+            </section>
+        </div>
+       
+    </div>
+</main>
+@section Scripts {
+    @*<script>tinymce.init({ selector: '#mytextarea' });</script>*@
+    <partial name="_ValidationScriptsPartial" />
+}

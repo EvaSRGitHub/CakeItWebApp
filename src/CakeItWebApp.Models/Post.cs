@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace CakeItWebApp.Models
 {
@@ -21,6 +22,8 @@ namespace CakeItWebApp.Models
         public string ShortContent { get; set; }
 
         public string FullContent { get; set; }
+
+        public DateTime CreatedOn { get; set; }
 
         public bool IsDeleted { get; set; }
 

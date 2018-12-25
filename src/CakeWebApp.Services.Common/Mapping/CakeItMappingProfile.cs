@@ -4,11 +4,13 @@ using CakeItWebApp.Models.Enums;
 using CakeItWebApp.ViewModels;
 using CakeItWebApp.ViewModels.Cakes;
 using CakeItWebApp.ViewModels.CustomCake;
+using CakeItWebApp.ViewModels.Forum;
 using CakeItWebApp.ViewModels.Orders;
 using CakeItWebApp.ViewModels.Tags;
 using CakeItWebApp.ViewModels.Tutorials;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace CakeWebApp.Services.Common.Mapping
@@ -39,7 +41,7 @@ namespace CakeWebApp.Services.Common.Mapping
 
             CreateMap<Tag, TagInputViewModel>().ReverseMap();
 
-
+            CreateMap<Comment, CommentInputViewModel>().ReverseMap();
         }
     }
 }

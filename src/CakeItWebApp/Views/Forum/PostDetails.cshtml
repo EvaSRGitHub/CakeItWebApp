@@ -1,0 +1,149 @@
+﻿@model CakeItWebApp.ViewModels.Forum.PostDetailsViewModel
+
+<main class="container">
+    <div class="row">
+        <!-- Post Content Column -->
+        <div class="col-lg-12">
+            <!-- Title -->
+            <h1 class="mt-4">@Model.Title</h1>
+            <!-- Author -->
+            <p class="lead">
+                by @Model.Author
+            </p>
+            <hr>
+            <!-- Date/Time -->
+            <p>Posted on @Model.CreatedOn</p>
+            <hr>
+            <!-- Post Content -->
+            <p class="lead">@Html.Raw(Model.FullContent)</p>
+            <hr>
+            @if (this.User.Identity.Name == Model.Author)
+            {
+                <div class="button-holder d-flex justify-content-around">
+                    <a asp-controller="Forum" asp-action="EditPost" asp-route-id="@Model.Id" class="btn btn-info text-white mb-3">Edit</a>
+                    <a asp-controller="Forum" asp-action="SoftDeletePost" asp-route-id="@Model.Id" class="btn btn-danger text-white mb-3">Delete</a>
+                </div>
+            }
+            else if (this.User.IsInRole("Admin"))
+            {
+                <div class="button-holder d-flex justify-content-around">
+                    <a asp-controller="Forum" asp-action="SoftDeletePost" asp-route-id="@Model.Id" class="btn btn-danger text-white mb-3">Delete</a>
+                </div>
+            }
+            <!-- Comments Form -->
+            <div class="card my-4">
+                <h5 class="card-header">Leave a Comment:</h5>
+                <div class="card-body">
+                    @{
+                        var createComment = Model.CreateComment;
+                    }
+                    <form method="post" asp-controller="Forum" asp-action="Comment">
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                        <div class="form-group">
+                            <input asp-for="@createComment.AuthorName" value="@this.User.Identity.Name" hidden />
+                            <input asp-for="@createComment.PostId" value="@Model.Id" hidden />
+                            <textarea asp-for="@createComment.Content" id="mytextarea" class="form-control" rows="3"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                </div>
+            </div>
+
+            @for (var i = 0; i < Model.Comments.Count; i++)
+            {
+                <!-- Single Comment -->
+                var comment = Model.Comments.ToList()[i];
+
+                <div class="media mb-4">
+                    <img class="d-flex mr-3 rounded-circle" src="~/images/comment.png" alt="" style="height: 30px">
+                    <div class="media-body">
+                        <p>@Html.Raw(comment.Content)</p>
+                        <p>
+                            <em>Author: @comment.Author.UserName</em>,
+                            <em>Created on: @comment.CreatedOn</em>
+                        </p>
+                    </div>
+                </div>
+                <hr />
+
+                @if (this.User.Identity.Name == comment.Author.UserName)
+                {
+                    <div class="button-holder d-flex justify-content-around">
+                        <a asp-controller="Forum" asp-action="EditComment" asp-route-id="@comment.Id" class="btn btn-info text-white mb-3">Edit</a>
+                        <a asp-controller="Forum" asp-action="SoftDeleteComment" asp-route-id="@comment.Id" class="btn btn-danger text-white mb-3">Delete</a>
+
+                    </div>
+                }
+                else if (this.User.IsInRole("Admin"))
+                {
+                    <div class="button-holder d-flex justify-content-around">
+                        <a asp-controller="Forum" asp-action="SoftDeleteComment" asp-route-id="@comment.Id" class="btn btn-danger text-white mb-3">Delete</a>
+                    </div>
+                }
+            }
+
+            <!-- Sidebar Widgets Column -->
+            <div class="col-md-4">
+                <!-- Search Widget -->
+                <div class="card my-4">
+                    <h5 class="card-header">Search</h5>
+                    <div class="card-body">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Search for...">
+                            <span class="input-group-btn">
+                                <button class="btn btn-secondary" type="button">Go!</button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Categories Widget -->
+                @*<div class="card my-4">
+                        <h5 class="card-header">Categories</h5>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <ul class="list-unstyled mb-0">
+                                        <li>
+                                            <a href="#">Web Design</a>
+                                        </li>
+                                        <li>
+                                            <a href="#">HTML</a>
+                                        </li>
+                                        <li>
+                                            <a href="#">Freebies</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-lg-6">
+                                    <ul class="list-unstyled mb-0">
+                                        <li>
+                                            <a href="#">JavaScript</a>
+                                        </li>
+                                        <li>
+                                            <a href="#">CSS</a>
+                                        </li>
+                                        <li>
+                                            <a href="#">Tutorials</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>*@
+                <!-- Side Widget -->
+                @*<div class="card my-4">
+                        <h5 class="card-header">Side Widget</h5>
+                        <div class="card-body">
+                            You can put anything you want inside of these side widgets. They are easy to use, and feature the new Bootstrap 4 card containers!
+                        </div>
+                    </div>*@
+            </div>
+        </div>
+        <!-- /.row -->
+    </div>
+</main>
+@section Scripts {
+    <script>tinymce.init({ selector: '#mytextarea' });</script>
+    <partial name="_ValidationScriptsPartial" />
+}

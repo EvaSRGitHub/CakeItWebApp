@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="8.0.0" />
+    <PackageReference Include="HtmlSanitizer" Version="4.0.199" />
   </ItemGroup>
 
   <ItemGroup>

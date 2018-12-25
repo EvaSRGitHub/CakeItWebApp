@@ -1,4 +1,6 @@
-﻿namespace CakeItWebApp.Models
+﻿using System;
+
+namespace CakeItWebApp.Models
 {
     public class Comment
     {
@@ -13,6 +15,8 @@
         public virtual Post Podt { get; set; }
 
         public string Content { get; set; }
+
+        public DateTime CreatedOn { get; set; }
 
         public bool IsDeleted { get; set; }
     }

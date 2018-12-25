@@ -12,6 +12,7 @@
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.2" PrivateAssets="All" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.6" PrivateAssets="All" />
+    <PackageReference Include="TinyMCE" Version="4.9.2" />
     <PackageReference Include="X.PagedList.Mvc.Core" Version="7.6.0" />
   </ItemGroup>
 
@@ -21,10 +22,6 @@
     <ProjectReference Include="..\CakeItWebApp.ViewModels\CakeItWebApp.ViewModels.csproj" />
     <ProjectReference Include="..\CakeWebApp.Services.Common\CakeWebApp.Services.Common.csproj" />
     <ProjectReference Include="..\Services\CakeItWebApp.Services.Messaging\CakeItWebApp.Services.Messaging.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Views\Forum\" />
   </ItemGroup>
 
 </Project>
