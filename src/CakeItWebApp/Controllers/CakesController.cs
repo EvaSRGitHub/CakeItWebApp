@@ -13,6 +13,8 @@ namespace CakeItWebApp.Controllers
 {
     public class CakesController : Controller
     {
+        private const int MaxCakesPerPage = 3;
+
         private readonly ILogger<CakesController> logger;
         private readonly ICakeService cakeService;
         private readonly IErrorService errorService;
@@ -32,7 +34,7 @@ namespace CakeItWebApp.Controllers
 
             var nextPage = page ?? 1;
 
-            var cakesPerPage = allCakes.ToPagedList(nextPage, 3);
+            var cakesPerPage = allCakes.ToPagedList(nextPage, MaxCakesPerPage);
 
             return View(cakesPerPage);
         }

@@ -8,6 +8,8 @@ namespace CakeItWebApp.ViewModels.Forum
 {
     public class CommentInputViewModel
     {
+        public int Id { get; set; }
+
         public string AuthorId { get; set; }
 
         [Required]

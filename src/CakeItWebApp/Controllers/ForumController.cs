@@ -6,12 +6,15 @@ using CakeItWebApp.ViewModels.Forum;
 using CakeWebApp.Services.Common.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using X.PagedList;
 
 namespace CakeItWebApp.Controllers
 {
     [Authorize]
     public class ForumController : Controller
     {
+        private const int MaxPostPerPage = 4;
+
         private readonly IForumService forumService;
         private readonly IErrorService errorService;
         private readonly ITagService tagService;
@@ -24,7 +27,7 @@ namespace CakeItWebApp.Controllers
         }
 
         [AllowAnonymous]
-        public IActionResult Index()
+        public IActionResult Index(int? page)
         {
             var tags = this.tagService.GetAllTags().ToList().Select( t => t.Name);
 
@@ -32,9 +35,11 @@ namespace CakeItWebApp.Controllers
 
             var allPosts = this.forumService.GetAllPosts();
 
-            return View(allPosts);
+            var nextPage = page ?? 1;
 
-            //TODO: PAGING
+            var postsPerPage = allPosts.ToPagedList(nextPage, MaxPostPerPage);
+
+            return View(postsPerPage);
         }
 
         public IActionResult CreatePost()
@@ -70,6 +75,7 @@ namespace CakeItWebApp.Controllers
             return RedirectToAction("Index");
         }
 
+        [AllowAnonymous]
         public IActionResult PostDetails(int id)
         {
             PostDetailsViewModel postDetail = null;
@@ -112,7 +118,7 @@ namespace CakeItWebApp.Controllers
 
                 return this.View("Error");
             }
-            return RedirectToAction("PostDetails", model.Id);
+            return RedirectToAction("PostDetails", new { id = comment.PostId });
         }
 
         public async Task<IActionResult> EditPost(int id)
@@ -160,7 +166,6 @@ namespace CakeItWebApp.Controllers
             return RedirectToAction("PostDetails", new { id = model.Id });
         }
 
-       
         public async Task<IActionResult> SoftDeletePost(int id)
         {
             PostInputViewModel model;
@@ -195,11 +200,94 @@ namespace CakeItWebApp.Controllers
 
             return this.RedirectToAction("Index");
         }
-        //Edit Comment
 
-        //Delete Comment
+        public async Task<IActionResult> EditComment(int id)
+        {
+            EditCommentViewModel model;
 
+            try
+            {
+                model = await this.forumService.GetCommentToEditOrDelete(id);
+            }
+            catch (Exception e)
+            {
+                ViewData["Errors"] = e.Message;
+
+                return this.View("Error");
+            }
+
+            return this.View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditComment(EditCommentViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var errors = this.ModelState.Values.SelectMany(p => p.Errors).Select(e => e.ErrorMessage).ToList();
+
+                var errorModel = this.errorService.GetErrorModel(errors);
+
+                return View("Error", errorModel);
+            }
+
+            try
+            {
+                await this.forumService.UpdateComment(model);
+            }
+            catch (Exception e)
+            {
+                ViewData["Errors"] = e.Message;
+                return this.View("Error");
+            }
+
+            return RedirectToAction("PostDetails", new { id = model.Comment.PostId });
+        }
+
+        public async Task<IActionResult> SoftDeleteComment(int id)
+        {
+            EditCommentViewModel model;
+
+            try
+            {
+                model = await this.forumService.GetCommentToEditOrDelete(id);
+            }
+            catch (Exception e)
+            {
+                ViewData["Errors"] = e.Message;
+
+                return this.View("Error");
+            }
+
+            return this.View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SoftDeleteComment(EditCommentViewModel model)
+        {
+            try
+            {
+                await this.forumService.MarkCommentAsDeleted(model);
+            }
+            catch (Exception e)
+            {
+                ViewData["Errors"] = e.Message;
+
+                return this.View("Error");
+            }
+
+            return this.RedirectToAction("PostDetails", new { id = model.Comment.PostId });
+        }
+
+        //TODO: My Posts
+
+        //TODO: My Comments
+
+        //TODO: Admin All Posts ?
         
+        //TODO: PostByTags
+
+        //TODO: Search Post's Title by words
 
         //TODO - All Delets
     }

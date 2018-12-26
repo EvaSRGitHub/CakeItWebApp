@@ -57,16 +57,16 @@
                 <div class="media mb-4">
                     <img class="d-flex mr-3 rounded-circle" src="~/images/comment.png" alt="" style="height: 30px">
                     <div class="media-body">
-                        <p>@Html.Raw(comment.Content)</p>
+                        <p>@Html.Raw(comment.Content.TrimEnd())</p>
                         <p>
-                            <em>Author: @comment.Author.UserName</em>,
-                            <em>Created on: @comment.CreatedOn</em>
+                            <em>Author:<strong>@comment.AuthorName</strong></em>,
+                            <em>Created on: <strong>@comment.CreatedOn</strong></em>
                         </p>
                     </div>
                 </div>
-                <hr />
 
-                @if (this.User.Identity.Name == comment.Author.UserName)
+
+                @if (this.User.Identity.Name == comment.AuthorName)
                 {
                     <div class="button-holder d-flex justify-content-around">
                         <a asp-controller="Forum" asp-action="EditComment" asp-route-id="@comment.Id" class="btn btn-info text-white mb-3">Edit</a>
@@ -80,6 +80,8 @@
                         <a asp-controller="Forum" asp-action="SoftDeleteComment" asp-route-id="@comment.Id" class="btn btn-danger text-white mb-3">Delete</a>
                     </div>
                 }
+
+                <hr style="background-color: black">
             }
 
             <!-- Sidebar Widgets Column -->
@@ -99,45 +101,45 @@
 
                 <!-- Categories Widget -->
                 @*<div class="card my-4">
-                        <h5 class="card-header">Categories</h5>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    <ul class="list-unstyled mb-0">
-                                        <li>
-                                            <a href="#">Web Design</a>
-                                        </li>
-                                        <li>
-                                            <a href="#">HTML</a>
-                                        </li>
-                                        <li>
-                                            <a href="#">Freebies</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="col-lg-6">
-                                    <ul class="list-unstyled mb-0">
-                                        <li>
-                                            <a href="#">JavaScript</a>
-                                        </li>
-                                        <li>
-                                            <a href="#">CSS</a>
-                                        </li>
-                                        <li>
-                                            <a href="#">Tutorials</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
+                <h5 class="card-header">Categories</h5>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <ul class="list-unstyled mb-0">
+                                <li>
+                                    <a href="#">Web Design</a>
+                                </li>
+                                <li>
+                                    <a href="#">HTML</a>
+                                </li>
+                                <li>
+                                    <a href="#">Freebies</a>
+                                </li>
+                            </ul>
                         </div>
-                    </div>*@
+                        <div class="col-lg-6">
+                            <ul class="list-unstyled mb-0">
+                                <li>
+                                    <a href="#">JavaScript</a>
+                                </li>
+                                <li>
+                                    <a href="#">CSS</a>
+                                </li>
+                                <li>
+                                    <a href="#">Tutorials</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>*@
                 <!-- Side Widget -->
                 @*<div class="card my-4">
-                        <h5 class="card-header">Side Widget</h5>
-                        <div class="card-body">
-                            You can put anything you want inside of these side widgets. They are easy to use, and feature the new Bootstrap 4 card containers!
-                        </div>
-                    </div>*@
+                <h5 class="card-header">Side Widget</h5>
+                <div class="card-body">
+                    You can put anything you want inside of these side widgets. They are easy to use, and feature the new Bootstrap 4 card containers!
+                </div>
+            </div>*@
             </div>
         </div>
         <!-- /.row -->

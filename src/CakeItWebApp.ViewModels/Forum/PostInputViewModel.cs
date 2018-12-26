@@ -16,6 +16,7 @@ namespace CakeItWebApp.ViewModels.Forum
         public string Title { get; set; }
 
         [Required]
+        [Display(Name = "Full Name")]
         public string FullContent { get; set; }
 
         public DateTime CreatedOn => DateTime.UtcNow;

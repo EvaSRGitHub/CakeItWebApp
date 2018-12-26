@@ -105,11 +105,6 @@ namespace CakeWebApp.Services.Common.CommonServices
             }
         }
 
-        public Task EditPost(int id)
-        {
-            throw new NotImplementedException();
-        }
-
         public IEnumerable<PostIndexViewModel> GetAllPosts()
         {
             var posts = this.postRepo.All().Where(p => p.IsDeleted == false);
@@ -118,13 +113,49 @@ namespace CakeWebApp.Services.Common.CommonServices
             {
                 Author = p.Author.UserName,
                 CommentCount = p.Comments.Count,
-                CreatedOn = p.CreatedOn.ToString("dd-MM-yyyy hh:mm"),
+                CreatedOn = p.CreatedOn.ToString("dd-MM-yyyy HH:mm"),
                 Tags = string.Join(", ", p.Tags.Select(t => t.Tag.Name)),
                 Title = p.Title,
                 Id = p.Id
             }).ToList();
 
             return modelPosts;
+        }
+
+        public async Task<EditCommentViewModel> GetCommentToEditOrDelete(int id)
+        {
+            var commentToEdit = await this.commentRepo.GetByIdAsync(id);
+
+            if(commentToEdit.Podt == null || commentToEdit.Podt.IsDeleted == true)
+            {
+                throw new InvalidOperationException("Post not found.");
+            }
+
+            if(commentToEdit == null)
+            {
+                throw new InvalidOperationException("Comment not found.");
+            }
+
+            var model = new EditCommentViewModel
+            {
+                Post = new PostInputViewModel
+                {
+                    Author = commentToEdit.Podt.Author.UserName,
+                    Id = commentToEdit.Podt.Id,
+                    FullContent = this.sanitizer.Sanitize(commentToEdit.Podt.FullContent),
+                    Title = commentToEdit.Podt.Title
+                },
+                Comment = new CommentInputViewModel
+                {
+                    Id = commentToEdit.Id,
+                    AuthorId = commentToEdit.AuthorId,
+                    AuthorName = commentToEdit.Author.UserName,
+                    Content = this.sanitizer.Sanitize(commentToEdit.Content),
+                    PostId = commentToEdit.PostId
+                }
+            };
+
+            return model;
         }
 
         public async Task<PostInputViewModel> GetPostById(int id)
@@ -168,16 +199,15 @@ namespace CakeWebApp.Services.Common.CommonServices
                 Author = post.Author.UserName,
                 Title = post.Title,
                 FullContent = this.sanitizer.Sanitize(post.FullContent),
-                CreatedOn = post.CreatedOn.ToString("dd-MM-yyyy hh:mm"),
+                CreatedOn = post.CreatedOn.ToString("dd-MM-yyyy HH:mm"),
                 Tags = string.Join(", ", post.Tags.Select(t => t.Tag.Name)),
                 Id = post.Id,
                 IsDeleted = post.IsDeleted,
                 Comments = post.Comments.Where(c => c.IsDeleted == false).Select(c => new CommentViewModel
                 {
-                    // AuthorId = c.AuthorId,
-                    Author = c.Author,
+                    AuthorName = c.Author.UserName,
                     Content = this.sanitizer.Sanitize(c.Content),
-                    CreatedOn = c.CreatedOn.ToString("dd-MM-yyyy hh:mm"),
+                    CreatedOn = c.CreatedOn.ToString("dd-MM-yyyy HH:mm"),
                     Id = c.Id,
                     IsDeleted = c.IsDeleted
                 }).ToList()
@@ -189,6 +219,31 @@ namespace CakeWebApp.Services.Common.CommonServices
         public IEnumerable<PostIndexViewModel> GetPostsByTag(string tagName)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task MarkCommentAsDeleted(EditCommentViewModel model)
+        {
+            var comment = await this.commentRepo.GetByIdAsync(model.Comment.Id);
+
+            if (comment == null)
+            {
+                throw new InvalidOperationException("Comment not found.");
+            }
+
+            comment.IsDeleted = true;
+
+            this.commentRepo.Update(comment);
+
+            try
+            {
+                await this.commentRepo.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                this.logger.LogError(e.Message);
+
+                throw new InvalidOperationException("Sorry, an error occurred while trying to delete your comment.");
+            }
         }
 
         public async Task MarkPostAsDeleted(PostInputViewModel model)
@@ -213,6 +268,32 @@ namespace CakeWebApp.Services.Common.CommonServices
                 this.logger.LogError(e.Message);
 
                 throw new InvalidOperationException("Sorry, an error occurred while trying to delete your post");
+            }
+        }
+
+        public async Task UpdateComment(EditCommentViewModel model)
+        {
+            var comment = new Comment
+            {
+                AuthorId = model.Comment.AuthorId,
+                Id = model.Comment.Id,
+                Content = model.Comment.Content,
+                CreatedOn = model.Comment.CreatedOn,
+                IsDeleted = model.Comment.IsDeleted,
+                PostId = model.Comment.PostId
+            };
+
+            this.commentRepo.Update(comment);
+
+            try
+            {
+                await this.commentRepo.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                this.logger.LogError(e.Message);
+
+                throw new InvalidOperationException("Sorry an error occurred whille trying to edit your comment.");
             }
         }
 

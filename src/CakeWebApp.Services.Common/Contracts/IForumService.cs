@@ -20,10 +20,14 @@ namespace CakeWebApp.Services.Common.Contracts
 
         Task<PostInputViewModel> GetPostById(int id);
 
-        Task EditPost(int id);
-
         Task UpdatePost(PostInputViewModel model);
 
         Task MarkPostAsDeleted(PostInputViewModel model);
+
+        Task<EditCommentViewModel> GetCommentToEditOrDelete(int id);
+
+        Task UpdateComment(EditCommentViewModel model);
+
+        Task MarkCommentAsDeleted(EditCommentViewModel model);
     }
 }

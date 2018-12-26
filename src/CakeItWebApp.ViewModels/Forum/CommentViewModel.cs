@@ -11,10 +11,10 @@ namespace CakeItWebApp.ViewModels.Forum
         [Required]
         public int Id { get; set; }
 
-        [Required]
         public string AuthorId { get; set; }
 
-        public virtual CakeItUser Author { get; set; }
+        [Required]
+        public string AuthorName { get; set; }
 
         [Required]
         public string Content { get; set; }
