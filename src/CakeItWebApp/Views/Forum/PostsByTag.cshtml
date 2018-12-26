@@ -50,14 +50,12 @@
             <div class="card my-4">
                 <h5 class="card-header">Search</h5>
                 <div class="card-body">
-                    <form method="get">
-                        <div class="input-group">
-                            <input name="searchString" class="form-control" placeholder="Search for...">
-                            <span class="input-group-btn">
-                                <button class="btn btn-info" type="submit">Go!</button>
-                            </span>
-                        </div>
-                    </form>
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search for...">
+                        <span class="input-group-btn">
+                            <button class="btn btn-secondary" type="button">Go!</button>
+                        </span>
+                    </div>
                 </div>
             </div>
 
@@ -68,7 +66,7 @@
                     <div class="row">
                         <div class="col-lg-6">
                             <ul class="list-unstyled mb-0">
-                                @foreach (var tag in tags.Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries))
+                                @foreach (var tag in tags.Split(new char[] { ',', ' ' },StringSplitOptions.RemoveEmptyEntries))
                                 {
                                     <li>
                                         <a asp-controller="Forum" asp-action="PostsByTag" asp-route-tag="@tag">@tag</a>
@@ -87,29 +85,4 @@
            LiElementClasses = new string[] { "page-item" },
            PageClasses = new string[] { "page-link" }
     })
-
-</main>
-<!-- /.container -->
-<!-- Comment with nested comments -->
-@*<div class="media mb-4">
-        <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">
-        <div class="media-body">
-            <h5 class="mt-0">Commenter Name</h5>
-            Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-
-            <div class="media mt-4">
-                <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">
-                <div class="media-body">
-                    <h5 class="mt-0">Commenter Name</h5>
-                    Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-                </div>
-            </div>
-            <div class="media mt-4">
-                <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">
-                <div class="media-body">
-                    <h5 class="mt-0">Commenter Name</h5>
-                    Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-                </div>
-            </div>
-        </div>
-    </div>*@
+    </main>

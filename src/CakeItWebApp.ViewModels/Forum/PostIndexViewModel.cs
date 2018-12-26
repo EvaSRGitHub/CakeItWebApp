@@ -6,7 +6,7 @@ using System.Text;
 namespace CakeItWebApp.ViewModels.Forum
 {
     public class PostIndexViewModel
-    {
+    { 
         public int Id { get; set; }
 
         public string Author { get; set; }

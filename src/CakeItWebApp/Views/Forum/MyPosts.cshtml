@@ -1,0 +1,38 @@
+﻿@using System.Collections.Generic
+@model ICollection<CakeItWebApp.ViewModels.Forum.UserPostsViewModel>
+
+@{
+    var count = 0;
+}
+<main>
+    <div class="row">
+        <div class="col-md-8 offset-md-2 mt-2">
+            <h1>All My Posts</h1>
+            <hr class="hr-2" style="background-color: forestgreen">
+            <table class="table table-hover">
+                <thead>
+                    <tr class="row">
+                        <th scope="col" class="col-md-1 d-flex"><h3>#</h3></th>
+                        <th scope="col" class="col-md-2 d-flex"><h3>Title</h3></th>
+                        <th scope="col" class="col-md-2 d-flex"><h3>Posted On</h3></th>
+                        <th scope="col" class="col-md-5 d-flex"><h3>Content</h3></th>
+                        <th scope="col" class="col-md-2 d-flex"><h3>Comments</h3></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        count++;
+                        <tr class="row">
+                            <th scope="row" class="col-md-1 d-flex"><h5>@count</h5></th>
+                            <td class="col-md-2 d-flex"><h5>@item.Title</h5></td>
+                            <td class="col-md-2 d-flex"><h5>@item.CreatedOn</h5></td>
+                            <td class="col-md-5 d-flex"><h5>@item.Content ...</h5></td>
+                            <td class="col-md-2 d-flex"><h5><a asp-controller="Forum" asp-action="CommentsPerPost" asp-route-postId="@item.PostId" class="btn btn-info text-white">Comments</a></h5></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>

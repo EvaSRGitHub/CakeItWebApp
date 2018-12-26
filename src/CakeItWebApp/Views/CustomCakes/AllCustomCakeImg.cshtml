@@ -33,15 +33,15 @@
                         <td class="col-md-2" style="min-width: 15rem; max-width: 15rem; word-wrap: break-word; white-space:normal"><h5>@item.Side</h5></td>
                         <td class="col-md-2" style="min-width: 15rem; max-width: 15rem; word-wrap: break-word; white-space:normal"><h5>@item.Top</h5></td>
                         <td class="col-md-3" style="min-width: 34rem; max-width: 34rem; word-wrap: break-word; white-space:normal"><h5>@item.Img</h5></td>
-                        <td class="col-md-1 d-flex"><h5><a class="btn btn-secondary" asp-controller="CustomCakes" asp-action="Edit" asp-route-id="@item.Id">Edit</a></h5></td>
-                        <td class="col-md-1 d-flex"><h5><a class="btn btn-primary"asp-controller="CustomCakes" asp-action="Delete" asp-route-id="@item.Id">Delete</a></h5></td>
+                        <td class="col-md-1 d-flex"><h5><a class="btn btn-info" asp-controller="CustomCakes" asp-action="Edit" asp-route-id="@item.Id">Edit</a></h5></td>
+                        <td class="col-md-1 d-flex"><h5><a class="btn btn-danger" asp-controller="CustomCakes" asp-action="Delete" asp-route-id="@item.Id">Delete</a></h5></td>
 
                     </tr>
                     }
                 </tbody>
             </table>
             <div class="justify-content-right">
-                <a href="javascript:void(0);" onclick="history.go(-1);" class="btn btn-info" role="button">Back</a>
+                <a href="javascript:void(0);" onclick="history.go(-1);" class="btn btn-dark" role="button" style="color: white">Back</a>
             </div>
         </div>
     </div>

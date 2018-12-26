@@ -27,13 +27,13 @@ namespace CakeItWebApp.Controllers
         }
 
         [AllowAnonymous]
-        public IActionResult Index(int? page)
+        public IActionResult Index(int? page, string searchString = null)
         {
-            var tags = this.tagService.GetAllTags().ToList().Select( t => t.Name);
+            var tags = this.tagService.GetAllTags().ToList().Select(t => t.Name);
 
             ViewData["Tags"] = string.Join(", ", tags);
 
-            var allPosts = this.forumService.GetAllPosts();
+            var allPosts = this.forumService.GetAllActivePosts(searchString);
 
             var nextPage = page ?? 1;
 
@@ -279,15 +279,109 @@ namespace CakeItWebApp.Controllers
             return this.RedirectToAction("PostDetails", new { id = model.Comment.PostId });
         }
 
-        //TODO: My Posts
+        public IActionResult MyPosts()
+        {
+            ICollection<UserPostsViewModel> model;
 
-        //TODO: My Comments
+            try
+            {
+                model = this.forumService.GetAllMyPosts(this.User.Identity.Name).ToList();
+            }
+            catch (Exception e)
+            {
+                ViewData["Errors"] = e.Message;
 
-        //TODO: Admin All Posts ?
-        
-        //TODO: PostByTags
+                return this.View("Error");
+            }
 
-        //TODO: Search Post's Title by words
+            return this.View(model);
+        }
+
+        public async Task<IActionResult> CommentsPerPost(int PostId)
+        {
+            PostDetailsViewModel model;
+
+            try
+            {
+                model = await this.forumService.GetAllCommentsPerPost(PostId);
+            }
+            catch (Exception e)
+            {
+                ViewData["Errors"] = e.Message;
+
+                return this.View("Error");
+            }
+
+            return this.View(model);
+        }
+
+        public IActionResult MyComments()
+        {
+            ICollection<CommentInputViewModel> model;
+
+            try
+            {
+                model = this.forumService.GetAllMyComments(this.User.Identity.Name).ToList();
+            }
+            catch (Exception e)
+            {
+                ViewData["Errors"] = e.Message;
+
+                return this.View("Error");
+            }
+
+            return this.View(model);
+        }
+
+        [Authorize(Roles = "Admin")]
+        public IActionResult AllPosts(int? page)
+        {
+            IPagedList<PostIndexViewModel> postsPerPage;
+            try
+            {
+               var model = this.forumService.GetAllPosts().ToList();
+
+                var nextPage = page ?? 1;
+
+                postsPerPage = model.ToPagedList(nextPage, MaxPostPerPage);
+            }
+            catch (Exception e)
+            {
+                ViewData["Errors"] = e.Message;
+
+                return this.View("Error");
+            }
+
+            return this.View(postsPerPage);
+
+        }
+
+        [AllowAnonymous]
+        public IActionResult PostsByTag(int? page, string tag)
+        {
+            var tags = this.tagService.GetAllTags().ToList().Select(t => t.Name);
+
+            ViewData["Tags"] = string.Join(", ", tags);
+
+            ICollection<PostIndexViewModel> allPostsByTag;
+
+            try
+            {
+                allPostsByTag = this.forumService.GetPostsByTag(tag);
+            }
+            catch(Exception e)
+            {
+                ViewData["Errors"] = e.Message;
+
+                return this.View("Error");
+            }
+
+            var nextPage = page ?? 1;
+
+            var postsPerPage = allPostsByTag.ToPagedList(nextPage, MaxPostPerPage);
+
+            return View(postsPerPage);
+        }
 
         //TODO - All Delets
     }

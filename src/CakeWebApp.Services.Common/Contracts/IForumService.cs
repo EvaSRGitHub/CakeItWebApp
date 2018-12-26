@@ -1,6 +1,7 @@
 ﻿using CakeItWebApp.ViewModels.Forum;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -8,13 +9,15 @@ namespace CakeWebApp.Services.Common.Contracts
 {
     public interface IForumService
     {
+        IEnumerable<PostIndexViewModel> GetAllActivePosts(string searchString);
+
         IEnumerable<PostIndexViewModel> GetAllPosts();
 
         Task CreatePost(PostInputViewModel model);
 
         PostDetailsViewModel GetPostDetailById(int id);
 
-        IEnumerable<PostIndexViewModel> GetPostsByTag(string tagName);
+        ICollection<PostIndexViewModel> GetPostsByTag(string tagName);
 
         Task CreateComment(CommentInputViewModel model);
 
@@ -29,5 +32,11 @@ namespace CakeWebApp.Services.Common.Contracts
         Task UpdateComment(EditCommentViewModel model);
 
         Task MarkCommentAsDeleted(EditCommentViewModel model);
+
+        IQueryable<UserPostsViewModel> GetAllMyPosts(string userName);
+
+        IQueryable<CommentInputViewModel> GetAllMyComments(string userName);
+
+        Task<PostDetailsViewModel> GetAllCommentsPerPost(int postId);
     }
 }

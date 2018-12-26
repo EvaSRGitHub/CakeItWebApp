@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace CakeWebApp.Services.Common.CommonServices
@@ -105,9 +106,90 @@ namespace CakeWebApp.Services.Common.CommonServices
             }
         }
 
-        public IEnumerable<PostIndexViewModel> GetAllPosts()
+        public async Task<PostDetailsViewModel> GetAllCommentsPerPost(int postId)
         {
-            var posts = this.postRepo.All().Where(p => p.IsDeleted == false);
+            var post = await this.postRepo.GetByIdAsync(postId);
+
+            if (post == null && post.IsDeleted == true)
+            {
+                throw new InvalidOperationException("Post not found.");
+            }
+
+            var postDetail = new PostDetailsViewModel
+            {
+                Author = post.Author.UserName,
+                Title = post.Title,
+                FullContent = this.sanitizer.Sanitize(post.FullContent),
+                CreatedOn = post.CreatedOn.ToString("dd-MM-yyyy HH:mm"),
+                Tags = string.Join(", ", post.Tags.Select(t => t.Tag.Name)),
+                Id = post.Id,
+                IsDeleted = post.IsDeleted,
+                Comments = post.Comments.Where(c => c.IsDeleted == false).Select(c => new CommentViewModel
+                {
+                    AuthorName = c.Author.UserName,
+                    Content = this.sanitizer.Sanitize(c.Content),
+                    CreatedOn = c.CreatedOn.ToString("dd-MM-yyyy HH:mm"),
+                    Id = c.Id,
+                    IsDeleted = c.IsDeleted
+                }).ToList()
+            };
+
+            return postDetail;
+        }
+
+        public IQueryable<CommentInputViewModel> GetAllMyComments(string userName)
+        {
+            var comments = this.commentRepo.All().Where(a => a.Author.UserName == userName && a.IsDeleted == false);
+
+            if(comments == null)
+            {
+                throw new InvalidOperationException("No Comments found.");
+            }
+
+            var commentModels = comments.Select(c => new CommentInputViewModel {
+                CreatedOn = c.CreatedOn,
+                Content = GetShortContent(c.Content),
+                AuthorId = c.AuthorId,
+                Id = c.Id,
+                PostId = c.PostId,
+                IsDeleted = c.IsDeleted
+            }).OrderByDescending(c => c.CreatedOn);
+
+            return commentModels;
+        }
+
+        public IQueryable<UserPostsViewModel> GetAllMyPosts(string userName)
+        {
+            var allPosts = this.postRepo.All().Where(u => u.Author.UserName == userName && u.IsDeleted == false);
+
+            if (allPosts == null)
+            {
+                throw new InvalidOperationException("No Posts found.");
+            }
+
+            var modelPosts = allPosts.Select(p => new UserPostsViewModel
+            {
+                PostId = p.Id,
+                Title = p.Title,
+                CreatedOn = p.CreatedOn.ToString("dd-MM-yyyy HH:mm"),
+                Content = GetShortContent(p.FullContent),
+            });
+
+            return modelPosts;
+        }
+
+        public IEnumerable<PostIndexViewModel> GetAllActivePosts(string searchString)
+        {
+            IQueryable<Post> posts;
+
+            if (searchString == null)
+            {
+                posts = this.postRepo.All().Where(p => p.IsDeleted == false);
+            }
+            else
+            {
+                posts = this.postRepo.All().Where(p => p.Title.Contains(searchString) && p.IsDeleted == false);
+            }
 
             var modelPosts = posts.Select(p => new PostIndexViewModel
             {
@@ -117,7 +199,7 @@ namespace CakeWebApp.Services.Common.CommonServices
                 Tags = string.Join(", ", p.Tags.Select(t => t.Tag.Name)),
                 Title = p.Title,
                 Id = p.Id
-            }).ToList();
+            }).OrderByDescending(p => p.CreatedOn).ToList();
 
             return modelPosts;
         }
@@ -210,15 +292,32 @@ namespace CakeWebApp.Services.Common.CommonServices
                     CreatedOn = c.CreatedOn.ToString("dd-MM-yyyy HH:mm"),
                     Id = c.Id,
                     IsDeleted = c.IsDeleted
-                }).ToList()
+                }).OrderByDescending(c => c.CreatedOn).ToList()
             };
 
             return postDetail;
         }
 
-        public IEnumerable<PostIndexViewModel> GetPostsByTag(string tagName)
+        public ICollection<PostIndexViewModel> GetPostsByTag(string tagName)
         {
-            throw new NotImplementedException();
+            var posts = this.postRepo.All().Where(p => p.Tags.Any(t => t.Tag.Name == tagName) && p.IsDeleted == false);
+
+            if(posts == null)
+            {
+                throw new InvalidOperationException("No mathcing posts are found.");
+            }
+
+            var modelPosts = posts.Select(p => new PostIndexViewModel
+            {
+                Author = p.Author.UserName,
+                CommentCount = p.Comments.Count,
+                CreatedOn = p.CreatedOn.ToString("dd-MM-yyyy HH:mm"),
+                Tags = string.Join(", ", p.Tags.Select(t => t.Tag.Name)),
+                Title = p.Title,
+                Id = p.Id
+            }).OrderByDescending(p => p.CreatedOn).ToList();
+
+            return modelPosts;
         }
 
         public async Task MarkCommentAsDeleted(EditCommentViewModel model)
@@ -346,6 +445,47 @@ namespace CakeWebApp.Services.Common.CommonServices
                 throw new InvalidOperationException("Sorry. An error occurred while updating your post.");
             }
 
+        }
+
+        private string GetShortContent(string fullContent)
+        {
+            var content = StripHtml(this.sanitizer.Sanitize(fullContent));
+
+            var contentLength = content.Length;
+
+            return content.Substring(0, (contentLength < 100 ? contentLength : 100));
+        }
+
+        private string StripHtml(string source)
+        {
+            string output;
+
+            //get rid of HTML tags
+            output = Regex.Replace(source, "<[^>]*>", string.Empty);
+
+            //get rid of multiple blank lines
+            output = Regex.Replace(output, @"^\s*$\n", string.Empty, RegexOptions.Multiline);
+
+            return output;
+        }
+
+        public IEnumerable<PostIndexViewModel> GetAllPosts()
+        {
+            var posts = this.postRepo.All();
+
+            var modelPosts = posts.Select(p => new PostIndexViewModel
+            {
+                Author = p.Author.UserName,
+                FullContent = GetShortContent(p.FullContent),
+                CommentCount = p.Comments.Count,
+                CreatedOn = p.CreatedOn.ToString("dd-MM-yyyy HH:mm"),
+                Tags = string.Join(", ", p.Tags.Select(t => t.Tag.Name)),
+                Title = p.Title,
+                Id = p.Id,
+                IsDeleted = p.IsDeleted
+            }).OrderByDescending(p => p.CreatedOn).ToList();
+
+            return modelPosts;
         }
     }
 }
