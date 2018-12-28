@@ -4,52 +4,45 @@
     <div class="row">
         <div class="col-md-6 offset-md-3">
             <section>
-                <h1 class="text-center">Edit Cake</h1>
+                <h1 class="text-center">Delete Cake</h1>
                 <hr class="bg-panda hr-2" />
                 <form method="post">
                     <div asp-validation-summary="All" class="text-danger"></div>
                     <div class="form-row">
                         <div class="form-group col-md-6">
                             <label asp-for="@Model.Name" class="text-center"></label>
-                            <input asp-for="@Model.Name" class="form-control" placeholder="Name" value="@Model.Name">
+                            <input asp-for="@Model.Name" class="form-control" placeholder="Name" value="@Model.Name" disabled>
                             <span asp-validation-for="@Model.Name" class="text-danger"></span>
                         </div>
                         <div class="form-group col-md-6">
                             <label asp-for="@Model.CategoryId" class="text-center"></label>
-                            <input asp-for="@Model.CategoryId" class="form-control" placeholder="Category Id" value="@Model.CategoryId">
+                            <input asp-for="@Model.CategoryId" class="form-control" placeholder="Category Id" value="@Model.CategoryId" disabled>
                             <span asp-validation-for="@Model.CategoryId" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-6">
                             <label asp-for="@Model.Image" class="text-center"></label>
-                            <input asp-for="@Model.Image" type="url" class="form-control" placeholder="Image Url" value="@Model.Image">
+                            <input asp-for="@Model.Image" type="url" class="form-control" placeholder="Image Url" value="@Model.Image" disabled>
                             <span asp-validation-for="@Model.Image" class="text-danger"></span>
                         </div>
                         <div class="form-group col-md-6">
                             <label asp-for="@Model.Price" class="text-center"></label>
-                            <input asp-for="@Model.Price" type="number" class="form-control" placeholder="Price" value="@Model.Price">
+                            <input asp-for="@Model.Price" type="number" class="form-control" placeholder="Price" value="@Model.Price" disabled>
                             <span asp-validation-for="@Model.Price" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-12">
                             <label asp-for="@Model.Description" class="text-center"></label>
-                            <textarea asp-for="@Model.Description" class="form-control" rows="5" cols="50" placeholder="Description" value="@Model.Description"></textarea>
+                            <textarea asp-for="@Model.Description" class="form-control" rows="5" cols="50" placeholder="Description" value="@Model.Description" disabled></textarea>
                             <span asp-validation-for="@Model.Description" class="text-danger"></span>
                         </div>
 
                     </div>
-                    <div class="form-row">
-                        <div class="form-group col-md-12">
-                            <label asp-for="@Model.IsDeleted" class="text-center"></label>
-                            <input asp-for="@Model.IsDeleted" type="text" class="form-control" placeholder="Is deleted" value="@Model.IsDeleted">
-                            <span asp-validation-for="@Model.IsDeleted" class="text-danger"></span>
-                        </div>
-                    </div>
                     <hr class="bg-panda hr-2" />
                     <div class="button-holder d-flex justify-content-around">
-                        <button asp-controller="Cakes" asp-action="Edit" type="submit" class="btn btn-info" asp-route-id="@Model.Id">Edit Cake</button>
+                        <button asp-controller="Cakes" asp-action="Delete" type="submit" class="btn btn-info" asp-route-id="@Model.Id">Delete Cake</button>
                     </div>
                 </form>
             </section>

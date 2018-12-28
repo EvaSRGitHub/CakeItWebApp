@@ -356,9 +356,9 @@ namespace CakeItWebApp.Services.Common.Tests
             var mock = new Mock<ILogger<CustomCakeService>>();
             ILogger<CustomCakeService> logger = mock.Object;
             var service = new CustomCakeService(null, repo, this.Mapper, logger);
-
+            var cake = await service.GetCustomCakeImgById(1);
             //Act
-            await service.DeleteCustomCakeImg(1);
+            await service.DeleteCustomCakeImg(cake);
             var expectedRepoCount = 1;
             var actualRepoCount = repo.All().Count();
 
@@ -379,11 +379,12 @@ namespace CakeItWebApp.Services.Common.Tests
             var mock = new Mock<ILogger<CustomCakeService>>();
             ILogger<CustomCakeService> logger = mock.Object;
             var service = new CustomCakeService(null, repo, this.Mapper, logger);
+            var cake = await service.GetCustomCakeImgById(3);
 
             //Act
-
+            
             //Asser
-            await Assert.ThrowsAsync<InvalidOperationException>(async () => await service.DeleteCustomCakeImg(3));
+            await Assert.ThrowsAsync<InvalidOperationException>(async () => await service.DeleteCustomCakeImg(cake));
         }
 
         [Fact]

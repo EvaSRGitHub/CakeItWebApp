@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace CakeItWebApp.Models
+namespace CakeItWebApp.ViewModels.Books
 {
-    public class Book
+    public class BookIndexViewModel
     {
         public int Id { get; set; }
 
@@ -22,13 +22,15 @@ namespace CakeItWebApp.Models
         public string Description { get; set; }
 
         [Required]
+        [Display(Name = "Download Url")]
         public string DownloadUrl { get; set; }
 
         [Required]
-        public string CoverUrl { get; set; } 
+        [Display(Name = "Cover Image Url")]
+        public string CoverUrl { get; set; }
 
-        public double? Rating { get; set; }
+        public double Rating { get; set; }
 
-        public int? RatingVotes { get; set; }
+        public int RatingVotes { get; set; }
     }
 }

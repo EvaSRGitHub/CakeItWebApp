@@ -30,7 +30,7 @@ namespace CakeItWebApp.Controllers
         {
             ShwoMessageIfOrderHasBeenFinished();
 
-            var allCakes = this.cakeService.GetAllCakes();
+            var allCakes = this.cakeService.GetAllActiveCakes();
 
             var nextPage = page ?? 1;
 
@@ -87,11 +87,15 @@ namespace CakeItWebApp.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id)
         {
-           var model = await this.cakeService.GetCakeById(id);
-            
-            if(model == null)
+            EditAndDeleteViewModel model;
+
+            try
             {
-                ViewData["Errors"] = "Product not found.";
+                model = await this.cakeService.GetCakeToEdit(id);
+            }
+            catch (Exception e)
+            {
+                ViewData["Errors"] = e.Message;
 
                 return this.View("Error");
             }
@@ -122,13 +126,41 @@ namespace CakeItWebApp.Controllers
             return RedirectToAction("Index");
         }
 
-        [HttpPost]
-        [Authorize(Roles = "Adimn")]
-        public IActionResult Delete(int id)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Delete(int id)
         {
-            this.cakeService.DeleteCake(id);
+            EditAndDeleteViewModel model;
 
-            return this.View("/Cakes/Index");
+            try
+            {
+              model = await this.cakeService.GetCakeById(id);
+            }
+            catch (Exception e)
+            {
+                ViewData["Errors"] = e.Message;
+
+                return this.View("Error");
+            }
+
+            return this.View(model);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Delete(EditAndDeleteViewModel model)
+        {
+            try
+            {
+               await this.cakeService.DeleteCake(model);
+            }
+            catch (Exception e)
+            {
+                ViewData["Errors"] = e.Message;
+
+                return this.View("Error");
+            }
+
+            return this.RedirectToAction("Index");
         }
 
         public async Task<IActionResult> Details(int id)
@@ -163,6 +195,14 @@ namespace CakeItWebApp.Controllers
             TempData["Rate"] = "Your rating has been successfully registered.";
 
             return RedirectToAction(nameof(Index));
+        }
+
+        [Authorize(Roles = "Admin")]
+        public IActionResult AllCakes()
+        {
+            var model = this.cakeService.GetAllCakes();
+
+            return this.View(model);
         }
     }
 }

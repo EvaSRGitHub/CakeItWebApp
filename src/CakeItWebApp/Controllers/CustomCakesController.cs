@@ -112,9 +112,6 @@ namespace CakeItWebApp.Controllers
                 return this.View("Error");
             }
 
-
-           
-
             return RedirectToAction("AddToCart", "ShoppingCart", new { Id = customProductId });
         }
 
@@ -208,13 +205,32 @@ namespace CakeItWebApp.Controllers
             return RedirectToAction("AllCustomCakeImg");
         }
 
-        [HttpPost]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
+            CustomCakeImgViewModel model;
+
             try
             {
-                await this.customCakeService.DeleteCustomCakeImg(id);
+                model = await this.customCakeService.GetCustomCakeImgById(id);
+            }
+            catch (Exception e)
+            {
+                ViewData["Errors"] = e.Message;
+
+                return this.View("Error");
+            }
+
+            return this.View(model);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Delete(CustomCakeImgViewModel model)
+        {
+            try
+            {
+                await this.customCakeService.DeleteCustomCakeImg(model);
             }
             catch (Exception e)
             {

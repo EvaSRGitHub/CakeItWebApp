@@ -2,6 +2,7 @@
 using CakeItWebApp.Models;
 using CakeItWebApp.Models.Enums;
 using CakeItWebApp.ViewModels;
+using CakeItWebApp.ViewModels.Books;
 using CakeItWebApp.ViewModels.Cakes;
 using CakeItWebApp.ViewModels.CustomCake;
 using CakeItWebApp.ViewModels.Forum;
@@ -42,6 +43,12 @@ namespace CakeWebApp.Services.Common.Mapping
             CreateMap<Tag, TagInputViewModel>().ReverseMap();
 
             CreateMap<Comment, CommentInputViewModel>().ReverseMap();
+
+            CreateMap<Book, CreateBookViewModel>().ReverseMap();
+
+            CreateMap<Book, BookIndexViewModel>().ReverseMap();
+
+
         }
     }
 }

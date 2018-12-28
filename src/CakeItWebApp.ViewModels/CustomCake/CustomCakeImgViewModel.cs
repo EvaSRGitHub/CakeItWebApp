@@ -20,5 +20,8 @@ namespace CakeItWebApp.ViewModels.CustomCake
 
         [Required]
         public string Img { get; set; }
+
+        [Display(Name = "Is Deleted")]
+        public bool IsDeleted { get; set; }
     }
 }

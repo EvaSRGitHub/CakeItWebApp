@@ -12,10 +12,10 @@
             <thead>
                 <tr class="row">
                     <th scope="col" class="col-md-1 d-flex"><h3>#</h3></th>
-                    <th scope="col" class="col-md-4 d-flex"><h3>Name</h3></th>
+                    <th scope="col" class="col-md-6 d-flex"><h3>Name</h3></th>
                     <th scope="col" class="col-md-2 d-flex"><h3>Price</h3></th>
-                    <th scope="col" class="col-md-2 d-flex"><h3>Quantity</h3></th>
-                    <th scope="col" class="col-md-3 d-flex"><h3>Remove</h3></th>
+                    <th scope="col" class="col-md-1 d-flex"><h3>Qty</h3></th>
+                    <th scope="col" class="col-md-2 d-flex"><h3>Remove</h3></th>
                 </tr>
             </thead>
             <tbody>
@@ -24,10 +24,10 @@
                     count++;
                     <tr class="row">
                         <th scope="row" class="col-md-1 d-flex"><h5>@count</h5></th>
-                        <td class="col-md-4 d-flex"><h5>@item.Product.Name</h5></td>
+                        <td class="col-md-6 d-flex"><h5>@item.Product.Name</h5></td>
                         <td class="col-md-2 d-flex"><h5>@item.Product.Price</h5></td>
-                        <td class="col-md-2 d-flex"><h5>@item.Quantity</h5></td>
-                        <td class="col-md-3 d-flex justify-content-center">
+                        <td class="col-md-1 d-flex"><h5>@item.Quantity</h5></td>
+                        <td class="col-md-2 d-flex justify-content-center">
                             <div>
                                 <a asp-controller="ShoppingCart" asp-action="RemoveItem" asp-route-id="@item.Product.Id" class="btn btn-danger text-white">Remove</a>
                             </div>

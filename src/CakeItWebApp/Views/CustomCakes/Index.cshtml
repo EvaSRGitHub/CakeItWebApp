@@ -16,118 +16,99 @@
             <form method="post">
                 <div asp-validation-summary="All" class="text-danger"></div>
                 <!--Sponge-->
-                <div class="form-row dropdown justify-content-center mb-3">
-                    <button type="button" class="btn dropdown-toggle w-100 cakeItDropBtn" data-toggle="dropdown">
-                        <img src="~/images/spongeicon1.png" />
-                        Sponge
-                    </button>
-                    <div class="dropdown-menu w-100 cakeItDropMenu">
-                        @Model.
+                <div class="form-group w-100 d-flex">
+                    <span><img src="~/images/spongeicon1.png" /></span>
+                    <select class="form-control d-inline ml-2" asp-for="Sponge" style="background-color: wheat; color: saddlebrown; border: 2px solid saddlebrown;">
+                        <option selected>-- Choose Sponge --</option>
 
                         @foreach (var item in Enum.GetValues(typeof(CakeItWebApp.Models.Enums.SpongeType)))
                         {
-                            <div class="form-check cakeItForm-check">
-                                <label asp-for="Sponge" class="form-check-label">
-                                    <input asp-for="Sponge" type="radio" class="form-check-input" value="@item">@item
-                                </label>
-                            </div>
+                            var itemName = item.ToString().Replace('_', ' ');
+
+                            <option value="@item">@itemName Sponge</option>
                         }
-                    </div>
+                    </select>
                 </div>
                 <!--First Layer Cream-->
-                <div class="form-row dropdown justify-content-center mb-3">
-                    <button type="button" class="btn dropdown-toggle w-100 cakeItDropBtn" data-toggle="dropdown">
-                        <img src="~/images/creamicon.png" />
-                        First Layer Cream
-                    </button>
-                    <div class="dropdown-menu w-100 cakeItDropMenu">
+                <div class="form-group w-100 d-flex">
+                    <span><img src="~/images/creamicon.png" /></span>
+                    <select class="form-control d-inline ml-2" asp-for="FirstLayerCream" style="background-color: wheat; color: saddlebrown; border: 2px solid saddlebrown;">
+                        <option selected>-- Choose First Layer Cream --</option>
+
                         @foreach (var item in Enum.GetValues(typeof(CakeItWebApp.Models.Enums.CreamType)))
                         {
-                            <div class="form-check cakeItForm-check">
-                                <label asp-for="FirstLayerCream" class="form-check-label">
-                                    <input asp-for="FirstLayerCream" type="radio" class="form-check-input" value="@item">@item
-                                </label>
-                            </div>
+                            var itemName = item.ToString().Replace('_', ' ');
+
+                            <option value="@item">@itemName Cream</option>
                         }
-                    </div>
+                    </select>
                 </div>
                 <!--Second Layer Cream-->
-                <div class="form-row dropdown justify-content-center  mb-3">
-                    <button type="button" class="btn dropdown-toggle w-100 cakeItDropBtn" data-toggle="dropdown">
-                        <img src="~/images/creamicon.png" />
-                        Second Layer Cream
-                    </button>
-                    <div class="dropdown-menu w-100 cakeItDropMenu">
+                <div class="form-group w-100 d-flex">
+                    <span><img src="~/images/creamicon.png" /></span>
+                    <select class="form-control d-inline ml-2" asp-for="SecondLayerCream" style="background-color: wheat; color: saddlebrown; border: 2px solid saddlebrown;">
+                        <option selected>-- Choose Second Layer Cream --</option>
+
                         @foreach (var item in Enum.GetValues(typeof(CakeItWebApp.Models.Enums.CreamType)))
                         {
-                            <div class="form-check cakeItForm-check">
-                                <label asp-for="SecondLayerCream" class="form-check-label">
-                                    <input asp-for="SecondLayerCream" type="radio" class="form-check-input" value="@item">@item
-                                </label>
-                            </div>
+                            var itemName = item.ToString().Replace('_', ' ');
+
+                            <option value="@item">@itemName Cream</option>
                         }
-                    </div>
+                    </select>
                 </div>
                 <!--Fruit Filling-->
-                <div class="form-row dropdown justify-content-center mb-3">
-                    <button type="button" class="btn dropdown-toggle w-100 cakeItDropBtn" data-toggle="dropdown">
-                        <img src="~/images/fruiticon.png" />
-                        Fruit Filling
-                    </button>
-                    <div class="dropdown-menu w-100 cakeItDropMenu" x-placement="bottom-start">
+                <div class="form-group w-100 d-flex">
+                    <span><img src="~/images/fruiticon.png" /></span>
+                    <select class="form-control d-inline ml-2" asp-for="Filling" style="background-color: wheat; color: saddlebrown; border: 2px solid saddlebrown;">
+                        <option selected>-- Choose Filling --</option>
+
                         @foreach (var item in Enum.GetValues(typeof(CakeItWebApp.Models.Enums.FillingType)))
                         {
-                            <div class="form-check cakeItForm-check">
-                                <label asp-for="Filling" class="form-check-label">
-                                    <input asp-for="Filling" type="radio" class="form-check-input" value="@item">@item
-                                </label>
-                            </div>
+                            var itemName = item.ToString().Replace('_', ' ');
+
+                            <option value="@item">@itemName Filling</option>
                         }
-                    </div>
+                    </select>
                 </div>
                 <!--Side Decoration-->
-                <div class="form-row dropdown justify-content-center mb-3">
-                    <button type="button" class="btn dropdown-toggle w-100 cakeItDropBtn" data-toggle="dropdown">
-                        <img src="~/images/sidesicon.png" />
-                        Side Decoration
-                    </button>
-                    <div class="dropdown-menu w-100 cakeItDropMenu">
+                <div class="form-group w-100 d-flex">
+                    <span><img src="~/images/sidesicon.png" /></span>
+                    <select class="form-control d-inline ml-2" asp-for="SideDecoration" style="background-color: wheat; color: saddlebrown; border: 2px solid saddlebrown;">
+                        <option selected>-- Choose Side Decoration --</option>
+
                         @foreach (var item in Enum.GetValues(typeof(CakeItWebApp.Models.Enums.SideDecorationType)))
                         {
-                            <div class="form-check cakeItForm-check">
-                                <label asp-for="SideDecoration" class="form-check-label">
-                                    <input asp-for="SideDecoration" type="radio" class="form-check-input" value="@item">@item
-                                </label>
-                            </div>
+                            var itemName = item.ToString().Replace('_', ' ');
+
+                        <option value="@item">@itemName Side Decoration</option>
                         }
-                    </div>
+                    </select>
                 </div>
                 <!--Top Decoration-->
-                <div class="form-row dropdown justify-content-center mb-3">
-                    <button type="button" class="btn dropdown-toggle w-100 cakeItDropBtn" data-toggle="dropdown">
-                        <img src="~/images/toppingicon.png" />
-                        Top Decoration
-                    </button>
-                    <div class="dropdown-menu w-100 cakeItDropMenu">
+                <div class="form-group w-100 d-flex">
+                    <span><img src="~/images/toppingicon.png" /></span>
+                    <select class="form-control d-inline ml-2" asp-for="TopDecoration" style="background-color: wheat; color: saddlebrown; border: 2px solid saddlebrown;">
+                        <option selected>-- Choose Top Decoration --</option>
+
                         @foreach (var item in Enum.GetValues(typeof(CakeItWebApp.Models.Enums.TopDecorationType)))
                         {
-                            <div class="form-check cakeItForm-check">
-                                <label asp-for="TopDecoration" class="form-check-label">
-                                    <input asp-for="TopDecoration" type="radio" class="form-check-input" value="@item">@item
-                                </label>
-                            </div>
+                            var itemName = item.ToString().Replace('_', ' ');
+
+                            <option value="@item">@itemName Top Decoration</option>
                         }
-                    </div>
+                    </select>
                 </div>
                 <!--Slices-->
-                <div class="form-group w-100">
-                    <select class="form-control" asp-for="NumberOfSlices" style="background-color: wheat; color: saddlebrown; border: 2px solid saddlebrown;">
+                <div class="form-group w-100 d-flex">
+                    <span><img src="~/images/toppingicon.png"/></span>
+                    <select class="form-control d-inline ml-2" asp-for="NumberOfSlices" style="background-color: wheat; color: saddlebrown; border: 2px solid saddlebrown;">
                         <option selected>-- Choose Number of Slices --</option>
                         @for (var i = 0; i < slices.Count(); i++)
                         {
                             var number = @slices[i];
 
-                            <option value="@number">@number</option>
+                            <option value="@number">@number Slices</option>
                         }
                     </select>
                 </div>
@@ -138,10 +119,10 @@
         @*<div class="col-md-7 mt-3">
                 <img class="img-fluid mt-5 mx-auto d-block" src="http://placehold.it/750x500" alt="">
             </div>*@
-    </div>
-    <!--div row-->
-</main>
+        </div>
+        <!--div row-->
+    </main>
 
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}
+    @section Scripts {
+        <partial name="_ValidationScriptsPartial" />
+    }

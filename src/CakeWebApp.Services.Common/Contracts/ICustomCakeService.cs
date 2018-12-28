@@ -23,6 +23,6 @@ namespace CakeWebApp.Services.Common.Contracts
 
         Task UpdateCustomCakeImg(CustomCakeImgViewModel model);
 
-        Task DeleteCustomCakeImg(int id);
+        Task DeleteCustomCakeImg(CustomCakeImgViewModel model);
     }
 }

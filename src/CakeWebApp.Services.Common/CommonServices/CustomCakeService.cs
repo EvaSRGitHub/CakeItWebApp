@@ -35,9 +35,14 @@ namespace CakeWebApp.Services.Common.CommonServices
 
             var top = model.TopDecoration.ToLower();
 
-            var img = customCakeImgRepo.All().SingleOrDefault(c => c.Side.ToLower() == side && c.Top.ToLower() == top).Img;
+            var customCakeImg = customCakeImgRepo.All().SingleOrDefault(c => c.Side.ToLower() == side && c.Top.ToLower() == top);
 
-            model.Img = img;
+            if(customCakeImg == null)
+            {
+                throw new NullReferenceException("Sorry, we are out of this product. Please choose other Side - Top combination.");
+            }
+
+            model.Img = customCakeImg.Img;
 
             if(!Uri.TryCreate(model.Img, UriKind.Absolute, out Uri result))
             {
@@ -151,13 +156,13 @@ namespace CakeWebApp.Services.Common.CommonServices
             }
         }
 
-        public async Task DeleteCustomCakeImg(int id)
+        public async Task DeleteCustomCakeImg(CustomCakeImgViewModel model)
         {
-            var customCakeImg = await this.customCakeImgRepo.GetByIdAsync(id);
+            var customCakeImg = await this.customCakeImgRepo.GetByIdAsync(model.Id);
 
             if (customCakeImg == null)
             {
-                throw new InvalidOperationException("Tutorial not found.");
+                throw new InvalidOperationException("Custom cake not found.");
             }
 
             this.customCakeImgRepo.Delete(customCakeImg);
@@ -170,7 +175,7 @@ namespace CakeWebApp.Services.Common.CommonServices
             {
                 this.logger.LogError(e.Message);
 
-                throw new InvalidOperationException("Sorry, an error occurred and your request couldn't be processed.");
+                throw new InvalidOperationException("Sorry, an error occurred while trying to delete custom cake.");
             }
         }
     }

@@ -61,8 +61,6 @@ namespace CakeItWebApp.Controllers
                 return this.View("Error");
             }
 
-            await this.shoppingCartService.RemoveFromShoppingCart(id);
-
             return RedirectToAction("Index", "ShoppingCart");
         }
 

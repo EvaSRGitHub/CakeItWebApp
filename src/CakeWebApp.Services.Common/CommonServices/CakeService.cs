@@ -56,7 +56,7 @@ namespace CakeWebApp.Services.Common.CommonServices
 
             if (cake == null)
             {
-                throw new InvalidOperationException("Product not found.");
+                throw new NullReferenceException("Product not found.");
             }
 
             if (rating < 1 && rating > 5)
@@ -80,21 +80,31 @@ namespace CakeWebApp.Services.Common.CommonServices
             }
         }
 
-        public async Task DeleteCake(int id)
+        public async Task DeleteCake(EditAndDeleteViewModel model)
         {
-            if (!this.repository.All().Any(p => p.Id == id))
+            if (model == null)
             {
-                return;
+                throw new NullReferenceException("Cake not found.");
             }
 
-            var product = await this.repository.GetByIdAsync(id);
+            var cake = await this.repository.GetByIdAsync(model.Id);
+            cake.IsDeleted = true;
 
-            this.repository.Delete(product);
-            
-            await this.repository.SaveChangesAsync();
+            this.repository.Update(cake);
+
+            try
+            {
+                await this.repository.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                this.logger.LogError(e.Message);
+
+                throw new InvalidOperationException("Sorry, an error occurred while trying to delete cake.");
+            }
         }
 
-        public IEnumerable<CakeIndexViewModel> GetAllCakes() 
+        public IEnumerable<CakeIndexViewModel> GetAllActiveCakes() 
         {
             return mapper.ProjectTo<CakeIndexViewModel>(this.repository.All().Where(c => c.IsDeleted == false)) .ToList();
         }
@@ -102,6 +112,11 @@ namespace CakeWebApp.Services.Common.CommonServices
         public async Task<EditAndDeleteViewModel> GetCakeById(int id)
         {
             var product = await this.repository.GetByIdAsync(id);
+
+            if(product == null || product.IsDeleted == true)
+            {
+                throw new NullReferenceException("Cake not found.");
+            }
 
             var model = this.mapper.Map<Product, EditAndDeleteViewModel>(product);
 
@@ -115,6 +130,20 @@ namespace CakeWebApp.Services.Common.CommonServices
             var cakeDetails = this.mapper.Map<Product, CakeIndexViewModel>(cake);
 
             return cakeDetails;
+        }
+
+        public async Task<EditAndDeleteViewModel> GetCakeToEdit(int id)
+        {
+            var product = await this.repository.GetByIdAsync(id);
+
+            if (product == null)
+            {
+                throw new NullReferenceException("Cake not found.");
+            }
+
+            var model = this.mapper.Map<Product, EditAndDeleteViewModel>(product);
+
+            return model;
         }
 
         public async Task<string> UpdateCake(EditAndDeleteViewModel model)
@@ -158,6 +187,11 @@ namespace CakeWebApp.Services.Common.CommonServices
             product.IsDeleted = true;
 
             await this.repository.SaveChangesAsync();
+        }
+
+        public IEnumerable<CakeIndexViewModel> GetAllCakes()
+        {
+            return mapper.ProjectTo<CakeIndexViewModel>(this.repository.All()).ToList();
         }
     }
 }

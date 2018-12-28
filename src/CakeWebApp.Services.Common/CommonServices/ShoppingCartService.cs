@@ -117,6 +117,7 @@ namespace CakeWebApp.Services.Common.CommonServices
                     this.repository.Delete(shoppingCartItem);
                 }
             }
+
             await this.repository.SaveChangesAsync();
         }
 

@@ -245,8 +245,10 @@ namespace CakeItWebApp.Services.Common.Tests
 
             await cakeService.AddCakeToDb(cakeModel1);
 
+            var cake = await cakeService.GetCakeById(2);
+
             //Act
-            await cakeService.DeleteCake(2);
+            await cakeService.DeleteCake(cake);
 
             var actualProductsCount = this.Db.Products.Count(); ;
 
@@ -268,8 +270,10 @@ namespace CakeItWebApp.Services.Common.Tests
 
             await cakeService.AddCakeToDb(cakeModel1);
 
+            var cake = await cakeService.GetCakeById(1);
+
             //Act
-            await cakeService.DeleteCake(1);
+            await cakeService.DeleteCake(cake);
 
             var actualProductsCount = this.Db.Products.Count(); ;
 

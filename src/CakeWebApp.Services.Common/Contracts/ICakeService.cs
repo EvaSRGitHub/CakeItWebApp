@@ -14,13 +14,17 @@ namespace CakeWebApp.Services.Common.Contracts
 
         Task AddCakeToDb<T>(T model);
 
+        IEnumerable<CakeIndexViewModel> GetAllActiveCakes();
+
         IEnumerable<CakeIndexViewModel> GetAllCakes();
 
         Task<EditAndDeleteViewModel> GetCakeById(int id);
 
+        Task<EditAndDeleteViewModel> GetCakeToEdit(int id);
+
         Task<string> UpdateCake(EditAndDeleteViewModel model);
 
-        Task DeleteCake(int id);
+        Task DeleteCake(EditAndDeleteViewModel model);
 
         Task<CakeIndexViewModel> ShowCakeDetails(int id);
 

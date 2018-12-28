@@ -71,6 +71,7 @@ namespace CakeItWebApp
             services.ConfigureApplicationCookie(options =>
             {
                 options.LoginPath = "/Identity/Account/Login";
+                options.AccessDeniedPath = "/Identity/Account/AccessDenied";
             });
 
             services.AddAutoMapper();
@@ -123,6 +124,7 @@ namespace CakeItWebApp
 
             services.AddScoped<ISanitizer, HtmlSanitizerAdapter>();
 
+            services.AddScoped<IBookService, BookService>();
 
         }
 

@@ -14,6 +14,7 @@ namespace CakeItWebApp.ViewModels.Cakes
         public string Name { get; set; }
 
         [Required]
+        [Display(Name = "Category Id")]
         public int CategoryId { get; set; }
 
         [Required]
@@ -25,5 +26,9 @@ namespace CakeItWebApp.ViewModels.Cakes
 
         [Required]
         public string Description { get; set; }
+
+        [Required]
+        [Display(Name = "Is Deleted")]
+        public bool IsDeleted { get; set; }
     }
 }

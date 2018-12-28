@@ -1,0 +1,50 @@
+﻿@model CakeItWebApp.ViewModels.CustomCake.CustomCakeImgViewModel
+
+<main class="container">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <section>
+                <h1 class="text-center">Delete Custom Cake Img</h1>
+                <hr class="bg-panda hr-2" />
+                <form method="post">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label asp-for="Name" class="text-center"></label>
+                            <input asp-for="Name" class="form-control" placeholder="Name" value="@Model.Name" disabled>
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label asp-for="Side" class="text-center"></label>
+                            <input asp-for="Side" class="form-control" placeholder="Side" value="@Model.Side" disabled>
+                            <span asp-validation-for="Side" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label asp-for="Top" class="text-center"></label>
+                            <input asp-for="Top" class="form-control" placeholder="Top" value="@Model.Top" disabled>
+                            <span asp-validation-for="Top" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label asp-for="Img" class="text-center"></label>
+                            <input asp-for="Img" type="url" class="form-control" placeholder="Img" value="@Model.Img" disabled>
+                            <span asp-validation-for="Img" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <hr class="bg-panda hr-2" />
+                    <div class="button-holder d-flex justify-content-center">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </div>
+                </form>
+            </section>
+        </div>
+    </div>
+</main>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

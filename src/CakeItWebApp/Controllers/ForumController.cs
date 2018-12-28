@@ -383,7 +383,6 @@ namespace CakeItWebApp.Controllers
             return View(postsPerPage);
         }
 
-        //TODO - All Delets
     }
 }
 

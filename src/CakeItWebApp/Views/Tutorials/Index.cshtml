@@ -6,7 +6,6 @@
 @model IPagedList<TutorialIndexViewModel>
 
 @{
-    ViewData["Title"] = "Home Page";
     var currentRating = 0;
     var fullStars = new string((char)9733, currentRating);
     var emptyStars = new string((char)9734, (5 - currentRating));
