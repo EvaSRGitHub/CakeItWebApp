@@ -19,6 +19,7 @@ namespace CakeItWebApp.Areas.Identity.Pages
         public ErrorModel(IErrorService errorService)
         {
             this.errorService = errorService;
+            this.Errors = new List<string>();
         }
 
         [BindProperty(SupportsGet = true)]

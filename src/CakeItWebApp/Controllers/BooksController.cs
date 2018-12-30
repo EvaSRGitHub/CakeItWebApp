@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using CakeItWebApp.ViewModels.Books;
 using CakeWebApp.Services.Common.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.Net.Http.Headers;
 using X.PagedList;
 
 namespace CakeItWebApp.Controllers
@@ -86,5 +90,116 @@ namespace CakeItWebApp.Controllers
 
             return this.RedirectToAction(nameof(Index));
         }
+
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> EditBook(int id)
+        {
+            BookIndexViewModel model;
+
+            try
+            {
+                model = await this.bookService.GetBookById(id);
+            }
+            catch (Exception e)
+            {
+                ViewData["Errors"] = e.Message;
+
+                return this.View("Error");
+            }
+
+            return this.View(model);
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public async Task<IActionResult> EditBook(BookIndexViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var errors = this.ModelState.Values.SelectMany(p => p.Errors).Select(e => e.ErrorMessage).ToList();
+
+                var errorModel = this.errorService.GetErrorModel(errors);
+
+                return View("Error", errorModel);
+            }
+
+            try
+            {
+                await this.bookService.UpdateBook(model);
+            }
+            catch (Exception e)
+            {
+                ViewData["Errors"] = e.Message;
+
+                return this.View("Error");
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteBook(int id)
+        {
+            BookIndexViewModel model;
+
+            try
+            {
+                model = await this.bookService.GetBookById(id);
+            }
+            catch (Exception e)
+            {
+                ViewData["Errors"] = e.Message;
+
+                return this.View("Error");
+            }
+
+            return this.View(model);
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public async Task<IActionResult> DeleteBook(BookIndexViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var errors = this.ModelState.Values.SelectMany(p => p.Errors).Select(e => e.ErrorMessage).ToList();
+
+                var errorModel = this.errorService.GetErrorModel(errors);
+
+                return View("Error", errorModel);
+            }
+
+            try
+            {
+                await this.bookService.DeleteBook(model);
+            }
+            catch (Exception e)
+            {
+                ViewData["Errors"] = e.Message;
+
+                return this.View("Error");
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        [Authorize]
+         public async Task<FileStreamResult> Download(int id)
+        {
+            var book = await this.bookService.GetBookById(id);
+
+            var downLoadUrl = book.DownloadUrl;
+
+            HttpClient  client = new HttpClient();
+
+             var stream = await client.GetStreamAsync(downLoadUrl);
+
+            return new FileStreamResult(stream, new MediaTypeHeaderValue("application/pdf"))
+            {
+                FileDownloadName = book.Title + ".pdf"
+            };
+        }
+
+
     }
 }

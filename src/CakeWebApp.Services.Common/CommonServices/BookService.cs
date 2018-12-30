@@ -78,6 +78,29 @@ namespace CakeWebApp.Services.Common.CommonServices
             }
         }
 
+        public async Task DeleteBook(BookIndexViewModel model)
+        {
+            if (model == null)
+            {
+                throw new NullReferenceException("Book not found.");
+            }
+
+            var book = this.mapper.Map<BookIndexViewModel, Book>(model);
+
+            this.bookRepo.Delete(book);
+
+            try
+            {
+                await this.bookRepo.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                this.logger.LogError(e.Message);
+
+                throw new InvalidOperationException("Sorry, an error occurred while trying to delete book.");
+            }
+        }
+
         public IQueryable<BookIndexViewModel> GetAllBooks()
         {
             var books = this.bookRepo.All();
@@ -86,5 +109,44 @@ namespace CakeWebApp.Services.Common.CommonServices
 
             return model;
         }
+
+        public async Task<BookIndexViewModel> GetBookById(int id)
+        {
+            var book = await this.bookRepo.GetByIdAsync(id);
+
+            if(book == null)
+            {
+                throw new NullReferenceException("Book not foud.");
+            }
+
+            var model = this.mapper.Map<Book, BookIndexViewModel>(book);
+
+            return model;
+        }
+
+        public  async Task UpdateBook(BookIndexViewModel model)
+        {
+           if(model == null)
+            {
+                throw new NullReferenceException("Book not found.");
+            }
+
+            var book = this.mapper.Map<BookIndexViewModel, Book>(model);
+
+            this.bookRepo.Update(book);
+
+            try
+            {
+                await this.bookRepo.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                this.logger.LogError(e.Message);
+
+                throw new InvalidOperationException("Sorry, an error occurred while trying to edit a book.");
+            }
+        }
+
+
     }
 }

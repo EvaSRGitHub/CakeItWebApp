@@ -153,7 +153,7 @@ namespace CakeWebApp.Services.Common.CommonServices
                 Id = c.Id,
                 PostId = c.PostId,
                 IsDeleted = c.IsDeleted
-            }).OrderByDescending(c => c.CreatedOn);
+            }).OrderBy(c => c.CreatedOn);
 
             return commentModels;
         }

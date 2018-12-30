@@ -4,12 +4,22 @@
     ViewData["Title"] = "Error";
 }
 
-<div class="alert alert-danger col-md-6 offset-md-3" role="alert">
-    <h2><strong>Error!</strong></h2>
+<main class="container">
+    <div class="alert alert-danger col-md-6 offset-md-3" role="alert">
+        <h2><strong>Error!</strong></h2>
 
-    @foreach (var item in Model.Errors)
-    {
-        <h3>@item</h3>
-    }
-    <a href="javascript:void(0);" onclick="history.go(-1);" class="btn btn-info" role="button">Back</a>
-</div>
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <h3>@TempData["ErrorMessage"]</h3>
+        }
+        else
+        {
+            @foreach (var item in Model.Errors)
+            {
+                <h3>@item</h3>
+            }
+        }
+
+        <a href="javascript:void(0);" onclick="history.go(-1);" class="btn btn-info" role="button">Back</a>
+    </div>
+</main>
