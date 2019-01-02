@@ -118,6 +118,7 @@ namespace CakeItWebApp.Controllers
 
                 return this.View("Error");
             }
+
             return RedirectToAction("PostDetails", new { id = comment.PostId });
         }
 

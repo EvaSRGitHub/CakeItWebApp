@@ -41,7 +41,7 @@ namespace CakeWebApp.Services.Common.CommonServices
         {
             if (model == null)
             {
-                throw new InvalidOperationException("Sorry, couldn't process your comment.");
+                throw new NullReferenceException("Sorry, couldn't process your comment.");
             }
 
             model.AuthorId = this.userRepo.All().SingleOrDefault(u => u.UserName == model.AuthorName).Id;
@@ -73,6 +73,11 @@ namespace CakeWebApp.Services.Common.CommonServices
                 FullContent = model.FullContent,
                 Title = model.Title,
             };
+
+            if(postRepo.All().Any(p => p.Title == post.Title && p.IsDeleted == false))
+            {
+                throw new InvalidOperationException("Post with such title already exists.");
+            }
 
             this.postRepo.Add(post);
 
@@ -153,7 +158,7 @@ namespace CakeWebApp.Services.Common.CommonServices
                 Id = c.Id,
                 PostId = c.PostId,
                 IsDeleted = c.IsDeleted
-            }).OrderBy(c => c.CreatedOn);
+            }).OrderByDescending(c => c.CreatedOn);
 
             return commentModels;
         }
@@ -173,7 +178,7 @@ namespace CakeWebApp.Services.Common.CommonServices
                 Title = p.Title,
                 CreatedOn = p.CreatedOn.ToString("dd-MM-yyyy HH:mm"),
                 Content = GetShortContent(p.FullContent),
-            });
+            }).OrderByDescending(p => p.CreatedOn);
 
             return modelPosts;
         }
@@ -208,7 +213,7 @@ namespace CakeWebApp.Services.Common.CommonServices
         {
             var commentToEdit = await this.commentRepo.GetByIdAsync(id);
 
-            if(commentToEdit.Podt == null || commentToEdit.Podt.IsDeleted == true)
+            if(commentToEdit.Post == null || commentToEdit.Post.IsDeleted == true)
             {
                 throw new InvalidOperationException("Post not found.");
             }
@@ -222,10 +227,10 @@ namespace CakeWebApp.Services.Common.CommonServices
             {
                 Post = new PostInputViewModel
                 {
-                    Author = commentToEdit.Podt.Author.UserName,
-                    Id = commentToEdit.Podt.Id,
-                    FullContent = this.sanitizer.Sanitize(commentToEdit.Podt.FullContent),
-                    Title = commentToEdit.Podt.Title
+                    Author = commentToEdit.Post.Author.UserName,
+                    Id = commentToEdit.Post.Id,
+                    FullContent = this.sanitizer.Sanitize(commentToEdit.Post.FullContent),
+                    Title = commentToEdit.Post.Title
                 },
                 Comment = new CommentInputViewModel
                 {

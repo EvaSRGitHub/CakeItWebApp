@@ -5,6 +5,7 @@ using CakeItWebApp.Services.Common.Repository;
 using CakeItWebApp.ViewModels;
 using CakeItWebApp.ViewModels.Cakes;
 using CakeItWebApp.ViewModels.CustomCake;
+using CakeItWebApp.ViewModels.Forum;
 using CakeItWebApp.ViewModels.Orders;
 using CakeItWebApp.ViewModels.Tutorials;
 using CakeWebApp.Services.Common.CommonServices;
@@ -22,7 +23,7 @@ namespace CakeItWebApp.Services.Common.Tests
         {
             this.Mapper = new Mapper(new MapperConfiguration(
                 config => {
-                    config.CreateMap<Product, CakeIndexViewModel>().ReverseMap();
+                    config.CreateMap<Product, CakeIndexViewModel>().ForMember(x => x.Rating, y => y.MapFrom(x => x.Rating ?? 0)).ForMember(x => x.RatingVotes, y => y.MapFrom(x => x.RatingVotes ?? 0)).ReverseMap();
                     config.CreateMap<Product, CreateCakeViewModel>().ReverseMap();
                     config.CreateMap<Product, EditAndDeleteViewModel>().ReverseMap();
                     config.CreateMap<Order, OrderViewModel>().ReverseMap();
@@ -32,6 +33,7 @@ namespace CakeItWebApp.Services.Common.Tests
                     config.CreateMap<CustomCakeOrderViewModel, Ingredients>().ReverseMap();
                     config.CreateMap<AddTutorialViewModel, Tutorial>().ReverseMap();
                     config.CreateMap<TutorialIndexViewModel, Tutorial>().ReverseMap();
+                    config.CreateMap<Comment, CommentInputViewModel>().ReverseMap();
                 }));
 
             this.Options = new DbContextOptionsBuilder<CakeItDbContext>().UseInMemoryDatabase(databaseName: "CakeItInMemory").Options;
@@ -51,12 +53,15 @@ namespace CakeItWebApp.Services.Common.Tests
 
             var cakeModel1 = new CreateCakeViewModel { Name = "Chocolate Peanut Cake", CategoryId = 1, Price = 35.50m, Description = "This Chocolate and Peanut Butter Drip Cake is completely sinful.", Image = "https://res.cloudinary.com/cakeit/image/upload/ar_1:1,c_fill,g_auto,e_art:hokusai/v1544136590/Chocolate_and_Peanut_cake.jpg" };
 
-            var cakeModel2 = new CreateCakeViewModel { Name = "Chocolate Cake", CategoryId = 1, Price = 35.50m, Description = "This Chocolate and Peanut Butter Drip Cake is completely sinful.", Image = "https://res.cloudinary.com/cakeit/image/upload/ar_1:1,c_fill,g_auto,e_art:hokusai/v1544136590/Chocolate_and_Peanut_cake.jpg" };
+            var cakeModel2 = new CreateCakeViewModel { Name = "Chocolate Drip Cake", CategoryId = 1, Price = 35.50m, Description = "This Chocolate and Peanut Butter Drip Cake is completely sinful.", Image = "https://res.cloudinary.com/cakeit/image/upload/ar_1:1,c_fill,g_auto,e_art:hokusai/v1544136590/Chocolate_and_Peanut_cake.jpg" };
 
             var cakeService = new CakeService(null, repo, this.Mapper);
 
            await cakeService.AddCakeToDb(cakeModel1);
            await cakeService.AddCakeToDb(cakeModel2);
+
+            await repo.SaveChangesAsync();
+            //It works without SaveCanges()???
         }
     }
 }

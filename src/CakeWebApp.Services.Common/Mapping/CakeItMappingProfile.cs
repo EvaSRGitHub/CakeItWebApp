@@ -20,7 +20,7 @@ namespace CakeWebApp.Services.Common.Mapping
     {
         public CakeItMappingProfile()
         {
-            CreateMap<Product, CakeIndexViewModel>().ReverseMap();
+            CreateMap<Product, CakeIndexViewModel>().ForMember(x => x.Rating, y => y.MapFrom(x => x.Rating ?? 0)).ForMember(x => x.RatingVotes, y => y.MapFrom(x => x.RatingVotes ?? 0)).ReverseMap();
 
             CreateMap<Product, CreateCakeViewModel>().ReverseMap();
 

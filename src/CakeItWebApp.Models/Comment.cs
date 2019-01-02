@@ -12,7 +12,7 @@ namespace CakeItWebApp.Models
 
         public int PostId { get; set; }
 
-        public virtual Post Podt { get; set; }
+        public virtual Post Post { get; set; }
 
         public string Content { get; set; }
 

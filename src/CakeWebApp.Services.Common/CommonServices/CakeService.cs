@@ -30,7 +30,7 @@ namespace CakeWebApp.Services.Common.CommonServices
         {
             var product = this.mapper.Map<T, Product>(model);
 
-            if (this.repository.All().Any(p => p.Name == product.Name && product.IsDeleted == true))
+            if (this.repository.All().Any(p => p.Name == product.Name && product.IsDeleted == false))
             {
                 throw new InvalidOperationException("Cake with such name alreadey exist in the data base."); 
             }
@@ -59,7 +59,7 @@ namespace CakeWebApp.Services.Common.CommonServices
                 throw new NullReferenceException("Product not found.");
             }
 
-            if (rating < 1 && rating > 5)
+            if (rating < 1 || rating > 5)
             {
                 throw new InvalidOperationException("Invlid rating value.");
             }
@@ -191,7 +191,8 @@ namespace CakeWebApp.Services.Common.CommonServices
 
         public IEnumerable<CakeIndexViewModel> GetAllCakes()
         {
-            return mapper.ProjectTo<CakeIndexViewModel>(this.repository.All()).ToList();
+            var allCakes = mapper.ProjectTo<CakeIndexViewModel>(this.repository.All()).ToList();
+            return allCakes;
         }
     }
 }
