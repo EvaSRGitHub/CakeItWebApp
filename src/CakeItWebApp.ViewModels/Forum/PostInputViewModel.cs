@@ -15,15 +15,15 @@ namespace CakeItWebApp.ViewModels.Forum
         [Required, MinLength(10)]
         public string Title { get; set; }
 
-        [Required]
-        [Display(Name = "Full Name")]
+        [Required, MinLength(2)]
+        [Display(Name = "Post Content")]
         public string FullContent { get; set; }
 
         public DateTime CreatedOn => DateTime.UtcNow;
 
         public bool IsDeleted { get; set; } = false;
 
-        [Required]
+        [Required, MinLength(2)]
         public string Tags { get; set; }
     }
 }

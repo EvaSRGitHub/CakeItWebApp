@@ -37,6 +37,19 @@ namespace CakeItWebApp.Controllers
             return View(model);
         }
 
+        //[Route("Home/Error404")]
+        public IActionResult Error404()
+        {
+            string originalPath = "unknown";
+
+            if (HttpContext.Items.ContainsKey("originalPath"))
+            {
+                originalPath = HttpContext.Items["originalPath"] as string;
+            }
+            
+            return View();
+        }
+
         public IActionResult Privacy()
         {
             return View();

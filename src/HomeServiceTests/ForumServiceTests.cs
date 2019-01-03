@@ -13,7 +13,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Web;
 using Xunit;
 
 namespace CakeItWebApp.Services.Common.Tests
@@ -88,6 +90,72 @@ namespace CakeItWebApp.Services.Common.Tests
 
             //Assert
             Assert.Equal(expecteddPostCount, acutalPostCount);
+        }
+
+        [Fact]
+        public async Task CreatePost_WithEmptyContent_ShouldThrow()
+        {
+            //Arrange
+            var db = this.SetDb();
+
+            var service = await this.Setup(db);
+
+            var postModel = new PostInputViewModel
+            {
+                Title = "Test Post",
+                Author = "eva@abv.bg",
+                FullContent = "",
+                Tags = "Baking, Cakes"
+            };
+
+            //Act
+
+            //Assert
+            await Assert.ThrowsAsync<NullReferenceException>(async () => await service.CreatePost(postModel));
+        }
+
+        [Fact]
+        public async Task CreatePost_WithEmptyTitle_ShouldThrow()
+        {
+            //Arrange
+            var db = this.SetDb();
+
+            var service = await this.Setup(db);
+
+            var postModel = new PostInputViewModel
+            {
+                Title = "",
+                Author = "eva@abv.bg",
+                FullContent = "Some test content",
+                Tags = "Baking, Cakes"
+            };
+
+            //Act
+
+            //Assert
+            await Assert.ThrowsAsync<NullReferenceException>(async () => await service.CreatePost(postModel));
+        }
+
+        [Fact]
+        public async Task CreatePost_WithEmptyTag_ShouldThrow()
+        {
+            //Arrange
+            var db = this.SetDb();
+
+            var service = await this.Setup(db);
+
+            var postModel = new PostInputViewModel
+            {
+                Title = "Test Post",
+                Author = "eva@abv.bg",
+                FullContent = "Some test content.",
+                Tags =  ""
+            };
+
+            //Act
+
+            //Assert
+            await Assert.ThrowsAsync<NullReferenceException>(async () => await service.CreatePost(postModel));
         }
 
         [Fact]
@@ -187,6 +255,68 @@ namespace CakeItWebApp.Services.Common.Tests
 
             //Assert
             Assert.Contains<Comment>(comment, postRepo.All().First().Comments);
+        }
+
+        [Fact]
+        public async Task CreateComment_WithEmptyContent_ShouldThrow()
+        {
+            //Arrange
+            var db = this.SetDb();
+
+            var service = await this.Setup(db);
+
+            var postModel = new PostInputViewModel
+            {
+                Title = "Test Post",
+                Author = "eva@abv.bg",
+                FullContent = "Some test post content",
+                Tags = "Baking, Cakes"
+            };
+
+            await service.CreatePost(postModel);
+
+            var commentModel = new CommentInputViewModel
+            {
+                AuthorName = "otherUser@abv.bg",
+                Content = "",
+                PostId = 1
+            };
+
+            //Act
+
+            //Assert
+           await Assert.ThrowsAsync<NullReferenceException>(async () => await service.CreateComment(commentModel));
+        }
+
+        [Fact]
+        public async Task CreateComment_WithWhiteSpaceContent_ShouldThrow()
+        {
+            //Arrange
+            var db = this.SetDb();
+
+            var service = await this.Setup(db);
+
+            var postModel = new PostInputViewModel
+            {
+                Title = "Test Post",
+                Author = "eva@abv.bg",
+                FullContent = "Some test post content",
+                Tags = "Baking, Cakes"
+            };
+
+            await service.CreatePost(postModel);
+
+            var commentModel = new CommentInputViewModel
+            {
+                AuthorName = "otherUser@abv.bg",
+                Content = "     ",
+                PostId = 1
+            };
+
+            //Act
+
+            //Assert
+            await Assert.ThrowsAsync<NullReferenceException>(async () => await service.CreateComment(commentModel));
         }
 
         [Fact]
@@ -793,6 +923,482 @@ namespace CakeItWebApp.Services.Common.Tests
 
             //Assert
             Assert.Throws<InvalidOperationException>(() => service.GetPostsByTag("Cakes"));
+        }
+
+        [Fact]
+        public async Task MarkCommentAsDeleted_WithValidModel_ShouldMarkCommentAsDeleted()
+        {
+            //Arrange
+            var db = this.SetDb();
+
+            var service = await this.Setup(db);
+
+            var postModel = new PostInputViewModel
+            {
+                Title = "Test Post",
+                Author = "eva@abv.bg",
+                FullContent = "Some test post content",
+                Tags = "Baking, Cakes"
+            };
+
+            await service.CreatePost(postModel);
+
+            var commentModel = new CommentInputViewModel
+            {
+                AuthorName = "otherUser@abv.bg",
+                Content = "Test comment",
+                PostId = 1
+            };
+
+            await service.CreateComment(commentModel);
+
+            var comment = await this.commentRepo.GetByIdAsync(1);
+
+            var model = new EditCommentViewModel
+            {
+                Post = new PostInputViewModel
+                {
+                    Author = comment.Post.Author.UserName,
+                    Id = comment.Post.Id,
+                    FullContent = this.sanitizer.Sanitize(comment.Post.FullContent),
+                    Title = comment.Post.Title
+                },
+                Comment = new CommentInputViewModel
+                {
+                    Id = comment.Id,
+                    AuthorId = comment.AuthorId,
+                    AuthorName = comment.Author.UserName,
+                    Content = this.sanitizer.Sanitize(comment.Content),
+                    PostId = comment.PostId
+                }
+            };
+
+            //Act
+            await service.MarkCommentAsDeleted(model);
+
+            var expectedCommentIsDeleted = true;
+            var actualCommentIsDeleted = comment.IsDeleted;
+
+            //Assert
+            Assert.Equal(expectedCommentIsDeleted, actualCommentIsDeleted);
+        }
+
+        [Fact]
+        public async Task UpdateComment_WithValidModel_ShouldSaveUpdatedComment()
+        {
+            //Arrange
+            var db = this.SetDb();
+
+            var service = await this.Setup(db);
+
+            var postModel = new PostInputViewModel
+            {
+                Title = "Test Post",
+                Author = "eva@abv.bg",
+                FullContent = "Some test post content",
+                Tags = "Baking, Cakes"
+            };
+
+            await service.CreatePost(postModel);
+
+            var commentModel = new CommentInputViewModel
+            {
+                AuthorName = "otherUser@abv.bg",
+                Content = "Test comment content",
+                PostId = 1
+            };
+
+            await service.CreateComment(commentModel);
+
+            var comment = await this.commentRepo.GetByIdAsync(1);
+
+            db.Entry(comment).State = EntityState.Detached;
+
+            var model = new EditCommentViewModel
+            {
+                Post = new PostInputViewModel
+                {
+                    Author = comment.Post.Author.UserName,
+                    Id = comment.Post.Id,
+                    FullContent = comment.Post.FullContent,
+                    Title = comment.Post.Title
+                },
+                Comment = new CommentInputViewModel
+                {
+                    AuthorId = comment.AuthorId,
+                    Id = comment.Id,
+                    Content = "Edit content.",
+                    CreatedOn = comment.CreatedOn,
+                    IsDeleted = comment.IsDeleted,
+                    PostId = comment.PostId
+                }
+            };
+
+            //Act
+            await service.UpdateComment(model);
+
+            var expectedCommentContent = "Edit content.";
+            var actualCommentContent = (await this.commentRepo.GetByIdAsync(1)).Content;
+
+            //Assert
+            Assert.Equal(expectedCommentContent, actualCommentContent);
+        }
+
+        [Fact]
+        public async Task UpdateComment_WithEmptyContent_ShouldThrow()
+        {
+            //Arrange
+            var db = this.SetDb();
+
+            var service = await this.Setup(db);
+
+            var postModel = new PostInputViewModel
+            {
+                Title = "Test Post",
+                Author = "eva@abv.bg",
+                FullContent = "Some test post content",
+                Tags = "Baking, Cakes"
+            };
+
+            await service.CreatePost(postModel);
+
+            var commentModel = new CommentInputViewModel
+            {
+                AuthorName = "otherUser@abv.bg",
+                Content = "Test comment content",
+                PostId = 1
+            };
+
+            await service.CreateComment(commentModel);
+
+            var comment = await this.commentRepo.GetByIdAsync(1);
+
+            db.Entry(comment).State = EntityState.Detached;
+
+            var model = new EditCommentViewModel
+            {
+                Post = new PostInputViewModel
+                {
+                    Author = comment.Post.Author.UserName,
+                    Id = comment.Post.Id,
+                    FullContent = comment.Post.FullContent,
+                    Title = comment.Post.Title
+                },
+                Comment = new CommentInputViewModel
+                {
+                    AuthorId = comment.AuthorId,
+                    Id = comment.Id,
+                    Content = "",
+                    CreatedOn = comment.CreatedOn,
+                    IsDeleted = comment.IsDeleted,
+                    PostId = comment.PostId
+                }
+            };
+
+            //Act
+
+            //Assert
+            await Assert.ThrowsAsync<NullReferenceException>(async () => await service.UpdateComment(model));
+        }
+
+        [Fact]
+        public async Task UpdatePost_WithValidTitle_ShouldSaveUpdatedPost()
+        {
+            //Arrange
+            var db = this.SetDb();
+
+            var service = await this.Setup(db);
+
+            var postModel = new PostInputViewModel
+            {
+                Title = "Test Post",
+                Author = "eva@abv.bg",
+                FullContent = "Some test post content",
+                Tags = "Baking, Cakes"
+            };
+
+            await service.CreatePost(postModel);
+
+            var post = await this.postRepo.GetByIdAsync(1);
+
+            db.Entry(post).State = EntityState.Detached;
+
+            var model = new PostInputViewModel
+            {
+                Id = post.Id,
+                Author = post.Author.UserName,
+                Title = "Edit Title",
+                FullContent = post.FullContent,
+                Tags = string.Join(", ", post.Tags.Select(tp => tp.Tag.Name)),
+                IsDeleted = post.IsDeleted
+            };
+
+            //Act
+            await service.UpdatePost(model);
+
+            var expectedTitle = "Edit Title";
+            var acutalTitle = (await this.postRepo.GetByIdAsync(1)).Title;
+
+            //Assert
+            Assert.Equal(expectedTitle, acutalTitle);
+        }
+
+        [Fact]
+        public async Task UpdatePost_WithValidContent_ShouldSaveUpdatedPost()
+        {
+            //Arrange
+            var db = this.SetDb();
+
+            var service = await this.Setup(db);
+
+            var postModel = new PostInputViewModel
+            {
+                Title = "Test Post",
+                Author = "eva@abv.bg",
+                FullContent = "Some test post content",
+                Tags = "Baking, Cakes"
+            };
+
+            await service.CreatePost(postModel);
+
+            var post = await this.postRepo.GetByIdAsync(1);
+
+            db.Entry(post).State = EntityState.Detached;
+
+            var model = new PostInputViewModel
+            {
+                Id = post.Id,
+                Author = post.Author.UserName,
+                Title = post.Title,
+                FullContent = "Edit Content",
+                Tags = string.Join(", ", post.Tags.Select(tp => tp.Tag.Name)),
+                IsDeleted = post.IsDeleted
+            };
+
+            //Act
+            await service.UpdatePost(model);
+
+            var expectedContent = "Edit Content";
+            var acutalContent = (await this.postRepo.GetByIdAsync(1)).FullContent;
+
+            //Assert
+            Assert.Equal(expectedContent, acutalContent);
+        }
+
+        [Fact]
+        public async Task UpdatePost_WithValidTags_ShouldSaveUpdatedPost()
+        {
+            //Arrange
+            var db = this.SetDb();
+
+            var service = await this.Setup(db);
+
+            var postModel = new PostInputViewModel
+            {
+                Title = "Test Post",
+                Author = "eva@abv.bg",
+                FullContent = "Some test post content",
+                Tags = "Baking"
+            };
+
+            await service.CreatePost(postModel);
+
+            var post = await this.postRepo.GetByIdAsync(1);
+
+            db.Entry(post).State = EntityState.Detached;
+
+            var model = new PostInputViewModel
+            {
+                Id = post.Id,
+                Author = post.Author.UserName,
+                Title = post.Title,
+                FullContent = post.FullContent,
+                Tags = "Baking, Cakes",
+                IsDeleted = post.IsDeleted
+            };
+
+            //Act
+            await service.UpdatePost(model);
+
+            var expectedTags = "Baking, Cakes";
+            var tags = (await this.postRepo.GetByIdAsync(1)).Tags;
+            var acutalTags = string.Join(", ", tags.Select(tp => tp.Tag.Name));
+
+            //Assert
+            Assert.Equal(expectedTags, acutalTags);
+        }
+
+        [Fact]
+        public async Task UpdatePost_WithEmptyTitle_ShouldThrow()
+        {
+            //Arrange
+            var db = this.SetDb();
+
+            var service = await this.Setup(db);
+
+            var postModel = new PostInputViewModel
+            {
+                Title = "Test Post",
+                Author = "eva@abv.bg",
+                FullContent = "Some test post content",
+                Tags = "Baking, Cakes"
+            };
+
+            await service.CreatePost(postModel);
+
+            var post = await this.postRepo.GetByIdAsync(1);
+
+            db.Entry(post).State = EntityState.Detached;
+
+            var model = new PostInputViewModel
+            {
+                Id = post.Id,
+                Author = post.Author.UserName,
+                Title = "",
+                FullContent = post.FullContent,
+                Tags = string.Join(", ", post.Tags.Select(tp => tp.Tag.Name)),
+                IsDeleted = post.IsDeleted
+            };
+
+            //Act
+
+            //Assert
+            await Assert.ThrowsAsync<NullReferenceException>(async () => await service.UpdatePost(model));
+        }
+
+        [Fact]
+        public async Task UpdatePost_WithEmptyTag_ShouldThrow()
+        {
+            //Arrange
+            var db = this.SetDb();
+
+            var service = await this.Setup(db);
+
+            var postModel = new PostInputViewModel
+            {
+                Title = "Test Post",
+                Author = "eva@abv.bg",
+                FullContent = "Some test post content",
+                Tags = "Baking, Cakes"
+            };
+
+            await service.CreatePost(postModel);
+
+            var post = await this.postRepo.GetByIdAsync(1);
+
+            db.Entry(post).State = EntityState.Detached;
+
+            var model = new PostInputViewModel
+            {
+                Id = post.Id,
+                Author = post.Author.UserName,
+                Title = post.Title,
+                FullContent = post.FullContent,
+                Tags = "",
+                IsDeleted = post.IsDeleted
+            };
+
+            //Act
+
+            //Assert
+            await Assert.ThrowsAsync<NullReferenceException>(async () => await service.UpdatePost(model));
+        }
+
+        [Fact]
+        public async Task UpdatePost_WithEmptyContent_ShouldThrow()
+        {
+            //Arrange
+            var db = this.SetDb();
+
+            var service = await this.Setup(db);
+
+            var postModel = new PostInputViewModel
+            {
+                Title = "Test Post",
+                Author = "eva@abv.bg",
+                FullContent = "Some test post content",
+                Tags = "Baking, Cakes"
+            };
+
+            await service.CreatePost(postModel);
+
+            var post = await this.postRepo.GetByIdAsync(1);
+
+            db.Entry(post).State = EntityState.Detached;
+
+            var model = new PostInputViewModel
+            {
+                Id = post.Id,
+                Author = post.Author.UserName,
+                Title = post.Title,
+                FullContent = "",
+                Tags = string.Join(", ", post.Tags.Select(tp => tp.Tag.Name)),
+                IsDeleted = post.IsDeleted
+            };
+
+            //Act
+
+            //Assert
+            await Assert.ThrowsAsync<NullReferenceException>(async () => await service.UpdatePost(model));
+        }
+
+        [Fact]
+        public async Task GetAllPosts_ShouldGetDeletedAndNotDeletedPosts()
+        {
+            //Arrange
+            var db = this.SetDb();
+
+            var service = await this.Setup(db);
+
+            var postModelA = new PostInputViewModel
+            {
+                Title = "Test Post A",
+                Author = "eva@abv.bg",
+                FullContent = "Some test post content",
+                Tags = "Baking"
+            };
+
+            await service.CreatePost(postModelA);
+
+            var postModelB = new PostInputViewModel
+            {
+                Title = "Test Post B",
+                Author = "eva@abv.bg",
+                FullContent = "Some test post content",
+                Tags = "Baking"
+            };
+
+            await service.CreatePost(postModelB);
+
+            var post = await this.postRepo.GetByIdAsync(2);
+
+            post.IsDeleted = true;
+
+            await this.postRepo.SaveChangesAsync();
+
+            //Act
+            var allPosts = service.GetAllPosts();
+
+            var expectedPostCount = 2;
+            var actualPostCount = allPosts.Count();
+
+            //Assert
+            Assert.Equal(expectedPostCount, actualPostCount);
+        }
+
+        [Fact]
+        public async Task GetAllPosts_WhithNoPosts_ShouldReturnEmpytPostCollection()
+        {
+            //Arrange
+            var db = this.SetDb();
+
+            var service = await this.Setup(db);
+
+            //Act
+            var allPosts = service.GetAllPosts();
+
+            //Assert
+            Assert.Empty(allPosts);
         }
 
         private async Task SeedTags(IRepository<Tag> tagRepo)

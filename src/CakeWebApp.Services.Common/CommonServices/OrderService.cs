@@ -60,12 +60,12 @@ namespace CakeWebApp.Services.Common.CommonServices
 
             var model = orders.Select(o => new AllOrdersViewModel {
                 OrderId = o.Id,
-                OrderDate = o.OrederDate.ToString("dd-MM-yyyy hh:mm"),
+                OrderDate = o.OrederDate.ToString("dd-MM-yyyy HH:mm"),
                 Customer = userName,
                 Address = o.OrderDetails.Address,
                 City = o.OrderDetails.City,
                 TotalValue = o.Total
-            }).ToList();
+            }).OrderByDescending(o => o.OrderDate).ToList();
 
             return model;
         }

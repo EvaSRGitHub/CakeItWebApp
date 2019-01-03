@@ -144,10 +144,16 @@ namespace CakeItWebApp
 
             app.UseSeedRolesMiddleware();
 
+            app.UseError404Middleware();
+
             app.UseHttpsRedirection();
+
             app.UseStaticFiles();
+
             app.UseCookiePolicy();
+
             app.UseSession();
+
             app.UseAuthentication();
 
             app.UseMvc(routes =>

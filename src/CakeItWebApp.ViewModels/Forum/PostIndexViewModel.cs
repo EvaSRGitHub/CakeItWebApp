@@ -11,7 +11,7 @@ namespace CakeItWebApp.ViewModels.Forum
 
         public string Author { get; set; }
 
-        [Required, MinLength(10)]
+        [Required]
         public string Title { get; set; }
 
         [Required]

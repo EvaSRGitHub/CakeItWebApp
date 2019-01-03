@@ -12,5 +12,10 @@ namespace CakeItWebApp.Middlewares.MiddlewareExtensions
         {
             return builder.UseMiddleware<SeedRolesMiddleware>();
         }
+
+        public static IApplicationBuilder UseError404Middleware(this IApplicationBuilder builder)
+        {
+            return builder.UseMiddleware<Error404Middleware>();
+        }
     }
 }

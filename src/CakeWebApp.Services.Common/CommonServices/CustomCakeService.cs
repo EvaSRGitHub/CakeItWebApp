@@ -86,7 +86,7 @@ namespace CakeWebApp.Services.Common.CommonServices
 
             var product = new Product
             {
-                Name = model.TopDecoration + " " + model.SideDecoration,
+                Name = model.TopDecoration.Replace('_', ' ') + " with " + model.SideDecoration.Replace('_', ' '),
                CategoryId = 2,
                Image = model.Img,
                Ingredients = ingredients,

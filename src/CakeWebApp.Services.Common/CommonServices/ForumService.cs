@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace CakeWebApp.Services.Common.CommonServices
 {
@@ -44,6 +45,13 @@ namespace CakeWebApp.Services.Common.CommonServices
                 throw new NullReferenceException("Sorry, couldn't process your comment.");
             }
 
+            var content = HttpUtility.HtmlDecode(StripHtml(model.Content));
+
+            if (string.IsNullOrWhiteSpace(content))
+            {
+                throw new NullReferenceException("Comment is required.");
+            }
+
             model.AuthorId = this.userRepo.All().SingleOrDefault(u => u.UserName == model.AuthorName).Id;
 
             var comment = this.mapper.Map<CommentInputViewModel, Comment>(model);
@@ -65,6 +73,27 @@ namespace CakeWebApp.Services.Common.CommonServices
         public async Task CreatePost(PostInputViewModel model)
         {
             var authorId = this.userRepo.All().SingleOrDefault(u => u.UserName == model.Author).Id;
+
+            var content = HttpUtility.HtmlDecode(StripHtml(model.FullContent.Trim()));
+
+            if (string.IsNullOrWhiteSpace(content))
+            {
+                throw new NullReferenceException("Comment is required.");
+            }
+
+            var title = HttpUtility.HtmlDecode(StripHtml(model.Title.Trim()));
+
+            if (string.IsNullOrWhiteSpace(title))
+            {
+                throw new NullReferenceException("Title is required.");
+            }
+
+            var inputTags = HttpUtility.HtmlDecode(StripHtml(model.Tags.Trim()));
+
+            if (string.IsNullOrWhiteSpace(inputTags))
+            {
+                throw new NullReferenceException("Tag is required.");
+            }
 
             var post = new Post
             {
@@ -136,7 +165,7 @@ namespace CakeWebApp.Services.Common.CommonServices
                     CreatedOn = c.CreatedOn.ToString("dd-MM-yyyy HH:mm"),
                     Id = c.Id,
                     IsDeleted = c.IsDeleted
-                }).ToList()
+                }).OrderByDescending(c => c.CreatedOn).ToList()
             };
 
             return postDetail;
@@ -159,7 +188,7 @@ namespace CakeWebApp.Services.Common.CommonServices
                 Id = c.Id,
                 PostId = c.PostId,
                 IsDeleted = c.IsDeleted
-            }).OrderByDescending(c => c.CreatedOn);
+            }).OrderByDescending(c => c.CreatedOn.Date);
 
             return commentModels;
         }
@@ -179,6 +208,7 @@ namespace CakeWebApp.Services.Common.CommonServices
                 Title = p.Title,
                 CreatedOn = p.CreatedOn.ToString("dd-MM-yyyy HH:mm"),
                 Content = GetShortContent(p.FullContent),
+                CommentsCount = p.Comments.Count
             }).OrderByDescending(p => p.CreatedOn);
 
             return modelPosts;
@@ -200,7 +230,7 @@ namespace CakeWebApp.Services.Common.CommonServices
             var modelPosts = posts.Select(p => new PostIndexViewModel
             {
                 Author = p.Author.UserName,
-                CommentCount = p.Comments.Count,
+                CommentCount = p.Comments.Where(c => c.IsDeleted == false).Count(),
                 CreatedOn = p.CreatedOn.ToString("dd-MM-yyyy HH:mm"),
                 Tags = string.Join(", ", p.Tags.Select(t => t.Tag.Name)),
                 Title = p.Title,
@@ -332,7 +362,7 @@ namespace CakeWebApp.Services.Common.CommonServices
 
             if (comment == null)
             {
-                throw new InvalidOperationException("Comment not found.");
+                throw new NullReferenceException("Comment not found.");
             }
 
             comment.IsDeleted = true;
@@ -378,6 +408,13 @@ namespace CakeWebApp.Services.Common.CommonServices
 
         public async Task UpdateComment(EditCommentViewModel model)
         {
+            var content = HttpUtility.HtmlDecode(StripHtml(model.Comment.Content));
+
+            if (string.IsNullOrWhiteSpace(content))
+            {
+                throw new NullReferenceException("Comment is required.");
+            }
+            
             var comment = new Comment
             {
                 AuthorId = model.Comment.AuthorId,
@@ -404,6 +441,27 @@ namespace CakeWebApp.Services.Common.CommonServices
 
         public async Task UpdatePost(PostInputViewModel model)
         {
+            var content = HttpUtility.HtmlDecode(StripHtml(model.FullContent.Trim()));
+
+            if (string.IsNullOrWhiteSpace(content))
+            {
+                throw new NullReferenceException("Comment is required.");
+            }
+
+            var title = HttpUtility.HtmlDecode(StripHtml(model.Title.Trim()));
+
+            if (string.IsNullOrWhiteSpace(title))
+            {
+                throw new NullReferenceException("Title is required.");
+            }
+
+            var inputTags = HttpUtility.HtmlDecode(StripHtml(model.Tags.Trim()));
+
+            if (string.IsNullOrWhiteSpace(inputTags))
+            {
+                throw new NullReferenceException("Tag is required.");
+            }
+
             var authorId = this.userRepo.All().SingleOrDefault(u => u.UserName == model.Author).Id;
 
             var post = new Post
@@ -472,7 +530,7 @@ namespace CakeWebApp.Services.Common.CommonServices
             //get rid of multiple blank lines
             output = Regex.Replace(output, @"^\s*$\n", string.Empty, RegexOptions.Multiline);
 
-            return output;
+            return HttpUtility.HtmlDecode(output);
         }
 
         public IEnumerable<PostIndexViewModel> GetAllPosts()

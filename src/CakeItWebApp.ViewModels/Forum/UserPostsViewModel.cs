@@ -18,5 +18,8 @@ namespace CakeItWebApp.ViewModels.Forum
 
         [Required]
         public string CreatedOn { get; set; }
+
+        [Required]
+        public int CommentsCount { get; set; }
     }
 }
