@@ -121,7 +121,7 @@ namespace CakeWebApp.Services.Common.CommonServices
 
             if (customCakeImg == null)
             {
-                throw new InvalidOperationException("Custom cake image not found.");
+                throw new NullReferenceException("Custom cake image not found.");
             }
 
             var model = this.mapper.Map<CustomCakeImg, CustomCakeImgViewModel>(customCakeImg);
@@ -162,7 +162,7 @@ namespace CakeWebApp.Services.Common.CommonServices
 
             if (customCakeImg == null)
             {
-                throw new InvalidOperationException("Custom cake not found.");
+                throw new NullReferenceException("Custom cake not found.");
             }
 
             this.customCakeImgRepo.Delete(customCakeImg);

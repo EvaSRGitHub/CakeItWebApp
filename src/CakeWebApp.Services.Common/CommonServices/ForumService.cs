@@ -74,7 +74,7 @@ namespace CakeWebApp.Services.Common.CommonServices
                 Title = model.Title,
             };
 
-            if(postRepo.All().Any(p => p.Title == post.Title && p.IsDeleted == false))
+            if (postRepo.All().Any(p => p.Title == post.Title && p.IsDeleted == false))
             {
                 throw new InvalidOperationException("Post with such title already exists.");
             }
@@ -146,12 +146,13 @@ namespace CakeWebApp.Services.Common.CommonServices
         {
             var comments = this.commentRepo.All().Where(a => a.Author.UserName == userName && a.IsDeleted == false);
 
-            if(comments == null)
+            if (comments.Count() == 0)
             {
                 throw new InvalidOperationException("No Comments found.");
             }
 
-            var commentModels = comments.Select(c => new CommentInputViewModel {
+            var commentModels = comments.Select(c => new CommentInputViewModel
+            {
                 CreatedOn = c.CreatedOn,
                 Content = GetShortContent(c.Content),
                 AuthorId = c.AuthorId,
@@ -167,7 +168,7 @@ namespace CakeWebApp.Services.Common.CommonServices
         {
             var allPosts = this.postRepo.All().Where(u => u.Author.UserName == userName && u.IsDeleted == false);
 
-            if (allPosts == null)
+            if (allPosts.Count() == 0)
             {
                 throw new InvalidOperationException("No Posts found.");
             }
@@ -193,7 +194,7 @@ namespace CakeWebApp.Services.Common.CommonServices
             }
             else
             {
-                posts = this.postRepo.All().Where(p => p.Title.Contains(searchString) && p.IsDeleted == false);
+                posts = this.postRepo.All().Where(p => p.Title.Contains(searchString, StringComparison.CurrentCultureIgnoreCase) && p.IsDeleted == false);
             }
 
             var modelPosts = posts.Select(p => new PostIndexViewModel
@@ -204,7 +205,7 @@ namespace CakeWebApp.Services.Common.CommonServices
                 Tags = string.Join(", ", p.Tags.Select(t => t.Tag.Name)),
                 Title = p.Title,
                 Id = p.Id
-            }).OrderByDescending(p => p.CreatedOn).ToList();
+            }).OrderBy(p => p.CreatedOn).ToList();
 
             return modelPosts;
         }
@@ -213,14 +214,14 @@ namespace CakeWebApp.Services.Common.CommonServices
         {
             var commentToEdit = await this.commentRepo.GetByIdAsync(id);
 
-            if(commentToEdit.Post == null || commentToEdit.Post.IsDeleted == true)
+            if (commentToEdit == null)
             {
-                throw new InvalidOperationException("Post not found.");
+                throw new NullReferenceException("Comment not found.");
             }
 
-            if(commentToEdit == null)
+            if (commentToEdit.Post == null || commentToEdit.Post.IsDeleted == true)
             {
-                throw new InvalidOperationException("Comment not found.");
+                throw new InvalidOperationException("Post not found.");
             }
 
             var model = new EditCommentViewModel
@@ -251,7 +252,7 @@ namespace CakeWebApp.Services.Common.CommonServices
 
             if (post == null)
             {
-                throw new InvalidOperationException("Post not found");
+                throw new NullReferenceException("Post not found");
             }
 
             if (post.IsDeleted)
@@ -276,7 +277,7 @@ namespace CakeWebApp.Services.Common.CommonServices
         {
             var post = this.postRepo.All().SingleOrDefault(p => p.Id == id);
 
-            if (post == null && post.IsDeleted == true)
+            if (post == null || post.IsDeleted == true)
             {
                 throw new InvalidOperationException("Post not found.");
             }
@@ -307,7 +308,7 @@ namespace CakeWebApp.Services.Common.CommonServices
         {
             var posts = this.postRepo.All().Where(p => p.Tags.Any(t => t.Tag.Name == tagName) && p.IsDeleted == false);
 
-            if(posts == null)
+            if (posts.Count() == 0)
             {
                 throw new InvalidOperationException("No mathcing posts are found.");
             }
@@ -354,7 +355,7 @@ namespace CakeWebApp.Services.Common.CommonServices
         {
             var post = await this.postRepo.GetByIdAsync(model.Id);
 
-            if(post == null)
+            if (post == null)
             {
                 throw new InvalidOperationException("Post not found.");
             }

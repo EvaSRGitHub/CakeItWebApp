@@ -34,34 +34,36 @@ namespace CakeItWebApp.Services.Common.Tests
                     config.CreateMap<AddTutorialViewModel, Tutorial>().ReverseMap();
                     config.CreateMap<TutorialIndexViewModel, Tutorial>().ReverseMap();
                     config.CreateMap<Comment, CommentInputViewModel>().ReverseMap();
+                    config.CreateMap<Comment, PostIndexViewModel>().ReverseMap();
+
                 }));
 
-            this.Options = new DbContextOptionsBuilder<CakeItDbContext>().UseInMemoryDatabase(databaseName: "CakeItInMemory").Options;
+            //this.Options = new DbContextOptionsBuilder<CakeItDbContext>().UseInMemoryDatabase(databaseName: "CakeItInMemory").Options;
 
-            this.Db = new CakeItDbContext(this.Options);
+            //this.Db = new CakeItDbContext(this.Options);
         }
 
         protected IMapper Mapper { get; private set; }
 
-        protected DbContextOptions<CakeItDbContext> Options { get; private set; }
+        //protected DbContextOptions<CakeItDbContext> Options { get; set; }
 
-        public CakeItDbContext Db { get; protected set; }
+        //public CakeItDbContext Db { get; protected set; }
 
-        protected async Task SeedProducts()
-        {
-            var repo = new Repository<Product>(this.Db);
+        //protected async Task SeedProducts()
+        //{
+        //    var repo = new Repository<Product>(this.Db);
 
-            var cakeModel1 = new CreateCakeViewModel { Name = "Chocolate Peanut Cake", CategoryId = 1, Price = 35.50m, Description = "This Chocolate and Peanut Butter Drip Cake is completely sinful.", Image = "https://res.cloudinary.com/cakeit/image/upload/ar_1:1,c_fill,g_auto,e_art:hokusai/v1544136590/Chocolate_and_Peanut_cake.jpg" };
+        //    var cakeModel1 = new CreateCakeViewModel { Name = "Chocolate Peanut Cake", CategoryId = 1, Price = 35.50m, Description = "This Chocolate and Peanut Butter Drip Cake is completely sinful.", Image = "https://res.cloudinary.com/cakeit/image/upload/ar_1:1,c_fill,g_auto,e_art:hokusai/v1544136590/Chocolate_and_Peanut_cake.jpg" };
 
-            var cakeModel2 = new CreateCakeViewModel { Name = "Chocolate Drip Cake", CategoryId = 1, Price = 35.50m, Description = "This Chocolate and Peanut Butter Drip Cake is completely sinful.", Image = "https://res.cloudinary.com/cakeit/image/upload/ar_1:1,c_fill,g_auto,e_art:hokusai/v1544136590/Chocolate_and_Peanut_cake.jpg" };
+        //    var cakeModel2 = new CreateCakeViewModel { Name = "Chocolate Drip Cake", CategoryId = 1, Price = 35.50m, Description = "This Chocolate and Peanut Butter Drip Cake is completely sinful.", Image = "https://res.cloudinary.com/cakeit/image/upload/ar_1:1,c_fill,g_auto,e_art:hokusai/v1544136590/Chocolate_and_Peanut_cake.jpg" };
 
-            var cakeService = new CakeService(null, repo, this.Mapper);
+        //    var cakeService = new CakeService(null, repo, this.Mapper);
 
-           await cakeService.AddCakeToDb(cakeModel1);
-           await cakeService.AddCakeToDb(cakeModel2);
+        //   await cakeService.AddCakeToDb(cakeModel1);
+        //   await cakeService.AddCakeToDb(cakeModel2);
 
-            await repo.SaveChangesAsync();
-            //It works without SaveCanges()???
-        }
+        //    await repo.SaveChangesAsync();
+        //    //It works without SaveCanges()???
+        //}
     }
 }

@@ -56,7 +56,7 @@ namespace CakeWebApp.Services.Common.CommonServices
 
             if (tagModel == null)
             {
-                throw new InvalidOperationException("Tag not found");
+                throw new NullReferenceException("Tag not found");
             }
 
             return this.mapper.Map<Tag, TagInputViewModel>(tagModel);

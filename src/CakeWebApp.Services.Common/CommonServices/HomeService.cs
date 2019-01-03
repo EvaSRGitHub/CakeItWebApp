@@ -53,7 +53,7 @@ namespace CakeWebApp.Services.Common.CommonServices
 
         public int GetCakeProductsCount()
         {
-            return this.repository.All().Where(p => p.Category.Type.ToString() == "Cake").Count();
+            return this.repository.All().Where(p => p.CategoryId == 1).Count();
         }
     }
 }

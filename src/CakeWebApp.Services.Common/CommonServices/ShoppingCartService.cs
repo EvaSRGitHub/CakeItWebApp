@@ -44,7 +44,7 @@ namespace CakeWebApp.Services.Common.CommonServices
 
             if(product == null)
             {
-                throw new InvalidOperationException("Product not found");
+                throw new NullReferenceException("Product not found");
             }
 
             var shoppingCartItem =
@@ -94,7 +94,7 @@ namespace CakeWebApp.Services.Common.CommonServices
 
             if (product == null)
             {
-                throw new InvalidOperationException("Product not found");
+                throw new NullReferenceException("Product not found");
             }
 
             var shoppingCartItem =

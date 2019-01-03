@@ -31,10 +31,10 @@ namespace CakeWebApp.Services.Common.CommonServices
 
             if (tutorial == null)
             {
-                throw new InvalidOperationException("Tutorial not found.");
+                throw new NullReferenceException("Tutorial not found.");
             }
 
-            if (rating < 1 && rating > 5)
+            if (rating < 1 || rating > 5)
             {
                 throw new InvalidOperationException("Invlid rating value.");
             }
@@ -89,7 +89,7 @@ namespace CakeWebApp.Services.Common.CommonServices
 
             if(tutorial == null)
             {
-                throw new InvalidOperationException("Tutorial not found.");
+                throw new NullReferenceException("Tutorial not found.");
             }
 
             this.repository.Delete(tutorial);
@@ -112,7 +112,7 @@ namespace CakeWebApp.Services.Common.CommonServices
 
             if (tutorial == null)
             {
-                throw new InvalidOperationException("Tutorial not found.");
+                throw new NullReferenceException("Tutorial not found.");
             }
 
             var model = this.mapper.Map<Tutorial, AddTutorialViewModel>(tutorial);

@@ -1,8 +1,10 @@
-﻿using CakeItWebApp.Models;
+﻿using CakeItWebApp.Data;
+using CakeItWebApp.Models;
 using CakeItWebApp.Services.Common.Repository;
 using CakeItWebApp.ViewModels.Cakes;
 using CakeWebApp.Models;
 using CakeWebApp.Services.Common.CommonServices;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using System;
@@ -16,14 +18,49 @@ namespace CakeItWebApp.Services.Common.Tests
 {
     public class ShoppingCartServiceTests : BaseServiceTestClass
     {
+        private CakeItDbContext SetDb()
+        {
+            var serviceProvider = new ServiceCollection()
+           .AddEntityFrameworkInMemoryDatabase()
+           .BuildServiceProvider();
+
+            var builder = new DbContextOptionsBuilder<CakeItDbContext>();
+            builder.UseInMemoryDatabase($"database{Guid.NewGuid()}")
+                   .UseInternalServiceProvider(serviceProvider);
+
+
+            var Db = new CakeItDbContext(builder.Options);
+            return Db;
+        }
+
+        private async Task SeedProducts(CakeItDbContext db)
+        {
+            var repo = new Repository<Product>(db);
+
+            var cakeModel1 = new CreateCakeViewModel { Name = "Chocolate Peanut Cake", CategoryId = 1, Price = 35.50m, Description = "This Chocolate and Peanut Butter Drip Cake is completely sinful.", Image = "https://res.cloudinary.com/cakeit/image/upload/ar_1:1,c_fill,g_auto,e_art:hokusai/v1544136591/Chocolate_and_Peanut_cake.jpg" };
+
+            var cakeModel2 = new CreateCakeViewModel { Name = "Chocolate Drip Cake", CategoryId = 1, Price = 35.50m, Description = "This Chocolate and Peanut Butter Drip Cake is completely sinful.", Image = "https://res.cloudinary.com/cakeit/image/upload/ar_1:1,c_fill,g_auto,e_art:hokusai/v1544136590/Chocolate_Drip_cake.jpg" };
+
+            var cakeService = new CakeService(null, repo, this.Mapper);
+
+            await cakeService.AddCakeToDb(cakeModel1);
+            await cakeService.AddCakeToDb(cakeModel2);
+
+            await repo.SaveChangesAsync();
+            //It works without SaveCanges()???
+        }
+
         [Fact]
         public async Task AddShoppingCartItem_WithValidProductId_ShouldAddNewItemToDb()
         {
             //Arrange
-            await this.SeedProducts();
-            var repo = new Repository<ShoppingCartItem>(this.Db);
+            var db = this.SetDb();
 
-            var productRepo = new Repository<Product>(this.Db);
+            await this.SeedProducts(db);
+
+            var repo = new Repository<ShoppingCartItem>(db);
+
+            var productRepo = new Repository<Product>(db);
 
             var provider = new Mock<IServiceProvider>();
 
@@ -48,8 +85,11 @@ namespace CakeItWebApp.Services.Common.Tests
         public async Task AddShoppingCartItem_WhitInValidProductId_ShouldThrow()
         {
             //Arrange
-            var repo = new Repository<ShoppingCartItem>(this.Db);
-            var productRepo = new Repository<Product>(this.Db);
+            var db = this.SetDb();
+
+            var repo = new Repository<ShoppingCartItem>(db);
+
+            var productRepo = new Repository<Product>(db);
 
             var provider = new Mock<IServiceProvider>();
 
@@ -58,15 +98,19 @@ namespace CakeItWebApp.Services.Common.Tests
             var shoppingCartService = new ShoppingCartService(repo, productRepo, null, provider.Object, cart.Object);
 
             //Assert
-            await Assert.ThrowsAsync<InvalidOperationException>(async () => await shoppingCartService.AddToShoppingCart(1));
+            await Assert.ThrowsAsync<NullReferenceException>(async () => await shoppingCartService.AddToShoppingCart(1));
         }
 
         [Fact]
         public async Task AddShoppingCartItem_WhitInValidProductId_ShouldNotAddItem()
         {
             //Arrange
-            var repo = new Repository<ShoppingCartItem>(this.Db);
-            var productRepo = new Repository<Product>(this.Db);
+            var db = this.SetDb();
+
+            var repo = new Repository<ShoppingCartItem>(db);
+
+            var productRepo = new Repository<Product>(db);
+
 
             var provider = new Mock<IServiceProvider>();
 
@@ -95,11 +139,13 @@ namespace CakeItWebApp.Services.Common.Tests
         public async Task AddShoppingCartItem_AddSecondTimeOneItem_ShouldIncreaseItemQuantityInDb()
         {
             //Arrange
-            await this.SeedProducts();
+            var db = this.SetDb();
 
-            var repo = new Repository<ShoppingCartItem>(this.Db);
+            await this.SeedProducts(db);
 
-            var productRepo = new Repository<Product>(this.Db);
+            var repo = new Repository<ShoppingCartItem>(db);
+
+            var productRepo = new Repository<Product>(db);
 
             var provider = new Mock<IServiceProvider>();
 
@@ -122,9 +168,11 @@ namespace CakeItWebApp.Services.Common.Tests
         public void GetCartItems_WithNoItems_ShouldReturnNull()
         {
             //Arrange
-            var repo = new Repository<ShoppingCartItem>(this.Db);
+            var db = this.SetDb();
 
-            var productRepo = new Repository<Product>(this.Db);
+            var repo = new Repository<ShoppingCartItem>(db);
+
+            var productRepo = new Repository<Product>(db);
 
             var provider = new Mock<IServiceProvider>();
 
@@ -146,12 +194,13 @@ namespace CakeItWebApp.Services.Common.Tests
         public async Task GetCartItems_WithTwoItems_ShouldReturnItemCount2()
         {
             //Arrange
+            var db = this.SetDb();
 
-            await this.SeedProducts();
+            await this.SeedProducts(db);
 
-            var repo = new Repository<ShoppingCartItem>(this.Db);
+            var repo = new Repository<ShoppingCartItem>(db);
 
-            var productRepo = new Repository<Product>(this.Db);
+            var productRepo = new Repository<Product>(db);
 
             var provider = new Mock<IServiceProvider>();
 
@@ -176,12 +225,13 @@ namespace CakeItWebApp.Services.Common.Tests
         public async Task ClearShopingCart()
         {
             //Arrange
+            var db = this.SetDb();
 
-            await this.SeedProducts();
+            await this.SeedProducts(db);
 
-            var repo = new Repository<ShoppingCartItem>(this.Db);
+            var repo = new Repository<ShoppingCartItem>(db);
 
-            var productRepo = new Repository<Product>(this.Db);
+            var productRepo = new Repository<Product>(db);
 
             var provider = new Mock<IServiceProvider>();
 
@@ -206,11 +256,13 @@ namespace CakeItWebApp.Services.Common.Tests
         public async Task RemoveFromShoppingCart_WithItemAmountingToTwo_ShouldReturnCartItemsCount1()
         {
             //Arrange
-            await this.SeedProducts();
+            var db = this.SetDb();
 
-            var repo = new Repository<ShoppingCartItem>(this.Db);
+            await this.SeedProducts(db);
 
-            var productRepo = new Repository<Product>(this.Db);
+            var repo = new Repository<ShoppingCartItem>(db);
+
+            var productRepo = new Repository<Product>(db);
 
             var provider = new Mock<IServiceProvider>();
 
@@ -235,10 +287,13 @@ namespace CakeItWebApp.Services.Common.Tests
         public async Task RemoveFromShoppingCart_WithOneItem_ShouldReturnCartItemsCount0()
         {
             //Arrange
-            await this.SeedProducts();
-            var repo = new Repository<ShoppingCartItem>(this.Db);
+            var db = this.SetDb();
 
-            var productRepo = new Repository<Product>(this.Db);
+            await this.SeedProducts(db);
+
+            var repo = new Repository<ShoppingCartItem>(db);
+
+            var productRepo = new Repository<Product>(db);
 
             var provider = new Mock<IServiceProvider>();
 
@@ -262,8 +317,11 @@ namespace CakeItWebApp.Services.Common.Tests
         public async Task RemoveFromShoppingCart_WhitInValidProductId_ShouldThrow()
         {
             //Arrange
-            var repo = new Repository<ShoppingCartItem>(this.Db);
-            var productRepo = new Repository<Product>(this.Db);
+            var db = this.SetDb();
+
+            var repo = new Repository<ShoppingCartItem>(db);
+
+            var productRepo = new Repository<Product>(db);
 
             var provider = new Mock<IServiceProvider>();
 
@@ -272,7 +330,7 @@ namespace CakeItWebApp.Services.Common.Tests
             var shoppingCartService = new ShoppingCartService(repo, productRepo, null, provider.Object, cart.Object);
 
             //Assert
-            await Assert.ThrowsAsync<InvalidOperationException>(async () => await shoppingCartService.RemoveFromShoppingCart(1));
+            await Assert.ThrowsAsync<NullReferenceException>(async () => await shoppingCartService.RemoveFromShoppingCart(1));
         }
     }
 }

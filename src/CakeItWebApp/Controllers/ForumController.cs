@@ -139,6 +139,12 @@ namespace CakeItWebApp.Controllers
                 return this.View("Error");
             }
 
+            if (model.Author != this.User.Identity.Name && !this.User.IsInRole("Admin"))
+            {
+                return this.Redirect("/Identity/Account/AccessDenied");
+            }
+
+
             return this.View(model);
         }
 
@@ -182,6 +188,11 @@ namespace CakeItWebApp.Controllers
                 return this.View("Error");
             }
 
+            if (model.Author != this.User.Identity.Name && !this.User.IsInRole("Admin"))
+            {
+                return this.Redirect("/Identity/Account/AccessDenied");
+            }
+
             return this.View(model);
         }
 
@@ -215,6 +226,11 @@ namespace CakeItWebApp.Controllers
                 ViewData["Errors"] = e.Message;
 
                 return this.View("Error");
+            }
+
+            if (model.Comment.AuthorName != this.User.Identity.Name && !this.User.IsInRole("Admin"))
+            {
+                return this.Redirect("/Identity/Account/AccessDenied");
             }
 
             return this.View(model);
@@ -258,6 +274,11 @@ namespace CakeItWebApp.Controllers
                 ViewData["Errors"] = e.Message;
 
                 return this.View("Error");
+            }
+
+            if (model.Comment.AuthorName != this.User.Identity.Name && !this.User.IsInRole("Admin"))
+            {
+                return this.Redirect("/Identity/Account/AccessDenied");
             }
 
             return this.View(model);

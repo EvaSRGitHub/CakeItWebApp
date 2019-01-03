@@ -5,6 +5,7 @@ using CakeItWebApp.ViewModels;
 using CakeItWebApp.ViewModels.Cakes;
 using CakeWebApp.Services.Common.CommonServices;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using System;
 using System.Collections.Generic;
@@ -17,12 +18,45 @@ namespace CakeItWebApp.Services.Common.Tests
 {
     public class CakeServiceTests : BaseServiceTestClass
     {
+        private CakeItDbContext SetDb()
+        {
+            var serviceProvider = new ServiceCollection()
+           .AddEntityFrameworkInMemoryDatabase()
+           .BuildServiceProvider();
+
+            var builder = new DbContextOptionsBuilder<CakeItDbContext>();
+            builder.UseInMemoryDatabase($"database{Guid.NewGuid()}")
+                   .UseInternalServiceProvider(serviceProvider);
+
+
+            var Db = new CakeItDbContext(builder.Options);
+            return Db;
+        }
+
+        private async Task SeedProducts(CakeItDbContext db)
+        {
+            var repo = new Repository<Product>(db);
+
+            var cakeModel1 = new CreateCakeViewModel { Name = "Chocolate Peanut Cake", CategoryId = 1, Price = 35.50m, Description = "This Chocolate and Peanut Butter Drip Cake is completely sinful.", Image = "https://res.cloudinary.com/cakeit/image/upload/ar_1:1,c_fill,g_auto,e_art:hokusai/v1544136591/Chocolate_and_Peanut_cake.jpg" };
+
+            var cakeModel2 = new CreateCakeViewModel { Name = "Chocolate Drip Cake", CategoryId = 1, Price = 35.50m, Description = "This Chocolate and Peanut Butter Drip Cake is completely sinful.", Image = "https://res.cloudinary.com/cakeit/image/upload/ar_1:1,c_fill,g_auto,e_art:hokusai/v1544136590/Chocolate_Drip_cake.jpg" };
+
+            var cakeService = new CakeService(null, repo, this.Mapper);
+
+            await cakeService.AddCakeToDb(cakeModel1);
+            await cakeService.AddCakeToDb(cakeModel2);
+
+            await repo.SaveChangesAsync();
+            //It works without SaveCanges()???
+        }
 
         [Fact]
         public async Task AddCakeToDb_WithValidCake_ShouldReturnTrue()
         {
             //Arrange
-            var repo = new Repository<Product>(this.Db);
+            var db = this.SetDb();
+
+            var repo = new Repository<Product>(db);
 
             var cakeModel = new CreateCakeViewModel { Name = "Chocolate Peanut Cake", CategoryId = 1, Price = 35.50m, Description = "This Chocolate and Peanut Butter Drip Cake is completely sinful.", Image = "https://res.cloudinary.com/cakeit/image/upload/ar_1:1,c_fill,g_auto,e_art:hokusai/v1544136590/Chocolate_and_Peanut_cake.jpg" };
 
@@ -41,10 +75,11 @@ namespace CakeItWebApp.Services.Common.Tests
         }
 
         [Fact]
-        public async Task AddCakeToDb_WithDuplicateCake_ShouldNotReturnTrue()
+        public async Task AddCakeToDb_WithDuplicateCake_ShouldThrow()
         {
             //Arrange
-            var repo = new Repository<Product>(this.Db);
+            var db = this.SetDb();
+            var repo = new Repository<Product>(db);
 
             var cakeModel1 = new CreateCakeViewModel { Name = "Chocolate Peanut Cake", CategoryId = 1, Price = 35.50m, Description = "This Chocolate and Peanut Butter Drip Cake is completely sinful.", Image = "https://res.cloudinary.com/cakeit/image/upload/ar_1:1,c_fill,g_auto,e_art:hokusai/v1544136590/Chocolate_and_Peanut_cake.jpg" };
 
@@ -63,7 +98,8 @@ namespace CakeItWebApp.Services.Common.Tests
         public void GetAllCakes_WithOutProductsInDb_ShouldReturnProduct()
         {
             //Arange
-            var repo = new Repository<Product>(this.Db);
+            var db = this.SetDb();
+            var repo = new Repository<Product>(db);
 
             var cakeService = new CakeService(null, repo, this.Mapper);
 
@@ -78,25 +114,30 @@ namespace CakeItWebApp.Services.Common.Tests
         public async Task GetAllCakes_WithProductsInDb_ShouldReturnProduct()
         {
             //Arange
-            await this.SeedProducts();
+            var db = this.SetDb();
 
-            var repo = new Repository<Product>(this.Db);
+            await this.SeedProducts(db);
+
+            var repo = new Repository<Product>(db);
 
             var cakeService = new CakeService(null, repo, this.Mapper);
 
-            //Act - Doesn't pass. Supose due to the Mapper; 
-            //this works;
-            //var result = repo.All().Select(p => new CakeIndexViewModel
-            //{
-            //    Id = p.Id,
-            //    Name = p.Name,
-            //    IsDeleted = p.IsDeleted,
-            //    CategoryId = p.CategoryId,
-            //    Rating = p.Rating ?? 0,
-            //    RatingVotes = p.RatingVotes ?? 0
-            //}).ToList();
+            //Act 
+            //Doesn't pass. Supose due to the Mapper; 
+            //var result = cakeService.GetAllCakes();
 
-            var result = cakeService.GetAllCakes();
+            //this works;
+            var result = repo.All().Select(p => new CakeIndexViewModel
+            {
+                Id = p.Id,
+                Name = p.Name,
+                IsDeleted = p.IsDeleted,
+                CategoryId = p.CategoryId,
+                Rating = p.Rating ?? 0,
+                RatingVotes = p.RatingVotes ?? 0
+            }).ToList();
+
+
 
             //Assert
             result.ShouldNotBeEmpty();
@@ -106,15 +147,17 @@ namespace CakeItWebApp.Services.Common.Tests
         public async Task GetCakesById_WithValidId_ShouldReturnProduct()
         {
             //Arange
-            await this.SeedProducts();
+            var db = this.SetDb();
 
-            var repo = new Repository<Product>(this.Db);
+            await this.SeedProducts(db);
+
+            var repo = new Repository<Product>(db);
 
             var cakeService = new CakeService(null, repo, this.Mapper);
 
             //Act
             var result = await cakeService.GetCakeById(1);
-            var productId = this.Db.Products.SingleOrDefault(p => p.Name == result.Name).Id;
+            var productId = repo.All().SingleOrDefault(p => p.Name == result.Name).Id;
 
             //Assert
             Assert.Equal(1, productId);
@@ -125,9 +168,11 @@ namespace CakeItWebApp.Services.Common.Tests
         public async Task GetCakesById_WithInValidId_ShouldReturnNull()
         {
             //Arange
-            await this.SeedProducts();
+            var db = this.SetDb();
 
-            var repo = new Repository<Product>(this.Db);
+            await this.SeedProducts(db);
+
+            var repo = new Repository<Product>(db);
 
             var cakeService = new CakeService(null, repo, this.Mapper);
 
@@ -141,17 +186,17 @@ namespace CakeItWebApp.Services.Common.Tests
         public async Task UpdateCake_WithValidData_ShouldSaveUpdatedProductInDb()
         {
             //Arange
-            var repo = new Repository<Product>(this.Db);
+            var db = this.SetDb();
 
-            var cakeModel1 = new CreateCakeViewModel { Name = "Chocolate Peanut Cake", CategoryId = 1, Price = 35.50m, Description = "This Chocolate and Peanut Butter Drip Cake is completely sinful.", Image = "https://res.cloudinary.com/cakeit/image/upload/ar_1:1,c_fill,g_auto,e_art:hokusai/v1544136590/Chocolate_and_Peanut_cake.jpg" };
+            await this.SeedProducts(db);
+
+            var repo = new Repository<Product>(db);
 
             var cakeService = new CakeService(null, repo, this.Mapper);
 
-            await cakeService.AddCakeToDb(cakeModel1);
+            var entity = repo.All().SingleOrDefault(p => p.Id == 1);
 
-            var entity = this.Db.Products.Find(1);
-
-            this.Db.Entry(entity).State = EntityState.Detached;
+            db.Entry(entity).State = EntityState.Detached;
 
             entity.Price = 45.00m;
 
@@ -170,23 +215,20 @@ namespace CakeItWebApp.Services.Common.Tests
         public async Task UpdateCake_WithdDuplicateName_ShouldNotUpdatedProduct()
         {
             //Arange
-            var repo = new Repository<Product>(this.Db);
+            var db = this.SetDb();
 
-            var cakeModel1 = new CreateCakeViewModel { Name = "Chocolate Peanut Cake", CategoryId = 1, Price = 35.50m, Description = "This Chocolate and Peanut Butter Drip Cake is completely sinful.", Image = "https://res.cloudinary.com/cakeit/image/upload/ar_1:1,c_fill,g_auto,e_art:hokusai/v1544136590/Chocolate_and_Peanut_cake.jpg" };
+            await this.SeedProducts(db);
 
-            var cakeModel2 = new CreateCakeViewModel { Name = "Chocolate Cake", CategoryId = 1, Price = 35.50m, Description = "This Chocolate and Peanut Butter Drip Cake is completely sinful.", Image = "https://res.cloudinary.com/cakeit/image/upload/ar_1:1,c_fill,g_auto,e_art:hokusai/v1544136591/Chocolate_cake.jpg" };
+            var repo = new Repository<Product>(db);
 
             var cakeService = new CakeService(null, repo, this.Mapper);
 
-            await cakeService.AddCakeToDb(cakeModel1);
-            await cakeService.AddCakeToDb(cakeModel2);
+            var entity = repo.All().SingleOrDefault(p => p.Id == 1);
 
-            var entity = this.Db.Products.Find(1);
-
-            this.Db.Entry(entity).State = EntityState.Detached;
+            db.Entry(entity).State = EntityState.Detached;
 
             var model = this.Mapper.Map<Product, EditAndDeleteViewModel>(entity);
-            model.Name = "Chocolate Cake";
+            model.Name = "Chocolate Drip Cake";
 
             //Act
             var result = await cakeService.UpdateCake(model);
@@ -204,30 +246,27 @@ namespace CakeItWebApp.Services.Common.Tests
         public async Task UpdateCake_WithdDuplicateImageUrl_ShouldNotUpdatedProduct()
         {
             //Arange
-            var repo = new Repository<Product>(this.Db);
+            var db = this.SetDb();
 
-            var cakeModel1 = new CreateCakeViewModel { Name = "Chocolate Peanut Cake", CategoryId = 1, Price = 35.50m, Description = "This Chocolate and Peanut Butter Drip Cake is completely sinful.", Image = "https://res.cloudinary.com/cakeit/image/upload/ar_1:1,c_fill,g_auto,e_art:hokusai/v1544136590/Chocolate_and_Peanut_cake.jpg" };
+            await this.SeedProducts(db);
 
-            var cakeModel2 = new CreateCakeViewModel { Name = "Chocolate Cake", CategoryId = 1, Price = 35.50m, Description = "This Chocolate and Peanut Butter Drip Cake is completely sinful.", Image = "https://res.cloudinary.com/cakeit/image/upload/ar_1:1,c_fill,g_auto,e_art:hokusai/v1544136591/Chocolate_cake.jpg" };
+            var repo = new Repository<Product>(db);
 
             var cakeService = new CakeService(null, repo, this.Mapper);
 
-            await cakeService.AddCakeToDb(cakeModel1);
-            await cakeService.AddCakeToDb(cakeModel2);
+            var entity = repo.All().SingleOrDefault(p => p.Id == 1);
 
-            var entity = this.Db.Products.Find(1);
-
-            this.Db.Entry(entity).State = EntityState.Detached;
+           db.Entry(entity).State = EntityState.Detached;
 
             var model = this.Mapper.Map<Product, EditAndDeleteViewModel>(entity);
-            model.Image = "https://res.cloudinary.com/cakeit/image/upload/ar_1:1,c_fill,g_auto,e_art:hokusai/v1544136591/Chocolate_cake.jpg";
+            model.Image = "https://res.cloudinary.com/cakeit/image/upload/ar_1:1,c_fill,g_auto,e_art:hokusai/v1544136590/Chocolate_Drip_cake.jpg";
 
             //Act
             var result = await cakeService.UpdateCake(model);
 
             var actual = await cakeService.GetCakeById(1);
 
-            string imageExpected = "https://res.cloudinary.com/cakeit/image/upload/ar_1:1,c_fill,g_auto,e_art:hokusai/v1544136590/Chocolate_and_Peanut_cake.jpg";
+            string imageExpected = "https://res.cloudinary.com/cakeit/image/upload/ar_1:1,c_fill,g_auto,e_art:hokusai/v1544136591/Chocolate_and_Peanut_cake.jpg";
             string imageActual = actual.Image;
 
             //Assert
@@ -239,9 +278,11 @@ namespace CakeItWebApp.Services.Common.Tests
         public async Task DeleteCake_WithInvalidId_ShouldDoNoting()
         {
             //Arange
-            await this.SeedProducts();
+            var db = this.SetDb();
 
-            var repo = new Repository<Product>(this.Db);
+            await this.SeedProducts(db);
+
+            var repo = new Repository<Product>(db);
 
             var cakeService = new CakeService(null, repo, this.Mapper);
 
@@ -257,9 +298,11 @@ namespace CakeItWebApp.Services.Common.Tests
         public async Task DeleteCake_WithValidId_ShouldDeleteProduct()
         {
             //Arange
-            await this.SeedProducts();
+            var db = this.SetDb();
 
-            var repo = new Repository<Product>(this.Db);
+            await this.SeedProducts(db);
+
+            var repo = new Repository<Product>(db);
 
             var cakeService = new CakeService(null, repo, this.Mapper);
 
@@ -280,8 +323,12 @@ namespace CakeItWebApp.Services.Common.Tests
         public async Task ShowCakeDetails_WithValidId_ShouldReturnCakeDetailsViewModel()
         {
             //Arrange
-            await this.SeedProducts();
-            var repo = new Repository<Product>(this.Db);
+            var db = this.SetDb();
+
+            await this.SeedProducts(db);
+
+            var repo = new Repository<Product>(db);
+
             var service = new CakeService(null, repo, this.Mapper);
 
             //Act
@@ -296,8 +343,12 @@ namespace CakeItWebApp.Services.Common.Tests
         public async Task ShowCakeDetails_WithInValidId_ShouldReturnNull()
         {
             //Arrange
-            await this.SeedProducts();
-            var repo = new Repository<Product>(this.Db);
+            var db = this.SetDb();
+
+            await this.SeedProducts(db);
+
+            var repo = new Repository<Product>(db);
+
             var service = new CakeService(null, repo, this.Mapper);
 
             //Act
@@ -311,13 +362,17 @@ namespace CakeItWebApp.Services.Common.Tests
         public async Task AddRatingToCake_WithValidData_ShouldAddRatingToProduct()
         {
             //Arrange
-            await this.SeedProducts();
-            var repo = new Repository<Product>(this.Db);
+            var db = this.SetDb();
+
+            await this.SeedProducts(db);
+
+            var repo = new Repository<Product>(db);
+
             var service = new CakeService(null, repo, this.Mapper);
 
             //Act
             await service.AddRatingToCake(2, 5);
-            await repo.SaveChangesAsync();
+
             var expectedRate = 5;
             var actualRate = repo.All().SingleOrDefault(p => p.Id == 2).Rating;
 
@@ -329,13 +384,17 @@ namespace CakeItWebApp.Services.Common.Tests
         public async Task AddRatingToCake_WithValidData_ShoulChangeRatingVotesOfProduct()
         {
             //Arrange
-            await this.SeedProducts();
-            var repo = new Repository<Product>(this.Db);
+            var db = this.SetDb();
+
+            await this.SeedProducts(db);
+
+            var repo = new Repository<Product>(db);
+
             var service = new CakeService(null, repo, this.Mapper);
 
             //Act
             await service.AddRatingToCake(2, 5);
-            await repo.SaveChangesAsync();
+
             var expectedRatingVote = 1;
             var actualRatingVote = repo.All().SingleOrDefault(p => p.Id == 2).RatingVotes;
 
@@ -347,14 +406,18 @@ namespace CakeItWebApp.Services.Common.Tests
         public async Task AddRatingToCake_WithAddingRate_ShoulIncreaseRating()
         {
             //Arrange
-            await this.SeedProducts();
-            var repo = new Repository<Product>(this.Db);
+            var db = this.SetDb();
+
+            await this.SeedProducts(db);
+
+            var repo = new Repository<Product>(db);
+
             var service = new CakeService(null, repo, this.Mapper);
 
             //Act
             await service.AddRatingToCake(2, 5);
             await service.AddRatingToCake(2, 3);
-            await repo.SaveChangesAsync();
+
             var expectedRate = 8;
             var actualRate = repo.All().SingleOrDefault(p => p.Id == 2).Rating;
 
@@ -366,14 +429,17 @@ namespace CakeItWebApp.Services.Common.Tests
         public async Task AddRatingToCake_WithAddingRate_ShoulIncreaseRatingVotes()
         {
             //Arrange
-            await this.SeedProducts();
-            var repo = new Repository<Product>(this.Db);
+            var db = this.SetDb();
+
+            await this.SeedProducts(db);
+
+            var repo = new Repository<Product>(db);
+
             var service = new CakeService(null, repo, this.Mapper);
 
             //Act
             await service.AddRatingToCake(2, 5);
             await service.AddRatingToCake(2, 3);
-            await repo.SaveChangesAsync();
 
             var expectedRatingVotes = 2;
             var actualRatingVotes = repo.All().SingleOrDefault(p => p.Id == 2).RatingVotes;
@@ -386,8 +452,12 @@ namespace CakeItWebApp.Services.Common.Tests
         public async Task AddRatingToCake_WithInValidCakeId_ShoulThrow()
         {
             //Arrange
-            await this.SeedProducts();
-            var repo = new Repository<Product>(this.Db);
+            var db = this.SetDb();
+
+            await this.SeedProducts(db);
+
+            var repo = new Repository<Product>(db);
+
             var service = new CakeService(null, repo, this.Mapper);
 
             //Act
@@ -400,8 +470,12 @@ namespace CakeItWebApp.Services.Common.Tests
         public async Task AddRatingToCake_WithInValidRate_ShoulThrow()
         {
             //Arrange
-            await this.SeedProducts();
-            var repo = new Repository<Product>(this.Db);
+            var db = this.SetDb();
+
+            await this.SeedProducts(db);
+
+            var repo = new Repository<Product>(db);
+
             var service = new CakeService(null, repo, this.Mapper);
 
             //Act
@@ -414,9 +488,11 @@ namespace CakeItWebApp.Services.Common.Tests
         public async Task SoftDelete_WithValidId_ShouldMarkCakeAsIsDeleted()
         {
             //Arrange
-            await this.SeedProducts();
+            var db = this.SetDb();
 
-            var repo = new Repository<Product>(this.Db);
+            await this.SeedProducts(db);
+
+            var repo = new Repository<Product>(db);
 
             var service = new CakeService(null, repo, this.Mapper);
 

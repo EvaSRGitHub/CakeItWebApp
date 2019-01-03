@@ -85,9 +85,9 @@ namespace CakeItWebApp.Areas.Identity.Pages.Account
 
             if (result.Succeeded)
             {
-                //ShoppingCartViewModel usersShoppingCart = new ShoppingCartViewModel();
-                //String cartId = _provider.GetService<IShoppingCartService>().GetShoppingCart().Id;
-                await _provider.GetService<IShoppingCartService>().MigrateCart(Input.Email);
+                var user = await _signInManager.UserManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
+
+               await _provider.GetService<IShoppingCartService>().MigrateCart(user.Email);
 
                 _logger.LogInformation("{Name} logged in with {LoginProvider} provider.", info.Principal.Identity.Name, info.LoginProvider);
                 return LocalRedirect(returnUrl);
@@ -133,6 +133,7 @@ namespace CakeItWebApp.Areas.Identity.Pages.Account
                     if (result.Succeeded)
                     {
                         await _signInManager.SignInAsync(user, isPersistent: false);
+
                         _logger.LogInformation("User created an account using {Name} provider.", info.LoginProvider);
                         return LocalRedirect(returnUrl);
                     }

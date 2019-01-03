@@ -1,7 +1,10 @@
-﻿using CakeItWebApp.Models;
+﻿using CakeItWebApp.Data;
+using CakeItWebApp.Models;
 using CakeItWebApp.Services.Common.Repository;
 using CakeItWebApp.ViewModels.Tutorials;
 using CakeWebApp.Services.Common.CommonServices;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,9 +16,24 @@ namespace CakeItWebApp.Services.Common.Tests
 {
     public class TutorialServiceTests:BaseServiceTestClass
     {
-        private async Task SeedTutorials()
+        private CakeItDbContext SetDb()
         {
-            var repo = new Repository<Tutorial>(this.Db);
+            var serviceProvider = new ServiceCollection()
+           .AddEntityFrameworkInMemoryDatabase()
+           .BuildServiceProvider();
+
+            var builder = new DbContextOptionsBuilder<CakeItDbContext>();
+            builder.UseInMemoryDatabase($"database{Guid.NewGuid()}")
+                   .UseInternalServiceProvider(serviceProvider);
+
+
+            var Db = new CakeItDbContext(builder.Options);
+            return Db;
+        }
+
+        private async Task SeedTutorials(CakeItDbContext db)
+        {
+            var repo = new Repository<Tutorial>(db);
             repo.Add(new Tutorial {Title = "Lotus Flower", Description="Lotus Test Descripion", Url="https://someurl.bg" });
 
             repo.Add(new Tutorial { Title = "Silver leaf", Description = "Silver leaf" +
@@ -28,7 +46,10 @@ namespace CakeItWebApp.Services.Common.Tests
         public async Task AddTutorial_WithValidModel_ShouldBeSuccessful()
         {
             //Arrange
-            var repo = new Repository<Tutorial>(this.Db);
+            var db = this.SetDb();
+
+            var repo = new Repository<Tutorial>(db);
+
             var service = new TutorialService(repo, this.Mapper,null);
 
             var model = new AddTutorialViewModel { Title = "Lotus Flower", Description = "Lotus Test Descripion", Url = "https://someurl.bg" };
@@ -46,7 +67,10 @@ namespace CakeItWebApp.Services.Common.Tests
         public async Task AddTutorial_WithDuplicateUrl_ShouldTrow()
         {
             //Arrange
-            var repo = new Repository<Tutorial>(this.Db);
+            var db = this.SetDb();
+
+            var repo = new Repository<Tutorial>(db);
+
             var service = new TutorialService(repo, this.Mapper, null);
 
             var model1 = new AddTutorialViewModel { Title = "Lotus Flower", Description = "Lotus Test Descripion", Url = "https://someurl.bg" };
@@ -63,7 +87,10 @@ namespace CakeItWebApp.Services.Common.Tests
         public async Task AddTutorial_WithDuplicateTitle_ShouldTrow()
         {
             //Arrange
-            var repo = new Repository<Tutorial>(this.Db);
+            var db = this.SetDb();
+
+            var repo = new Repository<Tutorial>(db);
+
             var service = new TutorialService(repo, this.Mapper, null);
 
             var model1 = new AddTutorialViewModel { Title = "Lotus Flower", Description = "Lotus Test Descripion", Url = "https://someurl.bg" };
@@ -80,12 +107,16 @@ namespace CakeItWebApp.Services.Common.Tests
         public async Task Edit_WithValidData_ShouldSaveUpdatedTurorial()
         {
             //Arrange
-            await this.SeedTutorials();
-            var repo = new Repository<Tutorial>(this.Db);
+            var db = this.SetDb();
+
+            await this.SeedTutorials(db);
+
+            var repo = new Repository<Tutorial>(db);
+
             var service = new TutorialService(repo, this.Mapper, null);
 
             var tutorial = await repo.GetByIdAsync(2);
-            this.Db.Entry(tutorial).State = Microsoft.EntityFrameworkCore.EntityState.Detached;
+            db.Entry(tutorial).State = EntityState.Detached;
             var model = this.Mapper.Map<Tutorial, AddTutorialViewModel>(tutorial);
             model.Title = "Golden leaf";
 
@@ -103,12 +134,16 @@ namespace CakeItWebApp.Services.Common.Tests
         public async Task Edit_WithDuplicateTitle_ShouldSaveUpdatedTurorialThrow()
         {
             //Arrange
-            await this.SeedTutorials();
-            var repo = new Repository<Tutorial>(this.Db);
+            var db = this.SetDb();
+
+            await this.SeedTutorials(db);
+
+            var repo = new Repository<Tutorial>(db);
+
             var service = new TutorialService(repo, this.Mapper, null);
 
             var tutorial = await repo.GetByIdAsync(2);
-            this.Db.Entry(tutorial).State = Microsoft.EntityFrameworkCore.EntityState.Detached;
+            db.Entry(tutorial).State = EntityState.Detached;
             var model = this.Mapper.Map<Tutorial, AddTutorialViewModel>(tutorial);
             model.Title = "Lotus Flower";
 
@@ -122,12 +157,16 @@ namespace CakeItWebApp.Services.Common.Tests
         public async Task Edit_WithDuplicateUrl_ShouldSaveUpdatedTurorialThrow()
         {
             //Arrange
-            await this.SeedTutorials();
-            var repo = new Repository<Tutorial>(this.Db);
+            var db = this.SetDb();
+
+            await this.SeedTutorials(db);
+
+            var repo = new Repository<Tutorial>(db);
+
             var service = new TutorialService(repo, this.Mapper, null);
 
             var tutorial = await repo.GetByIdAsync(2);
-            this.Db.Entry(tutorial).State = Microsoft.EntityFrameworkCore.EntityState.Detached;
+            db.Entry(tutorial).State = EntityState.Detached;
             var model = this.Mapper.Map<Tutorial, AddTutorialViewModel>(tutorial);
             model.Url = "https:" +
                 "//someurl.bg";
@@ -142,8 +181,12 @@ namespace CakeItWebApp.Services.Common.Tests
         public async Task DeleteTutorial_WithValidiD_ShouldDeleteTheTutorial()
         {
             //Arrange
-            await this.SeedTutorials();
-            var repo = new Repository<Tutorial>(this.Db);
+            var db = this.SetDb();
+
+            await this.SeedTutorials(db);
+
+            var repo = new Repository<Tutorial>(db);
+
             var service = new TutorialService(repo, this.Mapper, null);
 
             //Act
@@ -163,22 +206,30 @@ namespace CakeItWebApp.Services.Common.Tests
         public async Task DeleteTutorial_WithInValidiD_ShouldDoNating()
         {
             //Arrange
-            await this.SeedTutorials();
-            var repo = new Repository<Tutorial>(this.Db);
+            var db = this.SetDb();
+
+            await this.SeedTutorials(db);
+
+            var repo = new Repository<Tutorial>(db);
+
             var service = new TutorialService(repo, this.Mapper, null);
 
             //Act
 
             //Asser
-            await Assert.ThrowsAsync<InvalidOperationException>(async () => await service.DeleteTutorial(3));
+            await Assert.ThrowsAsync<NullReferenceException>(async () => await service.DeleteTutorial(3));
         }
 
         [Fact]
         public async Task GetTutorialById_WithValidId_ShouldReturnModel()
         {
             //Arrange
-            await this.SeedTutorials();
-            var repo = new Repository<Tutorial>(this.Db);
+            var db = this.SetDb();
+
+            await this.SeedTutorials(db);
+
+            var repo = new Repository<Tutorial>(db);
+
             var service = new TutorialService(repo, this.Mapper, null);
 
             //Act
@@ -196,27 +247,34 @@ namespace CakeItWebApp.Services.Common.Tests
         public async Task GetTutorialById_WithInValidId_ShouldThrow()
         {
             //Arrange
-            await this.SeedTutorials();
-            var repo = new Repository<Tutorial>(this.Db);
+            var db = this.SetDb();
+
+            await this.SeedTutorials(db);
+
+            var repo = new Repository<Tutorial>(db);
+
             var service = new TutorialService(repo, this.Mapper, null);
 
             //Act
 
             //Assert
-            await Assert.ThrowsAsync<InvalidOperationException>(async () => await service.GetTutorialById(3));
+            await Assert.ThrowsAsync<NullReferenceException>(async () => await service.GetTutorialById(3));
         }
 
         [Fact]
         public async Task AddRatingToTutorial_WithValidData_ShouldAddRatingToTutorial()
         {
             //Arrange
-            await this.SeedTutorials();
-            var repo = new Repository<Tutorial>(this.Db);
+            var db = this.SetDb();
+
+            await this.SeedTutorials(db);
+
+            var repo = new Repository<Tutorial>(db);
             var service = new TutorialService(repo, this.Mapper, null);
 
             //Act
             await service.AddRatingToTutorial(2, 5);
-            await repo.SaveChangesAsync();
+
             var expectedRate = 5;
             var actualRate = repo.All().SingleOrDefault(p => p.Id == 2).Rating;
 
@@ -228,13 +286,17 @@ namespace CakeItWebApp.Services.Common.Tests
         public async Task AddRatingToTutorial_WithValidData_ShoulChangeRatingVotesOfTheTutorial()
         {
             //Arrange
-            await this.SeedTutorials();
-            var repo = new Repository<Tutorial>(this.Db);
+            var db = this.SetDb();
+
+            await this.SeedTutorials(db);
+
+            var repo = new Repository<Tutorial>(db);
+
             var service = new TutorialService(repo, this.Mapper, null);
 
             //Act
             await service.AddRatingToTutorial(2, 5);
-            await repo.SaveChangesAsync();
+
             var expectedRatingVote = 1;
             var actualRatingVote = repo.All().SingleOrDefault(p => p.Id == 2).RatingVotes;
 
@@ -246,14 +308,18 @@ namespace CakeItWebApp.Services.Common.Tests
         public async Task AddRatingToTutorial_WithAddingRate_ShoulIncreaseRating()
         {
             //Arrange
-            await this.SeedTutorials();
-            var repo = new Repository<Tutorial>(this.Db);
+            var db = this.SetDb();
+
+            await this.SeedTutorials(db);
+
+            var repo = new Repository<Tutorial>(db);
+
             var service = new TutorialService(repo, this.Mapper, null);
 
             //Act
             await service.AddRatingToTutorial(2, 5);
             await service.AddRatingToTutorial(2, 3);
-            await repo.SaveChangesAsync();
+           
             var expectedRate = 8;
             var actualRate = repo.All().SingleOrDefault(p => p.Id == 2).Rating;
 
@@ -265,14 +331,18 @@ namespace CakeItWebApp.Services.Common.Tests
         public async Task AddRatingToTutorial_WithAddingRate_ShoulIncreaseRatingVotes()
         {
             //Arrange
-            await this.SeedTutorials();
-            var repo = new Repository<Tutorial>(this.Db);
+            var db = this.SetDb();
+
+            await this.SeedTutorials(db);
+
+            var repo = new Repository<Tutorial>(db);
+
             var service = new TutorialService(repo, this.Mapper, null);
 
             //Act
             await service.AddRatingToTutorial(2, 5);
             await service.AddRatingToTutorial(2, 3);
-            await repo.SaveChangesAsync();
+           
             var expectedRatingVotes = 2;
             var actualRatingVotes = repo.All().SingleOrDefault(p => p.Id == 2).RatingVotes;
 
@@ -284,36 +354,48 @@ namespace CakeItWebApp.Services.Common.Tests
         public async Task AddRatingToTutorial_WithInValidCakeId_ShoulThrow()
         {
             //Arrange
-            await this.SeedTutorials();
-            var repo = new Repository<Tutorial>(this.Db);
+            var db = this.SetDb();
+
+            await this.SeedTutorials(db);
+
+            var repo = new Repository<Tutorial>(db);
+
             var service = new TutorialService(repo, this.Mapper, null);
 
             //Act
 
             //Assert
-            await Assert.ThrowsAsync<InvalidOperationException>(async () => await service.AddRatingToTutorial(3, 5));
+            await Assert.ThrowsAsync<NullReferenceException>(async () => await service.AddRatingToTutorial(3, 5));
         }
 
         [Fact]
         public async Task AddRatingToTutorial_WithInValidRate_ShoulThrow()
         {
             //Arrange
-            await this.SeedTutorials();
-            var repo = new Repository<Tutorial>(this.Db);
+            var db = this.SetDb();
+
+            await this.SeedTutorials(db);
+
+            var repo = new Repository<Tutorial>(db);
+
             var service = new TutorialService(repo, this.Mapper, null);
 
             //Act
 
             //Assert
-            await Assert.ThrowsAsync<InvalidOperationException>(async () => await service.AddRatingToTutorial(3, -5));
+            await Assert.ThrowsAsync<NullReferenceException>(async () => await service.AddRatingToTutorial(3, -5));
         }
 
         [Fact]
         public async Task GetTutorials_WithAddedTutorialsInTheDb_ShouldReturnCollectionOfTurorials()
         {
             //Arrange
-            await this.SeedTutorials();
-            var repo = new Repository<Tutorial>(this.Db);
+            var db = this.SetDb();
+
+            await this.SeedTutorials(db);
+
+            var repo = new Repository<Tutorial>(db);
+
             var service = new TutorialService(repo, this.Mapper, null);
 
             //Act
@@ -327,7 +409,10 @@ namespace CakeItWebApp.Services.Common.Tests
         public void GetTutorials_WithNoTutorialsInTheDb_ShouldReturnEmpty()
         {
             //Arrange
-            var repo = new Repository<Tutorial>(this.Db);
+            var db = this.SetDb();
+
+            var repo = new Repository<Tutorial>(db);
+
             var service = new TutorialService(repo, this.Mapper, null);
 
             //Act
