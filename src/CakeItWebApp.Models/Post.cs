@@ -19,8 +19,6 @@ namespace CakeItWebApp.Models
 
         public string Title { get; set; }
 
-        public string ShortContent { get; set; }
-
         public string FullContent { get; set; }
 
         public DateTime CreatedOn { get; set; }

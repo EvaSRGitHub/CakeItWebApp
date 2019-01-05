@@ -228,7 +228,7 @@ namespace CakeItWebApp.Controllers
                 return this.View("Error");
             }
 
-            if (model.Comment.AuthorName != this.User.Identity.Name && !this.User.IsInRole("Admin"))
+            if (model.CommentAuthor != this.User.Identity.Name && !this.User.IsInRole("Admin"))
             {
                 return this.Redirect("/Identity/Account/AccessDenied");
             }
@@ -258,7 +258,7 @@ namespace CakeItWebApp.Controllers
                 return this.View("Error");
             }
 
-            return RedirectToAction("PostDetails", new { id = model.Comment.PostId });
+            return RedirectToAction("PostDetails", new { id = model.PostId });
         }
 
         public async Task<IActionResult> SoftDeleteComment(int id)
@@ -276,7 +276,7 @@ namespace CakeItWebApp.Controllers
                 return this.View("Error");
             }
 
-            if (model.Comment.AuthorName != this.User.Identity.Name && !this.User.IsInRole("Admin"))
+            if (model.CommentAuthor != this.User.Identity.Name && !this.User.IsInRole("Admin"))
             {
                 return this.Redirect("/Identity/Account/AccessDenied");
             }
@@ -298,7 +298,7 @@ namespace CakeItWebApp.Controllers
                 return this.View("Error");
             }
 
-            return this.RedirectToAction("PostDetails", new { id = model.Comment.PostId });
+            return this.RedirectToAction("PostDetails", new { id = model.PostId });
         }
 
         public IActionResult MyPosts()

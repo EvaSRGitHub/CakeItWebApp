@@ -3,11 +3,12 @@
 
 @{
     var count = 0;
+    var date = "";
 }
 <main class="container">
     <div class="row">
         <div class="col-md-8 offset-md-2 mt-2">
-            <h1>All My Posts</h1>
+            <h1>All My Comments</h1>
             <hr class="hr-2" style="background-color: forestgreen">
             <table class="table table-hover">
                 <thead>
@@ -22,9 +23,10 @@
                     @foreach (var item in Model)
                     {
                         count++;
+                        date = (item.CreatedOn).ToString("dd-MM-yyyy HH:mm");
                         <tr class="row">
                             <th scope="row" class="col-md-1 d-flex"><h5>@count</h5></th>
-                            <td class="col-md-3 d-flex"><h5>@item.CreatedOn</h5></td>
+                            <td class="col-md-3 d-flex"><h5>@date</h5></td>
                             <td class="col-md-5 d-flex"><h5>@item.Content ...</h5></td>
                             <td class="col-md-3 d-flex"><h5><a asp-controller="Forum" asp-action="CommentsPerPost" asp-route-postId="@item.PostId" class="btn btn-info text-white">Post</a></h5></td>
                         </tr>

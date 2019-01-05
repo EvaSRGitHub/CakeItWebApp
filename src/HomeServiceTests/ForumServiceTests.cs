@@ -954,24 +954,9 @@ namespace CakeItWebApp.Services.Common.Tests
 
             var comment = await this.commentRepo.GetByIdAsync(1);
 
-            var model = new EditCommentViewModel
-            {
-                Post = new PostInputViewModel
-                {
-                    Author = comment.Post.Author.UserName,
-                    Id = comment.Post.Id,
-                    FullContent = this.sanitizer.Sanitize(comment.Post.FullContent),
-                    Title = comment.Post.Title
-                },
-                Comment = new CommentInputViewModel
-                {
-                    Id = comment.Id,
-                    AuthorId = comment.AuthorId,
-                    AuthorName = comment.Author.UserName,
-                    Content = this.sanitizer.Sanitize(comment.Content),
-                    PostId = comment.PostId
-                }
-            };
+            var model = this.Mapper.Map<Comment, EditCommentViewModel>(comment);
+            model.FullContent = this.sanitizer.Sanitize(model.FullContent);
+            model.Content = this.sanitizer.Sanitize(model.Content);
 
             //Act
             await service.MarkCommentAsDeleted(model);
@@ -1014,25 +999,9 @@ namespace CakeItWebApp.Services.Common.Tests
 
             db.Entry(comment).State = EntityState.Detached;
 
-            var model = new EditCommentViewModel
-            {
-                Post = new PostInputViewModel
-                {
-                    Author = comment.Post.Author.UserName,
-                    Id = comment.Post.Id,
-                    FullContent = comment.Post.FullContent,
-                    Title = comment.Post.Title
-                },
-                Comment = new CommentInputViewModel
-                {
-                    AuthorId = comment.AuthorId,
-                    Id = comment.Id,
-                    Content = "Edit content.",
-                    CreatedOn = comment.CreatedOn,
-                    IsDeleted = comment.IsDeleted,
-                    PostId = comment.PostId
-                }
-            };
+            var model = this.Mapper.Map<Comment, EditCommentViewModel>(comment);
+            model.FullContent = model.FullContent;
+            model.Content = "Edit content.";
 
             //Act
             await service.UpdateComment(model);
@@ -1075,25 +1044,8 @@ namespace CakeItWebApp.Services.Common.Tests
 
             db.Entry(comment).State = EntityState.Detached;
 
-            var model = new EditCommentViewModel
-            {
-                Post = new PostInputViewModel
-                {
-                    Author = comment.Post.Author.UserName,
-                    Id = comment.Post.Id,
-                    FullContent = comment.Post.FullContent,
-                    Title = comment.Post.Title
-                },
-                Comment = new CommentInputViewModel
-                {
-                    AuthorId = comment.AuthorId,
-                    Id = comment.Id,
-                    Content = "",
-                    CreatedOn = comment.CreatedOn,
-                    IsDeleted = comment.IsDeleted,
-                    PostId = comment.PostId
-                }
-            };
+            var model = this.Mapper.Map<Comment, EditCommentViewModel>(comment);
+            model.Content = "";
 
             //Act
 

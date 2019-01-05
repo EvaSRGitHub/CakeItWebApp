@@ -65,7 +65,7 @@ namespace CakeWebApp.Services.Common.CommonServices
                 Address = o.OrderDetails.Address,
                 City = o.OrderDetails.City,
                 TotalValue = o.Total
-            }).OrderByDescending(o => o.OrderDate).ToList();
+            }).OrderBy(o => o.OrderId).ToList();
 
             return model;
         }

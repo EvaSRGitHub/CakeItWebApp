@@ -7,18 +7,18 @@
                 <h1 class="text-center">Delete Comment</h1>
                 <hr class="bg-panda hr-2" />
                 <h3>Post:</h3>
-                <p><em>Title: <strong>@Model.Post.Title</strong></em></p>
-                <p><em>Author: <strong>@Model.Post.Author</strong></em></p>
-                <p class="mb-4"><em>Content: <strong>@Html.Raw(Model.Post.FullContent)</strong></em></p>
+                <p><em>Title: <strong>@Model.Title</strong></em></p>
+                <p><em>Author: <strong>@Model.PostAuthorName</strong></em></p>
+                <p class="mb-4"><em>Content: <strong>@Html.Raw(Model.FullContent)</strong></em></p>
                 <hr style="background-color: gray" />
                 <form method="post" asp-controller="Forum" asp-action="SoftDeleteComment">
                     <div asp-validation-summary="All" class="text-danger"></div>
                     <div class="form-group">
-                        <input asp-for="@Model.Comment.Id" value="@Model.Comment.Id" hidden />
-                        <input asp-for="@Model.Comment.AuthorId" value="@Model.Comment.AuthorId" hidden />
-                        <input asp-for="@Model.Comment.AuthorName" value="@this.User.Identity.Name" hidden />
-                        <input asp-for="@Model.Comment.PostId" value="@Model.Post.Id" hidden />
-                        <textarea asp-for="@Model.Comment.Content" id="mytextarea" class="form-control" rows="3" disabled></textarea>
+                        <input asp-for="@Model.CommentId" value="@Model.CommentId" hidden />
+                        <input asp-for="@Model.CommentAuthorId" value="@Model.CommentAuthorId" hidden />
+                        <input asp-for="@Model.CommentAuthor" value="@this.User.Identity.Name" hidden />
+                        <input asp-for="@Model.PostId" value="@Model.PostId" hidden />
+                        <textarea asp-for="@Model.Content" id="mytextarea" class="form-control" rows="3" disabled></textarea>
                     </div>
 
                     <div class="button-holder d-flex justify-content-center">

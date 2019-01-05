@@ -148,6 +148,7 @@ namespace CakeWebApp.Services.Common.CommonServices
             return model;
         }
 
+        //Checkout for unsigned users
         public async Task Checkout(CheckoutViewModel model)
         {
             string content = CreateEmaiContent(model.Email);

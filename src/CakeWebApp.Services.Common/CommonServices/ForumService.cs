@@ -2,11 +2,13 @@
 using CakeItWebApp.Models;
 using CakeItWebApp.Services.Common.Repository;
 using CakeItWebApp.ViewModels.Forum;
+using CakeItWebApp.ViewModels.Tags;
 using CakeWebApp.Services.Common.Contracts;
 using CakeWebApp.Services.Common.Sanitizer;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -227,15 +229,7 @@ namespace CakeWebApp.Services.Common.CommonServices
                 posts = this.postRepo.All().Where(p => p.Title.Contains(searchString, StringComparison.CurrentCultureIgnoreCase) && p.IsDeleted == false);
             }
 
-            var modelPosts = posts.Select(p => new PostIndexViewModel
-            {
-                Author = p.Author.UserName,
-                CommentCount = p.Comments.Where(c => c.IsDeleted == false).Count(),
-                CreatedOn = p.CreatedOn.ToString("dd-MM-yyyy HH:mm"),
-                Tags = string.Join(", ", p.Tags.Select(t => t.Tag.Name)),
-                Title = p.Title,
-                Id = p.Id
-            }).OrderBy(p => p.CreatedOn).ToList();
+            var modelPosts = this.mapper.ProjectTo<PostIndexViewModel>(posts).OrderByDescending(p => p.CreatedOn).ToList();
 
             return modelPosts;
         }
@@ -254,24 +248,11 @@ namespace CakeWebApp.Services.Common.CommonServices
                 throw new InvalidOperationException("Post not found.");
             }
 
-            var model = new EditCommentViewModel
-            {
-                Post = new PostInputViewModel
-                {
-                    Author = commentToEdit.Post.Author.UserName,
-                    Id = commentToEdit.Post.Id,
-                    FullContent = this.sanitizer.Sanitize(commentToEdit.Post.FullContent),
-                    Title = commentToEdit.Post.Title
-                },
-                Comment = new CommentInputViewModel
-                {
-                    Id = commentToEdit.Id,
-                    AuthorId = commentToEdit.AuthorId,
-                    AuthorName = commentToEdit.Author.UserName,
-                    Content = this.sanitizer.Sanitize(commentToEdit.Content),
-                    PostId = commentToEdit.PostId
-                }
-            };
+            var model = this.mapper.Map<Comment, EditCommentViewModel>(commentToEdit);
+
+            model.FullContent = this.sanitizer.Sanitize(model.FullContent);
+
+            model.Content = this.sanitizer.Sanitize(model.Content);
 
             return model;
         }
@@ -343,22 +324,14 @@ namespace CakeWebApp.Services.Common.CommonServices
                 throw new InvalidOperationException("No mathcing posts are found.");
             }
 
-            var modelPosts = posts.Select(p => new PostIndexViewModel
-            {
-                Author = p.Author.UserName,
-                CommentCount = p.Comments.Count,
-                CreatedOn = p.CreatedOn.ToString("dd-MM-yyyy HH:mm"),
-                Tags = string.Join(", ", p.Tags.Select(t => t.Tag.Name)),
-                Title = p.Title,
-                Id = p.Id
-            }).OrderByDescending(p => p.CreatedOn).ToList();
+            var modelPosts = this.mapper.ProjectTo<PostIndexViewModel>(posts).OrderByDescending(p => p.CreatedOn).ToList();
 
             return modelPosts;
         }
 
         public async Task MarkCommentAsDeleted(EditCommentViewModel model)
         {
-            var comment = await this.commentRepo.GetByIdAsync(model.Comment.Id);
+            var comment = await this.commentRepo.GetByIdAsync(model.CommentId);
 
             if (comment == null)
             {
@@ -408,7 +381,7 @@ namespace CakeWebApp.Services.Common.CommonServices
 
         public async Task UpdateComment(EditCommentViewModel model)
         {
-            var content = HttpUtility.HtmlDecode(StripHtml(model.Comment.Content));
+            var content = HttpUtility.HtmlDecode(StripHtml(model.Content));
 
             if (string.IsNullOrWhiteSpace(content))
             {
@@ -417,12 +390,12 @@ namespace CakeWebApp.Services.Common.CommonServices
             
             var comment = new Comment
             {
-                AuthorId = model.Comment.AuthorId,
-                Id = model.Comment.Id,
-                Content = model.Comment.Content,
-                CreatedOn = model.Comment.CreatedOn,
-                IsDeleted = model.Comment.IsDeleted,
-                PostId = model.Comment.PostId
+                AuthorId = model.CommentAuthorId,
+                Id = model.CommentId,
+                Content = model.Content,
+                CreatedOn = DateTime.Parse(model.CreatedOn),
+                IsDeleted = model.IsDeleted,
+                PostId = model.PostId
             };
 
             this.commentRepo.Update(comment);
@@ -487,7 +460,7 @@ namespace CakeWebApp.Services.Common.CommonServices
 
                 foreach (var tag in tags)
                 {
-                    var tagId = tagRepo.All().SingleOrDefault(t => t.Name == tag).Id;
+                    var tagId = this.mapper.ProjectTo<TagInputViewModel>(tagRepo.All()).SingleOrDefault(t => t.Name == tag).Id;
 
                     var tagPosts = new TagPosts
                     {
