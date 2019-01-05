@@ -170,7 +170,6 @@ namespace CakeWebApp.Services.Common.CommonServices
             await this.ClearShoppingCart();
         }
 
-        //TEST
         private string CreateEmaiContent(string email)
         {
             var dir = Directory.GetCurrentDirectory();
@@ -188,7 +187,6 @@ namespace CakeWebApp.Services.Common.CommonServices
             return html;
         }
 
-        //TJEST
         private string GetOrderDetails(ICollection<ShoppingCartItem> shoppingCart)
         {
             StringBuilder sb = new StringBuilder();
@@ -203,6 +201,16 @@ namespace CakeWebApp.Services.Common.CommonServices
             sb.AppendLine($"Total value: ${totalValue}<br/>");
 
             return sb.ToString();
+        }
+
+        public async Task ClearShoppingCartWhenUserLeft()
+        {
+            var cartItems = this.repository
+               .All();
+
+            this.repository.DeleteRange(cartItems);
+
+            await this.repository.SaveChangesAsync();
         }
     }
 }

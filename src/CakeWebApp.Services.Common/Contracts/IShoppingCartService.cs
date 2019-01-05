@@ -23,5 +23,9 @@ namespace CakeWebApp.Services.Common.Contracts
         ShoppingCartViewModel GetShoppingCart();
 
         Task Checkout(CheckoutViewModel model);
+
+        Task ClearShoppingCartWhenUserLeft();
+
+
     }
 }

@@ -17,5 +17,10 @@ namespace CakeItWebApp.Middlewares.MiddlewareExtensions
         {
             return builder.UseMiddleware<Error404Middleware>();
         }
+
+        public static IApplicationBuilder UseClearShoppingCartMiddleware(this IApplicationBuilder builder)
+        {
+            return builder.UseMiddleware<ClearShoppingCartMiddleware>();
+        }
     }
 }

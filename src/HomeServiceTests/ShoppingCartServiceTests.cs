@@ -3,6 +3,7 @@ using CakeItWebApp.Models;
 using CakeItWebApp.Services.Common.Repository;
 using CakeItWebApp.ViewModels.Cakes;
 using CakeItWebApp.ViewModels.CustomCake;
+using CakeItWebApp.ViewModels.ShoppingCart;
 using CakeWebApp.Models;
 using CakeWebApp.Services.Common.CommonServices;
 using Microsoft.EntityFrameworkCore;
@@ -406,5 +407,38 @@ namespace CakeItWebApp.Services.Common.Tests
             //Assert
             Assert.NotNull(shopCart);
         }
+
+        [Fact]
+        public async Task ClearShopingCartWhenUserLeft()
+        {
+            //Arrange
+            var db = this.SetDb();
+
+            await this.SeedProducts(db);
+
+            var repo = new Repository<ShoppingCartItem>(db);
+
+            var productRepo = new Repository<Product>(db);
+
+            var provider = new Mock<IServiceProvider>();
+
+            var cart = new Mock<ShoppingCart>();
+
+            var shoppingCartService = new ShoppingCartService(repo, productRepo, null, provider.Object, cart.Object);
+
+            await shoppingCartService.AddToShoppingCart(1);
+            await shoppingCartService.AddToShoppingCart(2);
+
+            //Act
+            await shoppingCartService.ClearShoppingCartWhenUserLeft();
+
+            var expected = 0;
+            var actual = repo.All().Count();
+
+            //Assert
+            Assert.Equal(expected, actual);
+        }
+
+
     }
 }

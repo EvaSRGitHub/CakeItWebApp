@@ -156,6 +156,8 @@ namespace CakeItWebApp
 
             app.UseAuthentication();
 
+            app.UseClearShoppingCartMiddleware();
+
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
