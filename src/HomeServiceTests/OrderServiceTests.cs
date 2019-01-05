@@ -249,5 +249,55 @@ namespace CakeItWebApp.Services.Common.Tests
             //Assert
             Assert.Equal(1, id);
         }
+
+        [Fact]
+        public async Task SetOrderDetailsId_WithValidId_ShouldSetOrderDetailsToOrder()
+        {
+            //Arrange
+            var db = this.SetDb();
+
+            await this.SeedProducts(db);
+            await this.SeedUser(db);
+            await this.SeedShopigCart(db);
+
+            var repo = new Repository<Order>(db);
+            var userRepo = new Repository<CakeItUser>(db);
+            var cartItemRepo = new Repository<ShoppingCartItem>(db);
+
+            var item = cartItemRepo.All().First();
+            item.ShoppingCartId = "test@test.mail";
+            await cartItemRepo.SaveChangesAsync();
+
+            var orderService = new OrderService(repo, userRepo, cartItemRepo, this.Mapper);
+
+            var userName = "test@test.mail";
+
+            var result = await orderService.CreateOrder(userName);
+
+            var detailsRepo = new Repository<OrderDetails>(db);
+            var orderDetailsService = new OrderDetailsService(detailsRepo, this.Mapper);
+
+            var model = new OrderDetailsViewModel
+            {
+                FirstName = "Test",
+                LastName = "TestTest",
+                Email = "test@test.mail",
+                PhoneNumber = "+359/888777666",
+                City = "Test",
+                Country = "Test",
+                Address = "Test test test 6"
+            };
+
+            var id = await orderDetailsService.AddOrderDetails(model);
+
+            //Act
+            await orderService.SetOrderDetailsId(id);
+
+            var expectedOrderDetailsId = 1;
+            var actualOrerDetailsId = (await repo.GetByIdAsync(1)).OrderDetailsId;
+
+            //Assert
+            Assert.Equal(expectedOrderDetailsId, actualOrerDetailsId);
+        }
     }
 }

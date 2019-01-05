@@ -164,6 +164,64 @@ namespace CakeItWebApp.Services.Common.Tests
         }
 
         [Fact]
+        public async Task AssignImgAndPrice_WithNotCorrectlyFillInForm_ShouldThrow()
+        {
+            //Arrange
+            var db = this.SetDb();
+            await this.SeedCustomCakeImg(db);
+            var repo = new Repository<CustomCakeImg>(db);
+            var mock = new Mock<ILogger<CustomCakeService>>();
+            ILogger<CustomCakeService> logger = mock.Object;
+            var service = new CustomCakeService(null, repo, this.Mapper, logger);
+
+            CustomCakeOrderViewModel model = new CustomCakeOrderViewModel
+            {
+                Sponge = "Vanilla",
+                FirstLayerCream = "Whipped",
+                SecondLayerCream = "--Choose Second Layer Cream--",
+                Filling = "NoFilling",
+                SideDecoration = "White Cigarettes",
+                TopDecoration = "Habana",
+                NumberOfSlices = 6,
+                Img = null,
+            };
+
+            //Act
+
+            //Assert
+            Assert.Throws<InvalidOperationException>(() => service.AssignImgAndPrice(model));
+        }
+
+        [Fact]
+        public async Task AssignImgAndPrice_WithInvalidSide_ShouldThrow()
+        {
+            //Arrange
+            var db = this.SetDb();
+            await this.SeedCustomCakeImg(db);
+            var repo = new Repository<CustomCakeImg>(db);
+            var mock = new Mock<ILogger<CustomCakeService>>();
+            ILogger<CustomCakeService> logger = mock.Object;
+            var service = new CustomCakeService(null, repo, this.Mapper, logger);
+
+            CustomCakeOrderViewModel model = new CustomCakeOrderViewModel
+            {
+                Sponge = "Vanilla",
+                FirstLayerCream = "Whipped",
+                SecondLayerCream = "Whipped",
+                Filling = "NoFilling",
+                SideDecoration = "White Dots",
+                TopDecoration = "Habana",
+                NumberOfSlices = 6,
+                Img = null,
+            };
+
+            //Act
+
+            //Assert
+            Assert.Throws<NullReferenceException>(() => service.AssignImgAndPrice(model));
+        }
+
+        [Fact]
         public async Task AssignImgAndPrice_WhithInvalidImgUrn_ShouldThrow()
         {
             //Arrange
@@ -262,6 +320,25 @@ namespace CakeItWebApp.Services.Common.Tests
         }
 
         [Fact]
+        public void CreateCustomProduct_WithNullIngredients_ShouldThrow()
+        {
+            //Arrange
+            var db = this.SetDb();
+            var repo = new Repository<CustomCakeImg>(db);
+            var mock = new Mock<ILogger<CustomCakeService>>();
+            ILogger<CustomCakeService> logger = mock.Object;
+            var service = new CustomCakeService(null, repo, this.Mapper, logger);
+
+            CustomCakeOrderViewModel model = null;
+
+            //Act
+
+            //Assert
+            Assert.Throws<AutoMapperMappingException
+>(() => service.CreateCustomProduct(model));
+        }
+
+        [Fact]
         public async Task GetProductId_ShouldReturnTheIdOfTheLastAddedProduct()
         {
             //Arrange
@@ -290,7 +367,7 @@ namespace CakeItWebApp.Services.Common.Tests
             await productRepo.SaveChangesAsync();
 
             //Act
-            int? result = productRepo.All().LastOrDefault().Id;
+            int? result = await service.GetProductId();
 
             //Assert
             Assert.NotNull(result);
@@ -298,7 +375,7 @@ namespace CakeItWebApp.Services.Common.Tests
         }
 
         [Fact]
-        public void GetProductId_WithEmptyProductDb_ShouldThrow()
+        public async Task GetProductId_WithEmptyProductDb_ShouldThrow()
         {
             //Arrange
             var db = this.SetDb();
@@ -311,7 +388,7 @@ namespace CakeItWebApp.Services.Common.Tests
             //Act
 
             //Assert
-            Assert.Throws<NullReferenceException>(() => productRepo.All().LastOrDefault().Id);
+            await Assert.ThrowsAsync<NullReferenceException>(async () => await service.GetProductId());
         }
 
         [Fact]
@@ -476,6 +553,29 @@ namespace CakeItWebApp.Services.Common.Tests
 
             //Assert
             await Assert.ThrowsAsync<NullReferenceException>(async () => await service.GetCustomCakeImgById(3));
+        }
+
+        [Fact]
+        public async Task GetAllCustomCakesImg_ShouldReturnCollection()
+        {
+            //Arrange
+            var db = this.SetDb();
+
+            await this.SeedCustomCakeImg(db);
+
+            var repo = new Repository<CustomCakeImg>(db);
+            var mock = new Mock<ILogger<CustomCakeService>>();
+            ILogger<CustomCakeService> logger = mock.Object;
+            var service = new CustomCakeService(null, repo, this.Mapper, logger);
+
+            //Act
+            var result = service.GetAllCustomCakesImg();
+
+            var expectedCount = 2;
+            var actualCount = result.Count();
+
+            //Assert
+            Assert.Equal(expectedCount, actualCount);
         }
     }
 }

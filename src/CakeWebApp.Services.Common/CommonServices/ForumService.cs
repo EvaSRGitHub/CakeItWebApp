@@ -333,11 +333,6 @@ namespace CakeWebApp.Services.Common.CommonServices
         {
             var comment = await this.commentRepo.GetByIdAsync(model.CommentId);
 
-            if (comment == null)
-            {
-                throw new NullReferenceException("Comment not found.");
-            }
-
             comment.IsDeleted = true;
 
             this.commentRepo.Update(comment);
@@ -357,11 +352,6 @@ namespace CakeWebApp.Services.Common.CommonServices
         public async Task MarkPostAsDeleted(PostInputViewModel model)
         {
             var post = await this.postRepo.GetByIdAsync(model.Id);
-
-            if (post == null)
-            {
-                throw new InvalidOperationException("Post not found.");
-            }
 
             post.IsDeleted = true;
 

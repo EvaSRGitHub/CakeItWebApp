@@ -3,10 +3,12 @@ using CakeItWebApp.Data;
 using CakeItWebApp.Models;
 using CakeItWebApp.Services.Common.Repository;
 using CakeItWebApp.ViewModels;
+using CakeItWebApp.ViewModels.Books;
 using CakeItWebApp.ViewModels.Cakes;
 using CakeItWebApp.ViewModels.CustomCake;
 using CakeItWebApp.ViewModels.Forum;
 using CakeItWebApp.ViewModels.Orders;
+using CakeItWebApp.ViewModels.Tags;
 using CakeItWebApp.ViewModels.Tutorials;
 using CakeWebApp.Services.Common.CommonServices;
 using Microsoft.EntityFrameworkCore;
@@ -26,10 +28,14 @@ namespace CakeItWebApp.Services.Common.Tests
                 config =>
                 {
                     config.CreateMap<Product, CakeIndexViewModel>().ForMember(x => x.Rating, y => y.MapFrom(x => x.Rating ?? 0)).ForMember(x => x.RatingVotes, y => y.MapFrom(x => x.RatingVotes ?? 0)).ReverseMap();
+
                     config.CreateMap<Product, CreateCakeViewModel>().ReverseMap();
+
                     config.CreateMap<Product, EditAndDeleteViewModel>().ReverseMap();
+
                     config.CreateMap<Order, OrderViewModel>().ReverseMap();
                     config.CreateMap<ShoppingCartItem, OrderedProductsViewModel>().ReverseMap();
+
                     config.CreateMap<OrderDetails, OrderDetailsViewModel>().ReverseMap();
                     config.CreateMap<CustomCakeImgViewModel, CustomCakeImg>().ReverseMap();
                     config.CreateMap<CustomCakeOrderViewModel, Ingredients>().ReverseMap();
@@ -59,7 +65,16 @@ namespace CakeItWebApp.Services.Common.Tests
                 .ForMember(x => x.CreatedOn, y => y.MapFrom(x => x.CreatedOn.ToString("dd-MM-yyyy HH:mm")))
                 .ForMember(x => x.IsDeleted, y => y.MapFrom(x => x.IsDeleted))
                 .ForMember(x => x.Tags, y => y.MapFrom(x => string.Join(", ", x.Tags.Select(tp => tp.Tag.Name))));
+
+                    config.CreateMap<Book, CreateBookViewModel>().ReverseMap();
+
+                    config.CreateMap<Book, BookIndexViewModel>().ReverseMap();
+
+                    config.CreateMap<Tag, TagInputViewModel>().ReverseMap();
+
                 }));
+
+            
         }
 
         protected IMapper Mapper { get; private set; }

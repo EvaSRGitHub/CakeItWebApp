@@ -4,14 +4,16 @@ using CakeItWebApp.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CakeItWebApp.Data.Migrations
 {
     [DbContext(typeof(CakeItDbContext))]
-    partial class CakeItDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190105204836_CakeItUser_RemoveBookAndTutorialColumn")]
+    partial class CakeItUser_RemoveBookAndTutorialColumn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

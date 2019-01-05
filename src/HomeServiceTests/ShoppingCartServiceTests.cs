@@ -2,10 +2,12 @@
 using CakeItWebApp.Models;
 using CakeItWebApp.Services.Common.Repository;
 using CakeItWebApp.ViewModels.Cakes;
+using CakeItWebApp.ViewModels.CustomCake;
 using CakeWebApp.Models;
 using CakeWebApp.Services.Common.CommonServices;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -331,6 +333,78 @@ namespace CakeItWebApp.Services.Common.Tests
 
             //Assert
             await Assert.ThrowsAsync<NullReferenceException>(async () => await shoppingCartService.RemoveFromShoppingCart(1));
+        }
+
+        [Fact]
+        public async Task RemoveFromShoppingCart_WithOneItemCategoryTwo_ShouldReturnCartItemsCount0()
+        {
+            //Arrange
+            var db = this.SetDb();
+
+            var repo = new Repository<CustomCakeImg>(db);
+            var mock = new Mock<ILogger<CustomCakeService>>();
+            ILogger<CustomCakeService> logger = mock.Object;
+
+            var productRepo = new Repository<Product>(db);
+            var productService = new CakeService(null, productRepo, this.Mapper);
+
+            var service = new CustomCakeService(productRepo, repo, this.Mapper, logger);
+
+            var shoppingCartRepo = new Repository<ShoppingCartItem>(db);
+
+            var provider = new Mock<IServiceProvider>();
+            var cart = new Mock<ShoppingCart>();
+
+            var shoppingCartService = new ShoppingCartService(shoppingCartRepo, productRepo, null, provider.Object, cart.Object);
+
+            CustomCakeOrderViewModel model = new CustomCakeOrderViewModel
+            {
+                Sponge = "Vanilla",
+                FirstLayerCream = "Whipped",
+                SecondLayerCream = "Whipped",
+                Filling = "No_Filling",
+                SideDecoration = "White_Chocolate_Cigarettes",
+                TopDecoration = "Habana",
+                NumberOfSlices = 6,
+                Img = null,
+            };
+
+            var product = service.CreateCustomProduct(model);
+
+            await productService.AddCakeToDb(product);
+
+            await shoppingCartService.AddToShoppingCart(1);
+
+            //Act
+            await shoppingCartService.RemoveFromShoppingCart(1);
+
+            //Assert
+            Assert.Empty(productRepo.All());
+        }   
+
+        [Fact]
+        public async Task GetShoppingCart_ShouldReturnShoppingCart()
+        {
+            //Arrange
+            var db = this.SetDb();
+
+            await this.SeedProducts(db);
+
+            var repo = new Repository<ShoppingCartItem>(db);
+
+            var productRepo = new Repository<Product>(db);
+
+            var provider = new Mock<IServiceProvider>();
+
+            var cart = new Mock<ShoppingCart>();
+
+            var shoppingCartService = new ShoppingCartService(repo, productRepo, null, provider.Object, cart.Object);
+
+            //Act
+            var shopCart = shoppingCartService.GetShoppingCart();
+
+            //Assert
+            Assert.NotNull(shopCart);
         }
     }
 }

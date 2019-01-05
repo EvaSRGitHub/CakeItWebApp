@@ -3,9 +3,12 @@ using CakeItWebApp.Models;
 using CakeItWebApp.Services.Common.Repository;
 using CakeItWebApp.ViewModels;
 using CakeItWebApp.ViewModels.Cakes;
+using CakeItWebApp.ViewModels.CustomCake;
 using CakeWebApp.Services.Common.CommonServices;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Moq;
 using Shouldly;
 using System;
 using System.Collections.Generic;
@@ -505,5 +508,197 @@ namespace CakeItWebApp.Services.Common.Tests
             Assert.Equal(expected, actual);
         }
 
+        [Fact]
+        public async Task GetAllActiveCakes_ShouldReturnAllCakesNotDeleted()
+        {
+            //Arrange
+            var db = this.SetDb();
+
+            var repo = new Repository<Product>(db);
+
+            var cakeModel1 = new CreateCakeViewModel { Name = "Chocolate Peanut Cake", CategoryId = 1, Price = 35.50m, Description = "This Chocolate and Peanut Butter Drip Cake is completely sinful.", Image = "https://res.cloudinary.com/cakeit/image/upload/ar_1:1,c_fill,g_auto,e_art:hokusai/v1544136591/Chocolate_and_Peanut_cake.jpg"};
+
+            var cakeModel2 = new CreateCakeViewModel { Name = "Chocolate Drip Cake", CategoryId = 1, Price = 35.50m, Description = "This Chocolate and Peanut Butter Drip Cake is completely sinful.", Image = "https://res.cloudinary.com/cakeit/image/upload/ar_1:1,c_fill,g_auto,e_art:hokusai/v1544136590/Chocolate_Drip_cake.jpg" };
+
+            var cakeService = new CakeService(null, repo, this.Mapper);
+
+            await cakeService.AddCakeToDb(cakeModel1);
+
+            await cakeService.AddCakeToDb(cakeModel2);
+
+            var deleteCake = await repo.GetByIdAsync(1);
+            deleteCake.IsDeleted = true;
+            deleteCake.Category = new Category { Id = 1, Type = Models.Enums.CategoryType.Cake };
+
+            var activeCake = await repo.GetByIdAsync(2);
+            activeCake.Category = new Category {Id = 1, Type = Models.Enums.CategoryType.Cake };
+            await repo.SaveChangesAsync();
+
+            //Act
+            
+var allActiveCakes = cakeService.GetAllActiveCakes();
+
+            var expectedCakesCount = 1;
+            var actualCakesCount = allActiveCakes.Count();
+
+            //Assert
+            Assert.Equal(expectedCakesCount, actualCakesCount);
+        }
+
+        [Fact]
+        public async Task GetCakeToEdit_WithValidCakeId_ShouldReturnProduct()
+        {
+            //Assert
+            var db = this.SetDb();
+
+            await this.SeedProducts(db);
+
+            var repo = new Repository<Product>(db);
+
+            var service = new CakeService(null, repo, this.Mapper);
+
+            //Act
+            var result = await service.GetCakeToEdit(2);
+
+            var expectedCakeId = 2;
+            var acutalCakeId = result.Id;
+
+            //Assert
+            Assert.Equal(expectedCakeId, acutalCakeId);
+
+        }
+
+        [Fact]
+        public async Task GetCakeToEdit_WithInValidCakeId_ShouldThrow()
+        {
+            //Assert
+            var db = this.SetDb();
+
+            await this.SeedProducts(db);
+
+            var repo = new Repository<Product>(db);
+
+            var service = new CakeService(null, repo, this.Mapper);
+
+            //Act
+
+            //Assert
+            await Assert.ThrowsAsync<NullReferenceException>(async () => await service.GetCakeToEdit(3));
+
+        }
+
+        [Fact]
+        public async Task SoftDelete_WithValidCustomCakeId_ShouldMarkCakeAsDeleted()
+        {
+            //Assert
+            var db = this.SetDb();
+            var repo = new Repository<CustomCakeImg>(db);
+            var mock = new Mock<ILogger<CustomCakeService>>();
+            ILogger<CustomCakeService> logger = mock.Object;
+            var productRepo = new Repository<Product>(db);
+
+            var productService = new CakeService(null, productRepo, this.Mapper);
+
+            var service = new CustomCakeService(productRepo, repo, this.Mapper, logger);
+
+            CustomCakeOrderViewModel model = new CustomCakeOrderViewModel
+            {
+                Sponge = "Vanilla",
+                FirstLayerCream = "Whipped",
+                SecondLayerCream = "Whipped",
+                Filling = "No_Filling",
+                SideDecoration = "White_Chocolate_Cigarettes",
+                TopDecoration = "Habana",
+                NumberOfSlices = 6,
+                Img = null,
+            };
+
+            var product = service.CreateCustomProduct(model);
+
+            await productService.AddCakeToDb(product);
+
+            //Act
+            await productService.SoftDelete(1);
+
+            var expectedIsDeleted = true;
+            var actualIsDeleted = (await productRepo.GetByIdAsync(1)).IsDeleted;
+
+            //Assert
+            Assert.Equal(expectedIsDeleted, actualIsDeleted);
+        }
+
+        [Fact]
+        public async Task SoftDelete_WithInValidCustomCakeId_ShouldMarkCakeAsDeleted()
+        {
+            //Assert
+            var db = this.SetDb();
+            var repo = new Repository<CustomCakeImg>(db);
+            var mock = new Mock<ILogger<CustomCakeService>>();
+            ILogger<CustomCakeService> logger = mock.Object;
+            var productRepo = new Repository<Product>(db);
+
+            var productService = new CakeService(null, productRepo, this.Mapper);
+
+            var service = new CustomCakeService(productRepo, repo, this.Mapper, logger);
+
+            CustomCakeOrderViewModel model = new CustomCakeOrderViewModel
+            {
+                Sponge = "Vanilla",
+                FirstLayerCream = "Whipped",
+                SecondLayerCream = "Whipped",
+                Filling = "No_Filling",
+                SideDecoration = "White_Chocolate_Cigarettes",
+                TopDecoration = "Habana",
+                NumberOfSlices = 6,
+                Img = null,
+            };
+
+            var product = service.CreateCustomProduct(model);
+
+            await productService.AddCakeToDb(product);
+
+            //Act
+           
+
+            //Assert
+            await Assert.ThrowsAsync<InvalidOperationException>(async () => await productService.SoftDelete(2));
+        }
+
+        [Fact]
+        public async Task GetAllCakes_ShouldReturnAllCakesDeletedAndNot()
+        {
+            //Arrange
+            var db = this.SetDb();
+
+            var repo = new Repository<Product>(db);
+
+            var cakeModel1 = new CreateCakeViewModel { Name = "Chocolate Peanut Cake", CategoryId = 1, Price = 35.50m, Description = "This Chocolate and Peanut Butter Drip Cake is completely sinful.", Image = "https://res.cloudinary.com/cakeit/image/upload/ar_1:1,c_fill,g_auto,e_art:hokusai/v1544136591/Chocolate_and_Peanut_cake.jpg" };
+
+            var cakeModel2 = new CreateCakeViewModel { Name = "Chocolate Drip Cake", CategoryId = 1, Price = 35.50m, Description = "This Chocolate and Peanut Butter Drip Cake is completely sinful.", Image = "https://res.cloudinary.com/cakeit/image/upload/ar_1:1,c_fill,g_auto,e_art:hokusai/v1544136590/Chocolate_Drip_cake.jpg" };
+
+            var cakeService = new CakeService(null, repo, this.Mapper);
+
+            await cakeService.AddCakeToDb(cakeModel1);
+
+            await cakeService.AddCakeToDb(cakeModel2);
+
+            var deleteCake = await repo.GetByIdAsync(1);
+            deleteCake.IsDeleted = true;
+            deleteCake.Category = new Category { Id = 1, Type = Models.Enums.CategoryType.Cake };
+
+            var activeCake = await repo.GetByIdAsync(2);
+            activeCake.Category = new Category { Id = 1, Type = Models.Enums.CategoryType.Cake };
+            await repo.SaveChangesAsync();
+
+            //Act
+
+            var allActiveCakes = cakeService.GetAllCakes();
+
+            var expectedCakesCount = 2;
+            var actualCakesCount = allActiveCakes.Count();
+
+            //Assert
+            Assert.Equal(expectedCakesCount, actualCakesCount);
+        }
     }
 }

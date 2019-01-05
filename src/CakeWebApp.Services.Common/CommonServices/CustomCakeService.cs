@@ -31,6 +31,11 @@ namespace CakeWebApp.Services.Common.CommonServices
 
         public CustomCakeOrderViewModel AssignImgAndPrice(CustomCakeOrderViewModel model)
         {
+            if(model.Sponge.Contains("Choose") || model.FirstLayerCream.Contains("Choose") || model.SecondLayerCream.Contains("Choose") || model.Filling.Contains("Choose") || model.SideDecoration.Contains("Choose") || model.TopDecoration.Contains("Choose"))
+            {
+                throw new InvalidOperationException("Please fill the form coretlly.");
+            }
+
             var side = model.SideDecoration.ToLower();
 
             var top = model.TopDecoration.ToLower();
@@ -102,7 +107,7 @@ namespace CakeWebApp.Services.Common.CommonServices
 
             int? id = product.Id;
 
-            if (id == null)
+            if (product == null)
             {
                 throw new NullReferenceException("Product not Found");
             }
@@ -159,11 +164,6 @@ namespace CakeWebApp.Services.Common.CommonServices
         public async Task DeleteCustomCakeImg(CustomCakeImgViewModel model)
         {
             var customCakeImg = await this.customCakeImgRepo.GetByIdAsync(model.Id);
-
-            if (customCakeImg == null)
-            {
-                throw new NullReferenceException("Custom cake not found.");
-            }
 
             this.customCakeImgRepo.Delete(customCakeImg);
 

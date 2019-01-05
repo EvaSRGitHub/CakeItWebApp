@@ -34,7 +34,7 @@ namespace CakeWebApp.Services.Common.CommonServices
                 throw new NullReferenceException("Book not found.");
             }
 
-            if (rating < 1 && rating > 5)
+            if (rating < 1 || rating > 5)
             {
                 throw new InvalidOperationException("Invlid rating value.");
             }
@@ -114,11 +114,6 @@ namespace CakeWebApp.Services.Common.CommonServices
         {
             var book = await this.bookRepo.GetByIdAsync(id);
 
-            if(book == null)
-            {
-                throw new NullReferenceException("Book not foud.");
-            }
-
             var model = this.mapper.Map<Book, BookIndexViewModel>(book);
 
             return model;
@@ -129,6 +124,16 @@ namespace CakeWebApp.Services.Common.CommonServices
            if(model == null)
             {
                 throw new NullReferenceException("Book not found.");
+            }
+
+            if (this.bookRepo.All().Any(b => b.Title == model.Title && b.Id != model.Id))
+            {
+                throw new InvalidOperationException("Book with such title already exists.");
+            }
+
+            if (this.bookRepo.All().Any(b => b.DownloadUrl == model.DownloadUrl && b.Id != model.Id))
+            {
+                throw new InvalidOperationException("Book with such download url already exists.");
             }
 
             var book = this.mapper.Map<BookIndexViewModel, Book>(model);
@@ -146,7 +151,5 @@ namespace CakeWebApp.Services.Common.CommonServices
                 throw new InvalidOperationException("Sorry, an error occurred while trying to edit a book.");
             }
         }
-
-
     }
 }

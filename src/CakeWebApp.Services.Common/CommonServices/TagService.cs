@@ -29,6 +29,11 @@ namespace CakeWebApp.Services.Common.CommonServices
         {
             var tag = this.mapper.Map<TagInputViewModel, Tag>(model);
 
+            if (this.tagRepo.All().Any(t => t.Name == tag.Name && tag.IsDeleted == false))
+            {
+                throw new InvalidOperationException("Tag with such name alreadey exist in the data base.");
+            }
+
             tagRepo.Add(tag);
 
             try

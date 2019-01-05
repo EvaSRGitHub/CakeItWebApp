@@ -101,5 +101,27 @@ namespace CakeItWebApp.Services.Common.Tests.HomeServiceTests
                 Assert.Equal(actual, result.Name);
             }
         }
+
+        [Fact]
+        public async Task GetRandomCake__Home_Index_ShouldReturnNull()
+        {
+            var db = this.SetDb();
+            using (db)
+            {
+                //Arrange
+                db.Products.Add(new Product { Name = "Chocolate Peanut Cake", Price = 35.50m, Description = "This Chocolate and Peanut Butter Drip Cake is completely sinful.", Image = "https://res.cloudinary.com/cakeit/image/upload/ar_1:1,c_fill,g_auto,e_art:hokusai/v1544136590/Chocolate_and_Peanut_cake.jpg", Category = new Category { Id = 1, Type = Models.Enums.CategoryType.Cake }, IsDeleted = true });
+
+                await db.SaveChangesAsync();
+
+                var repo = new Repository<Product>(db);
+                var homeService = new HomeService(repo, this.Mapper);
+
+                //Act
+                var result = await homeService.GetRandomCake();
+
+                //Assert
+                result.ShouldBeNull();
+            }
+        }
     }
 }

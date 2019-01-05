@@ -15,7 +15,7 @@ namespace CakeWebApp.Services.Common.CommonServices
             this.ErrorParm = param;
         }
 
-        public ErrorViewModel GetErrorModel(List<string> errors)
+        public ErrorViewModel GetErrorModel(ICollection<string> errors)
         {
             return new ErrorViewModel { Errors = errors };
         }

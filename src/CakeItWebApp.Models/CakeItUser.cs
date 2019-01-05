@@ -12,8 +12,6 @@ namespace CakeItWebApp.Models
             this.IsDeleted = false;
             this.CreatedOn = DateTime.UtcNow;
             this.Orders = new HashSet<Order>();
-            this.Books = new HashSet<Book>();
-            this.Tutorials = new HashSet<Tutorial>();
         }
 
         public DateTime CreatedOn { get; set; }
@@ -23,9 +21,5 @@ namespace CakeItWebApp.Models
         public DateTime? DeletedOn { get; set; }
 
         public virtual ICollection<Order> Orders { get; set; }
-
-        public virtual ICollection<Book> Books { get; set; }
-
-        public virtual ICollection<Tutorial> Tutorials { get; set; }
     }
 }

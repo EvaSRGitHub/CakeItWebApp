@@ -179,7 +179,7 @@ namespace CakeWebApp.Services.Common.CommonServices
         {
             if (!this.repository.All().Any(p => p.Id == id))
             {
-                return;
+                throw new InvalidOperationException("Cake not found.");
             }
 
             var product = await this.repository.GetByIdAsync(id);

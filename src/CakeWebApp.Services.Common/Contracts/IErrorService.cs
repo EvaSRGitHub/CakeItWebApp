@@ -13,6 +13,6 @@ namespace CakeWebApp.Services.Common.Contracts
         void PassErrorParam(object param);
 
         //work for mvc
-        ErrorViewModel GetErrorModel(List<string> errors);
+        ErrorViewModel GetErrorModel(ICollection<string> errors);
     }
 }

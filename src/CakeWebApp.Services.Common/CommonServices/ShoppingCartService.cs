@@ -89,7 +89,6 @@ namespace CakeWebApp.Services.Common.CommonServices
 
         public async Task RemoveFromShoppingCart(int id)
         {
-
             var product = this.productsRepo.All().SingleOrDefault(p => p.Id == id);
 
             if (product == null)
@@ -121,6 +120,7 @@ namespace CakeWebApp.Services.Common.CommonServices
             await this.repository.SaveChangesAsync();
         }
 
+        //TEST
         public async Task MigrateCart(string userName)
         {
             var shoppingCartItems = this.repository.All().Where(c => c.ShoppingCartId ==  this.shoppingCart.Id);
@@ -137,6 +137,7 @@ namespace CakeWebApp.Services.Common.CommonServices
             await this.repository.SaveChangesAsync();
         }
 
+       
         public ShoppingCartViewModel GetShoppingCart()
         {
             var model = new ShoppingCartViewModel
@@ -148,6 +149,7 @@ namespace CakeWebApp.Services.Common.CommonServices
             return model;
         }
 
+        //TEST
         //Checkout for unsigned users
         public async Task Checkout(CheckoutViewModel model)
         {
@@ -168,6 +170,7 @@ namespace CakeWebApp.Services.Common.CommonServices
             await this.ClearShoppingCart();
         }
 
+        //TEST
         private string CreateEmaiContent(string email)
         {
             var dir = Directory.GetCurrentDirectory();
@@ -185,6 +188,7 @@ namespace CakeWebApp.Services.Common.CommonServices
             return html;
         }
 
+        //TJEST
         private string GetOrderDetails(ICollection<ShoppingCartItem> shoppingCart)
         {
             StringBuilder sb = new StringBuilder();

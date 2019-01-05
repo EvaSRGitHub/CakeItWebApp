@@ -149,7 +149,7 @@ namespace CakeItWebApp.Services.Common.Tests
                 Title = "Test Post",
                 Author = "eva@abv.bg",
                 FullContent = "Some test content.",
-                Tags =  ""
+                Tags = ""
             };
 
             //Act
@@ -189,7 +189,7 @@ namespace CakeItWebApp.Services.Common.Tests
             await Assert.ThrowsAsync<InvalidOperationException
 >(async () => await service.CreatePost(postModelB));
         }
-        
+
         [Fact]
         public async Task CreateComment_WithValidData_ShouldAddCommentToDb()
         {
@@ -285,7 +285,7 @@ namespace CakeItWebApp.Services.Common.Tests
             //Act
 
             //Assert
-           await Assert.ThrowsAsync<NullReferenceException>(async () => await service.CreateComment(commentModel));
+            await Assert.ThrowsAsync<NullReferenceException>(async () => await service.CreateComment(commentModel));
         }
 
         [Fact]
@@ -345,7 +345,44 @@ namespace CakeItWebApp.Services.Common.Tests
             await Assert.ThrowsAsync<NullReferenceException>(async () => await service.CreateComment(commentModel));
         }
 
-        [Fact] 
+        [Fact]
+        public async Task GetAllCommentsPerPost_WithValidPost_ShouldReturnAllComments()
+        {
+            //Arrange
+            var db = this.SetDb();
+
+            var service = await this.Setup(db);
+
+            var postModel = new PostInputViewModel
+            {
+                Title = "Test Post",
+                Author = "eva@abv.bg",
+                FullContent = "Some test post content",
+                Tags = "Baking, Cakes"
+            };
+
+            await service.CreatePost(postModel);
+
+            var commentModel = new CommentInputViewModel
+            {
+                AuthorName = "otherUser@abv.bg",
+                Content = "Test comment",
+                PostId = 1
+            };
+
+            await service.CreateComment(commentModel);
+
+            //Act
+            var result = await service.GetAllCommentsPerPost(1);
+
+            var expectedCount = 1;
+            var actualCount = result.Comments.Count();
+
+            //Assert
+            Assert.Equal(expectedCount, actualCount);
+        }
+
+        [Fact]
         public async Task GetAllMyPosts_WithPosts_ShouldReturnUserPosts()
         {
             //Arrange 
@@ -368,6 +405,7 @@ namespace CakeItWebApp.Services.Common.Tests
 
             //Assert
             Assert.NotEmpty(posts);
+                                    Assert.IsAssignableFrom<IQueryable<UserPostsViewModel>>(posts);
         }
 
         [Fact]
@@ -580,9 +618,9 @@ namespace CakeItWebApp.Services.Common.Tests
             await service.CreateComment(commentModel);
 
             //Act
-           
+
             //Assert
-           await Assert.ThrowsAsync<NullReferenceException>(async () => await service.GetCommentToEditOrDelete(2));
+            await Assert.ThrowsAsync<NullReferenceException>(async () => await service.GetCommentToEditOrDelete(2));
         }
 
         [Fact]
@@ -612,7 +650,7 @@ namespace CakeItWebApp.Services.Common.Tests
 
             await service.CreateComment(commentModel);
 
-           var post = await this.postRepo.GetByIdAsync(1);
+            var post = await this.postRepo.GetByIdAsync(1);
             post.IsDeleted = true;
             await this.postRepo.SaveChangesAsync();
 
@@ -717,7 +755,7 @@ namespace CakeItWebApp.Services.Common.Tests
         }
 
         [Fact]
-        public async Task GetPostDetailById_WithValidId_ShouldReturnPostDetails()
+        public async Task GetPostDetailById_WithCommentValidId_ShouldReturnPostDetails()
         {
             //Arrange
             var db = this.SetDb();
@@ -734,11 +772,24 @@ namespace CakeItWebApp.Services.Common.Tests
 
             await service.CreatePost(postModelA);
 
+            var commentModel = new CommentInputViewModel
+            {
+                AuthorName = "otherUser@abv.bg",
+                Content = "Test comment",
+                PostId = 1
+            };
+
+            await service.CreateComment(commentModel);
+
             //Act
             var post = service.GetPostDetailById(1);
 
+            var expectedComments = 1;
+            var actualComments = post.Comments.Count();
+
             //Assert
             Assert.NotNull(post);
+            Assert.Equal(expectedComments, actualComments);
             Assert.IsType<PostDetailsViewModel>(post);
         }
 

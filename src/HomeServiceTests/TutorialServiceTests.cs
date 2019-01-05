@@ -283,6 +283,23 @@ namespace CakeItWebApp.Services.Common.Tests
         }
 
         [Fact]
+        public async Task AddRatingToTutorial_WithInValidRating_ShouldThrow()
+        {
+            //Arrange
+            var db = this.SetDb();
+
+            await this.SeedTutorials(db);
+
+            var repo = new Repository<Tutorial>(db);
+            var service = new TutorialService(repo, this.Mapper, null);
+
+            //Act
+
+            //Assert
+            await Assert.ThrowsAsync<InvalidOperationException>(async () => await service.AddRatingToTutorial(2, 6));
+        }
+
+        [Fact]
         public async Task AddRatingToTutorial_WithValidData_ShoulChangeRatingVotesOfTheTutorial()
         {
             //Arrange
@@ -369,7 +386,7 @@ namespace CakeItWebApp.Services.Common.Tests
         }
 
         [Fact]
-        public async Task AddRatingToTutorial_WithInValidRate_ShoulThrow()
+        public async Task AddRatingToTutorial_WithNullTutorial_ShoulThrow()
         {
             //Arrange
             var db = this.SetDb();
