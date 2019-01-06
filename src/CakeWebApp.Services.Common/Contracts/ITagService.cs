@@ -16,6 +16,5 @@ namespace CakeWebApp.Services.Common.Contracts
         Task<TagInputViewModel> GetTagById(int id);
 
         Task UpdateTag(TagInputViewModel model);
-
     }
 }

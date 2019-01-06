@@ -60,13 +60,13 @@
                 </div>
                 }
 
-                @if (this.User.IsInRole("Admin"))
+                @*@if (this.User.IsInRole("Admin"))
                 {
                     <div class="button-holder d-flex justify-content-center">
                         <a asp-controller="Books" asp-action="EditBook" asp-route-id="@book.Id" class="btn btn-info text-white mb-3">Edit</a>
                         <a asp-controller="Books" asp-action="DeleteBook" asp-route-id="@book.Id" class="btn btn-danger text-white mb-3">Delete</a>
                     </div>
-                }
+                }*@
             </div>
         </div>
         <!-- /.row -->

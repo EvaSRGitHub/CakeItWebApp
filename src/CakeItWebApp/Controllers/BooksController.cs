@@ -200,6 +200,12 @@ namespace CakeItWebApp.Controllers
             };
         }
 
+        [Authorize(Roles = "Admin")]
+        public IActionResult AllBooks()
+        {
+            var model = this.bookService.GetAllBooks().ToList();
 
+            return this.View(model);
+        }
     }
 }

@@ -1,0 +1,45 @@
+﻿@using System.Collections.Generic
+@model ICollection<CakeItWebApp.ViewModels.Books.BookIndexViewModel>
+
+@{
+    var count = 0;
+}
+<main class="container">
+    <div class="row">
+        <div class="col-md-12 m-2">
+            <h1>All Cakes</h1>
+            <hr class="hr-2" style="background-color: black">
+            <table class="table table-hover">
+                <thead>
+                    <tr class="row">
+                        <th scope="col" class="col-md-1 d-flex"><h3>#</h3></th>
+                        <th scope="col" class="col-md-1 d-flex"><h3>Id</h3></th>
+                        <th scope="col" class="col-md-3 d-flex"><h3>Title</h3></th>
+                        <th scope="col" class="col-md-2 d-flex"><h3>Author</h3></th>
+                        <th scope="col" class="col-md-2 d-flex"><h3>Edit</h3></th>
+                        <th scope="col" class="col-md-2 d-flex"><h3>Delete</h3></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        count++;
+                    <tr class="row">
+                        <td class="col-md-1 d-flex"><h5>@count</h5></td>
+                        <td class="col-md-1 d-flex"><h5>@item.Id</h5></td>
+                        <td class="col-md-3 d-flex"><h5>@item.Title</h5></td>
+                        <td class="col-md-2 d-flex"><h5>@item.Author</h5></td>
+                        <td class="col-md-2 d-flex"><h5><a class="btn btn-info" asp-controller="Books" asp-action="EditBook" asp-route-id="@item.Id">Edit</a></h5></td>
+                        <td class="col-md-2 d-flex"><h5><a class="btn btn-danger" asp-controller="Books" asp-action="DeleteBook" asp-route-id="@item.Id">Delete</a></h5></td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+            <div class="justify-content-right">
+                <a href="javascript:void(0);" onclick="history.go(-1);" class="btn btn-dark" role="button" style="color: white">Back</a>
+            </div>
+        </div>
+    </div>
+</main>
+
+
