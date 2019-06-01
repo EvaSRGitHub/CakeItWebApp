@@ -27,7 +27,7 @@
                         <tr class="row">
                             <th scope="row" class="col-md-1 d-flex"><h5>@count</h5></th>
                             <td class="col-md-3 d-flex"><h5>@date</h5></td>
-                            <td class="col-md-5 d-flex"><h5>@item.Content ...</h5></td>
+                            <td class="col-md-5 d-flex"><h5>@Html.Raw(item.Content) ...</h5></td>
                             <td class="col-md-3 d-flex"><h5><a asp-controller="Forum" asp-action="CommentsPerPost" asp-route-postId="@item.PostId" class="btn btn-info text-white">Post</a></h5></td>
                         </tr>
                     }

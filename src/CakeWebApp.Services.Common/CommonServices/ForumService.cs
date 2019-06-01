@@ -5,6 +5,7 @@ using CakeItWebApp.ViewModels.Forum;
 using CakeItWebApp.ViewModels.Tags;
 using CakeWebApp.Services.Common.Contracts;
 using CakeWebApp.Services.Common.Sanitizer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -47,12 +48,7 @@ namespace CakeWebApp.Services.Common.CommonServices
                 throw new NullReferenceException("Sorry, couldn't process your comment.");
             }
 
-            var content = HttpUtility.HtmlDecode(StripHtml(model.Content));
-
-            if (string.IsNullOrWhiteSpace(content))
-            {
-                throw new NullReferenceException("Comment is required.");
-            }
+            var content = model.Content;
 
             model.AuthorId = this.userRepo.All().SingleOrDefault(u => u.UserName == model.AuthorName).Id;
 
@@ -76,25 +72,32 @@ namespace CakeWebApp.Services.Common.CommonServices
         {
             var authorId = this.userRepo.All().SingleOrDefault(u => u.UserName == model.Author).Id;
 
-            var content = HttpUtility.HtmlDecode(StripHtml(model.FullContent.Trim()));
+            var content = model.FullContent.Trim();
 
-            if (string.IsNullOrWhiteSpace(content))
-            {
-                throw new NullReferenceException("Comment is required.");
-            }
-
-            var title = HttpUtility.HtmlDecode(StripHtml(model.Title.Trim()));
+            var title = model.Title.Trim();
 
             if (string.IsNullOrWhiteSpace(title))
             {
                 throw new NullReferenceException("Title is required.");
             }
 
-            var inputTags = HttpUtility.HtmlDecode(StripHtml(model.Tags.Trim()));
+            var inputTags = model.Tags.Trim();
 
             if (string.IsNullOrWhiteSpace(inputTags))
             {
                 throw new NullReferenceException("Tag is required.");
+            }
+
+            var dataTags = this.tagPostsRepo.All().AsNoTracking().Select(t => t.Tag.Name).ToList();
+
+            var tags = model.Tags.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (var tag in tags)
+            {
+                if(!dataTags.Any(t => t.Equals(tag, StringComparison.InvariantCultureIgnoreCase)))
+                {
+                    throw new InvalidOperationException($"Invalid tag {tag}");
+                }
             }
 
             var post = new Post
@@ -115,8 +118,6 @@ namespace CakeWebApp.Services.Common.CommonServices
             try
             {
                 await this.postRepo.SaveChangesAsync();
-
-                var tags = model.Tags.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
                 foreach (var tag in tags)
                 {
@@ -148,13 +149,13 @@ namespace CakeWebApp.Services.Common.CommonServices
 
             if (post == null && post.IsDeleted == true)
             {
-                throw new InvalidOperationException("Post not found.");
+                return null;
             }
 
             var postDetail = new PostDetailsViewModel
             {
                 Author = post.Author.UserName,
-                Title = post.Title,
+                Title = this.sanitizer.Sanitize(post.Title),
                 FullContent = this.sanitizer.Sanitize(post.FullContent),
                 CreatedOn = post.CreatedOn.ToString("dd-MM-yyyy HH:mm"),
                 Tags = string.Join(", ", post.Tags.Select(t => t.Tag.Name)),
@@ -179,7 +180,7 @@ namespace CakeWebApp.Services.Common.CommonServices
 
             if (comments.Count() == 0)
             {
-                throw new InvalidOperationException("No Comments found.");
+                return null;
             }
 
             var commentModels = comments.Select(c => new CommentInputViewModel
@@ -197,20 +198,20 @@ namespace CakeWebApp.Services.Common.CommonServices
 
         public IQueryable<UserPostsViewModel> GetAllMyPosts(string userName)
         {
-            var allPosts = this.postRepo.All().Where(u => u.Author.UserName == userName && u.IsDeleted == false);
+            var allPosts = this.postRepo.All().AsNoTracking().Where(u => u.Author.UserName == userName && u.IsDeleted == false);
 
             if (allPosts.Count() == 0)
             {
-                throw new InvalidOperationException("No Posts found.");
+                return null;
             }
 
             var modelPosts = allPosts.Select(p => new UserPostsViewModel
             {
                 PostId = p.Id,
-                Title = p.Title,
+                Title = this.sanitizer.Sanitize(p.Title),
                 CreatedOn = p.CreatedOn.ToString("dd-MM-yyyy HH:mm"),
                 Content = GetShortContent(p.FullContent),
-                CommentsCount = p.Comments.Count
+                CommentsCount = p.Comments.Where(c => c.IsDeleted == false).Count()
             }).OrderByDescending(p => p.CreatedOn);
 
             return modelPosts;
@@ -222,14 +223,14 @@ namespace CakeWebApp.Services.Common.CommonServices
 
             if (searchString == null)
             {
-                posts = this.postRepo.All().Where(p => p.IsDeleted == false);
+                posts = this.postRepo.All().AsNoTracking().Where(p => p.IsDeleted == false);
             }
             else
             {
-                posts = this.postRepo.All().Where(p => p.Title.Contains(searchString, StringComparison.CurrentCultureIgnoreCase) && p.IsDeleted == false);
+                posts = this.postRepo.All().AsNoTracking().Where(p => p.Title.Contains(searchString, StringComparison.CurrentCultureIgnoreCase) && p.IsDeleted == false);
             }
 
-            var modelPosts = this.mapper.ProjectTo<PostIndexViewModel>(posts).OrderByDescending(p => p.CreatedOn).ToList();
+          var modelPosts = this.mapper.ProjectTo<PostIndexViewModel>(posts).OrderByDescending(p => p.CreatedOn).ToList();
 
             return modelPosts;
         }
@@ -296,7 +297,7 @@ namespace CakeWebApp.Services.Common.CommonServices
             var postDetail = new PostDetailsViewModel
             {
                 Author = post.Author.UserName,
-                Title = post.Title,
+                Title = this.sanitizer.Sanitize(post.Title),
                 FullContent = this.sanitizer.Sanitize(post.FullContent),
                 CreatedOn = post.CreatedOn.ToString("dd-MM-yyyy HH:mm"),
                 Tags = string.Join(", ", post.Tags.Select(t => t.Tag.Name)),
@@ -371,13 +372,13 @@ namespace CakeWebApp.Services.Common.CommonServices
 
         public async Task UpdateComment(EditCommentViewModel model)
         {
-            var content = HttpUtility.HtmlDecode(StripHtml(model.Content));
+            var content = model.Content;
 
             if (string.IsNullOrWhiteSpace(content))
             {
                 throw new NullReferenceException("Comment is required.");
             }
-            
+
             var comment = new Comment
             {
                 AuthorId = model.CommentAuthorId,
@@ -404,25 +405,37 @@ namespace CakeWebApp.Services.Common.CommonServices
 
         public async Task UpdatePost(PostInputViewModel model)
         {
-            var content = HttpUtility.HtmlDecode(StripHtml(model.FullContent.Trim()));
+            var content = model.FullContent.Trim();
 
             if (string.IsNullOrWhiteSpace(content))
             {
                 throw new NullReferenceException("Comment is required.");
             }
 
-            var title = HttpUtility.HtmlDecode(StripHtml(model.Title.Trim()));
+            var title = model.Title.Trim();
 
             if (string.IsNullOrWhiteSpace(title))
             {
                 throw new NullReferenceException("Title is required.");
             }
 
-            var inputTags = HttpUtility.HtmlDecode(StripHtml(model.Tags.Trim()));
+            var inputTags = model.Tags.Trim();
 
             if (string.IsNullOrWhiteSpace(inputTags))
             {
                 throw new NullReferenceException("Tag is required.");
+            }
+
+            var dataTags = this.tagPostsRepo.All().AsNoTracking().Select(t => t.Tag.Name).ToList();
+
+            var tags = model.Tags.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (var tag in tags)
+            {
+                if (!dataTags.Any(t => t.Equals(tag, StringComparison.InvariantCultureIgnoreCase)))
+                {
+                    throw new InvalidOperationException($"Invalid tag {tag}");
+                }
             }
 
             var authorId = this.userRepo.All().SingleOrDefault(u => u.UserName == model.Author).Id;
@@ -441,8 +454,6 @@ namespace CakeWebApp.Services.Common.CommonServices
             try
             {
                 await this.postRepo.SaveChangesAsync();
-
-                var tags = model.Tags.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
                 var tagsPerPost = tagPostsRepo.All().Where(tp => tp.PostId == post.Id);
 
@@ -476,7 +487,7 @@ namespace CakeWebApp.Services.Common.CommonServices
 
         private string GetShortContent(string fullContent)
         {
-            var content = StripHtml(this.sanitizer.Sanitize(fullContent));
+            var content = this.sanitizer.Sanitize(this.StripHtml(fullContent));
 
             var contentLength = content.Length;
 
@@ -507,7 +518,7 @@ namespace CakeWebApp.Services.Common.CommonServices
                 CommentCount = p.Comments.Count,
                 CreatedOn = p.CreatedOn.ToString("dd-MM-yyyy HH:mm"),
                 Tags = string.Join(", ", p.Tags.Select(t => t.Tag.Name)),
-                Title = p.Title,
+                Title = this.sanitizer.Sanitize(p.Title),
                 Id = p.Id,
                 IsDeleted = p.IsDeleted
             }).OrderByDescending(p => p.CreatedOn).ToList();

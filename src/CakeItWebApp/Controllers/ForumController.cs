@@ -303,17 +303,13 @@ namespace CakeItWebApp.Controllers
 
         public IActionResult MyPosts()
         {
-            ICollection<UserPostsViewModel> model;
+            ICollection<UserPostsViewModel> model = this.forumService.GetAllMyPosts(this.User.Identity.Name)?.ToList();
 
-            try
+            if(model == null)
             {
-                model = this.forumService.GetAllMyPosts(this.User.Identity.Name).ToList();
-            }
-            catch (Exception e)
-            {
-                ViewData["Errors"] = e.Message;
+                ViewData["Message"] = "No posts found.";
 
-                return this.View("Error");
+                return this.View("Notification");
             }
 
             return this.View(model);
@@ -321,35 +317,27 @@ namespace CakeItWebApp.Controllers
 
         public async Task<IActionResult> CommentsPerPost(int PostId)
         {
-            PostDetailsViewModel model;
+            PostDetailsViewModel model = await this.forumService.GetAllCommentsPerPost(PostId);
 
-            try
-            {
-                model = await this.forumService.GetAllCommentsPerPost(PostId);
-            }
-            catch (Exception e)
-            {
-                ViewData["Errors"] = e.Message;
+            //if(model == null)
+            //{
+            //    ViewData["Message"] = e.Message;
 
-                return this.View("Error");
-            }
+            //    return this.View("Error");
+            //}
 
             return this.View(model);
         }
 
         public IActionResult MyComments()
         {
-            ICollection<CommentInputViewModel> model;
-
-            try
+            ICollection<CommentInputViewModel> model = this.forumService.GetAllMyComments(this.User.Identity.Name)?.ToList();
+          
+            if(model == null)
             {
-                model = this.forumService.GetAllMyComments(this.User.Identity.Name).ToList();
-            }
-            catch (Exception e)
-            {
-                ViewData["Errors"] = e.Message;
+                ViewData["Message"] = "No Comments found.";
 
-                return this.View("Error");
+                return this.View("Notification");
             }
 
             return this.View(model);

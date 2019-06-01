@@ -23,7 +23,7 @@
             {
                 <div class="media mb-4">
                     <div class="media-body">
-                        <a asp-controller="Forum" asp-action="PostDetails" asp-route-id="@Model[i].Id"><h3 class="mt-0">@Model[i].Title</h3></a>
+                        <a asp-controller="Forum" asp-action="PostDetails" asp-route-id="@Model[i].Id"><h3 class="mt-0">@Html.Raw(Model[i].Title)</h3></a>
                         <p class="lead">by @Model[i].Author</p>
                         <p class="d-inline">
                             <em>Created On: <strong>@Model[i].CreatedOn</strong>,</em>

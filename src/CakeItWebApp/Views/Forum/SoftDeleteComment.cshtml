@@ -7,7 +7,7 @@
                 <h1 class="text-center">Delete Comment</h1>
                 <hr class="bg-panda hr-2" />
                 <h3>Post:</h3>
-                <p><em>Title: <strong>@Model.Title</strong></em></p>
+                <p><em>Title: <strong>@Html.Raw(Model.Title)</strong></em></p>
                 <p><em>Author: <strong>@Model.PostAuthorName</strong></em></p>
                 <p class="mb-4"><em>Content: <strong>@Html.Raw(Model.FullContent)</strong></em></p>
                 <hr style="background-color: gray" />

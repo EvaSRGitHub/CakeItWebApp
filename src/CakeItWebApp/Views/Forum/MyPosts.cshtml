@@ -26,9 +26,9 @@
                         count++;
                     <tr class="row">
                         <th scope="row" class="col-md-1 d-flex"><h5>@count</h5></th>
-                        <td class="col-md-2 d-flex"><h5>@item.Title</h5></td>
+                        <td class="col-md-2 d-flex"><h5>@Html.Raw(item.Title)</h5></td>
                         <td class="col-md-2 d-flex"><h5>@item.CreatedOn</h5></td>
-                        <td class="col-md-4 d-flex"><h5>@item.Content ...</h5></td>
+                        <td class="col-md-4 d-flex"><h5>@Html.Raw(item.Content) ...</h5></td>
                         <td class="col-md-1 d-flex"><h5>@item.CommentsCount</h5></td>
                         <td class="col-md-2 d-flex"><h5><a asp-controller="Forum" asp-action="CommentsPerPost" asp-route-postId="@item.PostId" class="btn btn-info text-white">Comments</a></h5></td>
                     </tr>
