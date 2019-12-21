@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace CakeWebApp.Services.Common.Sanitizer
+﻿namespace CakeWebApp.Services.Common.Sanitizer
 {
     public interface ISanitizer
     {

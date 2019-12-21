@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
-
-namespace CakeItWebApp.Models.Enums
+﻿namespace CakeItWebApp.Models.Enums
 {
     public enum FillingType
     {

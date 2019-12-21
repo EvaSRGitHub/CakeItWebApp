@@ -8,7 +8,6 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CakeWebApp.Services.Common.CommonServices
@@ -44,7 +43,7 @@ namespace CakeWebApp.Services.Common.CommonServices
             }
             catch (Exception e)
             {
-                this.logger.LogError(e.Message);
+                this.logger.LogDebug(e.Message);
 
                 throw new InvalidOperationException("Sorry, an error occurred and your request couldn't be processed.");
             }
@@ -74,7 +73,7 @@ namespace CakeWebApp.Services.Common.CommonServices
             }
             catch (Exception e)
             {
-                this.logger.LogError(e.Message);
+                this.logger.LogDebug(e.Message);
 
                 throw new InvalidOperationException("Sorry, an error occurred and your request couldn't be processed.");
             }
@@ -98,7 +97,7 @@ namespace CakeWebApp.Services.Common.CommonServices
             }
             catch (Exception e)
             {
-                this.logger.LogError(e.Message);
+                this.logger.LogDebug(e.Message);
 
                 throw new InvalidOperationException("Sorry, an error occurred while trying to delete cake.");
             }
@@ -106,6 +105,7 @@ namespace CakeWebApp.Services.Common.CommonServices
 
         public IEnumerable<CakeIndexViewModel> GetAllActiveCakes() 
         {
+
             return mapper.ProjectTo<CakeIndexViewModel>(this.repository.All().Where(c => c.IsDeleted == false)) .ToList();
         }
 
@@ -168,10 +168,11 @@ namespace CakeWebApp.Services.Common.CommonServices
             }
             catch (Exception e)
             {
-                this.logger.LogError(e.Message);
+                this.logger.LogDebug(e.Message);
 
                 return "Sorry, an error occurred and your request couldn't be processed.";
             }
+
             return "true";
         }
 
@@ -192,6 +193,7 @@ namespace CakeWebApp.Services.Common.CommonServices
         public IEnumerable<CakeIndexViewModel> GetAllCakes()
         {
             var allCakes = mapper.ProjectTo<CakeIndexViewModel>(this.repository.All()).ToList();
+
             return allCakes;
         }
     }

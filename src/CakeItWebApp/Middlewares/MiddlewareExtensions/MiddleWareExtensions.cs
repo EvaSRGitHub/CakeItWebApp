@@ -1,8 +1,4 @@
 ﻿using Microsoft.AspNetCore.Builder;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace CakeItWebApp.Middlewares.MiddlewareExtensions
 {
@@ -18,9 +14,9 @@ namespace CakeItWebApp.Middlewares.MiddlewareExtensions
             return builder.UseMiddleware<Error404Middleware>();
         }
 
-        public static IApplicationBuilder UseClearShoppingCartMiddleware(this IApplicationBuilder builder)
+        public static IApplicationBuilder UseCreateCategoryMiddleware(this IApplicationBuilder builder)
         {
-            return builder.UseMiddleware<ClearShoppingCartMiddleware>();
+            return builder.UseMiddleware<CreateCategoryMiddleware>();
         }
     }
 }

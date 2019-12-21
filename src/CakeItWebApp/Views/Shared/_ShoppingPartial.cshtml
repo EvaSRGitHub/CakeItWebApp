@@ -5,7 +5,7 @@
             My Shop
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <a class="dropdown-item" asp-controller="ShoppingCart" asp-action="Index">My Cart</a>
+            <a class="dropdown-item" asp-controller="Cart" asp-action="Index">My Cart</a>
             <a class="dropdown-item" asp-controller="Orders" asp-action="Index">My Orders</a>
         </div>
     </li>
@@ -13,6 +13,6 @@
 else
 {
     <li class="nav-item">
-        <a asp-controller="ShoppingCart" asp-action="Index" class="nav-link"><img src="~/images/cart.png" class="mr-1"alt=""> Cart <span></span></a>
+        <a asp-controller="Cart" asp-action="Index" class="nav-link"><img src="~/images/cart.png" class="mr-1"alt=""> Cart <span></span></a>
     </li>
 }

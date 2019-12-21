@@ -7,12 +7,11 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CakeWebApp.Services.Common.CommonServices
 {
-    public class BookService:IBookService
+    public class BookService: IBookService
     {
         private readonly IRepository<Book> bookRepo;
         private readonly IMapper mapper;
@@ -49,7 +48,7 @@ namespace CakeWebApp.Services.Common.CommonServices
             }
             catch (Exception e)
             {
-                this.logger.LogError(e.Message);
+                this.logger.LogDebug(e.Message);
 
                 throw new InvalidOperationException("Sorry, an error occurred while trying to rate a book.");
             }
@@ -72,7 +71,7 @@ namespace CakeWebApp.Services.Common.CommonServices
             }
             catch (Exception e)
             {
-                this.logger.LogError(e.Message);
+                this.logger.LogDebug(e.Message);
 
                 throw new InvalidOperationException("Sorry, an error occurred while trying to create book.");
             }
@@ -95,17 +94,17 @@ namespace CakeWebApp.Services.Common.CommonServices
             }
             catch (Exception e)
             {
-                this.logger.LogError(e.Message);
+                this.logger.LogDebug(e.Message);
 
                 throw new InvalidOperationException("Sorry, an error occurred while trying to delete book.");
             }
         }
 
-        public IQueryable<BookIndexViewModel> GetAllBooks()
+        public IEnumerable<BookIndexViewModel> GetAllBooks()
         {
             var books = this.bookRepo.All();
 
-            var model = this.mapper.ProjectTo<BookIndexViewModel>(books);
+            var model = this.mapper.ProjectTo<BookIndexViewModel>(books).ToList();
 
             return model;
         }
@@ -146,7 +145,7 @@ namespace CakeWebApp.Services.Common.CommonServices
             }
             catch (Exception e)
             {
-                this.logger.LogError(e.Message);
+                this.logger.LogDebug(e.Message);
 
                 throw new InvalidOperationException("Sorry, an error occurred while trying to edit a book.");
             }

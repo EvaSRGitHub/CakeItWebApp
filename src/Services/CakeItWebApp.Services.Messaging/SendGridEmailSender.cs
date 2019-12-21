@@ -1,12 +1,11 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using SendGrid;
 using SendGrid.Helpers.Mail;
-using Newtonsoft.Json;
+using System;
 using System.Linq;
-using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CakeItWebApp.Services.Messaging
 {
@@ -37,7 +36,6 @@ namespace CakeItWebApp.Services.Messaging
 
             var response = await client.SendEmailAsync(msg);
             
-            //this is working only with payed verson of Send Grid service!
             if (response.StatusCode != System.Net.HttpStatusCode.Accepted)
             {
                 var bodyResult = await response.Body.ReadAsStringAsync();

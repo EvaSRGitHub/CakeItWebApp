@@ -1,22 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text.Encodings.Web;
-using System.Threading.Tasks;
+﻿using CakeItWebApp.Models;
+using CakeItWebApp.Services.Messaging;
+using CakeWebApp.Services.Common.Contracts;
 using Microsoft.AspNetCore.Authorization;
-using CakeItWebApp.Models;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Logging;
-using CakeItWebApp.Services.Messaging;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using CakeWebApp.Services.Common.Contracts;
+using Microsoft.Extensions.Logging;
+using System;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
-using CakeItWebApp.ViewModels.ShoppingCart;
+using System.Text.Encodings.Web;
+using System.Threading.Tasks;
 
 namespace CakeItWebApp.Areas.Identity.Pages.Account
 {
@@ -124,10 +121,6 @@ namespace CakeItWebApp.Areas.Identity.Pages.Account
                     }
 
                     await _signInManager.SignInAsync(user, isPersistent: false);
-
-                    //ShoppingCartViewModel usersShoppingCart = new ShoppingCartViewModel();
-                    //String cartId = _provider.GetService<IShoppingCartService>().GetShoppingCart().Id;
-                   await _provider.GetService<IShoppingCartService>().MigrateCart(Input.Email);
 
                     return LocalRedirect(returnUrl);
                 }

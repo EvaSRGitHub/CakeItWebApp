@@ -1,0 +1,75 @@
+﻿@model CakeItWebApp.ViewModels.Cart.CartViewModel
+
+@{
+    var count = 0;
+}
+<main class=" container">
+    <div class="row">
+        <div class="col-12 col-md-8 m-2">
+            <h1>Shopping Cart</h1>
+            <hr class="hr-2" style="background-color: forestgreen">
+            <table class="table table-hover">
+                <thead>
+                    <tr class="row">
+                        <th scope="col" class="col-md-1 d-flex"><h3>#</h3></th>
+                        <th scope="col" class="col-md-6 d-flex"><h3>Name</h3></th>
+                        <th scope="col" class="col-md-2 d-flex"><h3>Price</h3></th>
+                        <th scope="col" class="col-md-1 d-flex"><h3>Qty</h3></th>
+                        <th scope="col" class="col-md-2 d-flex"><h3>Remove</h3></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.CartItems)
+                    {
+                        count++;
+                        <tr class="row">
+                            <th scope="row" class="col-md-1 d-flex"><h5>@count</h5></th>
+                            <td class="col-md-6 d-flex"><h5>@item.Product.Name</h5></td>
+                            <td class="col-md-2 d-flex"><h5>@item.Product.Price</h5></td>
+                            <td class="col-md-1 d-flex"><h5>@item.Quantity</h5></td>
+                            <td class="col-md-2 d-flex justify-content-center">
+                                <div>
+                                    <a asp-controller="Cart" asp-action="RemoveItem" asp-route-id="@item.Product.Id" class="btn btn-danger text-white">Remove</a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="col-12 col-md-3">
+            <div class="cart-summary">
+                <h5>Cart Total</h5>
+                <ul class="summary-table p-0">
+                    <li>
+                        <span>subtotal:</span>
+                        <span>
+                            $@Model.TotalValue
+                        </span>
+                    </li>
+                    <li><span>delivery:</span> <span>Free</span></li>
+                    <li>
+                        <span>
+                            total:
+                        </span>
+                        <span>
+                            $@Model.TotalValue
+                        </span>
+                    </li>
+                </ul>
+                <div class="cakeit-btn mb-2">
+                    <a asp-controller="Orders" asp-action="Checkout" data-toggle="tooltip" data-container="body" title="If you have an account with us please sign in to continue.Thus you will have your order details available any time you need them" class="btn amado-btn w-100" data-type="warning" style="color:white">Checkout</a>
+                </div>
+                <div class="cakeit-btn">
+                    <a asp-controller="Cakes" asp-action="Index" class="btn amado-btn w-100" style="color:white">Continue shopping</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<script>
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+</script>
+

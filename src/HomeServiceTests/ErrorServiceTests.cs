@@ -1,7 +1,5 @@
 ﻿using CakeWebApp.Services.Common.CommonServices;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using Xunit;
 
 namespace CakeItWebApp.Services.Common.Tests

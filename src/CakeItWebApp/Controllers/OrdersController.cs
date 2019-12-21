@@ -1,36 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using CakeItWebApp.ViewModels.Orders;
+﻿using CakeItWebApp.ViewModels.Orders;
 using CakeWebApp.Services.Common.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace CakeItWebApp.Controllers
 {
-    [Authorize]
     public class OrdersController : Controller
     {
         private readonly ILogger<OrdersController> logger;
         private readonly IOrderService orderService;
-        private readonly IShoppingCartService shoppingCartService;
+        private readonly ICartService cartService;
         private readonly IOrderDetailsService orderDetailsService;
         private readonly IErrorService errorService;
         private readonly ICakeService cakeService;
+        private readonly IEmailService emailService;
 
-
-        public OrdersController(ILogger<OrdersController> logger, 
-            IOrderService orderService, 
-            IShoppingCartService shoppingCartService, IOrderDetailsService orderDetailsService, IErrorService errorService, ICakeService cakeService)
+        public OrdersController(ILogger<OrdersController> logger,
+            IOrderService orderService,
+            ICartService cartService, IOrderDetailsService orderDetailsService, IErrorService errorService, ICakeService cakeService, IEmailService emailService)
         {
             this.logger = logger;
             this.orderService = orderService;
-            this.shoppingCartService = shoppingCartService;
+            this.cartService = cartService;
             this.orderDetailsService = orderDetailsService;
             this.errorService = errorService;
             this.cakeService = cakeService;
+            this.emailService = emailService;
         }
 
         [Authorize]
@@ -43,28 +42,28 @@ namespace CakeItWebApp.Controllers
             return View(model);
         }
 
-        [Authorize]
         public IActionResult Checkout()
         {
-            if(this.shoppingCartService.GetCartItems().Count == 0)
+            var items = this.cartService.GetCartItems().CartItems;
+
+            if (items.Count == 0)
             {
                 ViewData["Errors"] = "Your shopping cart is empty.";
 
                 return this.View("Error");
-            } 
+            }
 
             return this.View();
         }
 
         [HttpPost]
-        [Authorize]
-        public async Task <IActionResult> Checkout(OrderDetailsViewModel model)
+        public async Task<IActionResult> Checkout(OrderDetailsViewModel model)
         {
             int orderId = 0;
 
             try
             {
-                orderId = await this.orderService.CreateOrder(this.User.Identity.Name);
+                orderId = await this.orderService.CreateOrder(this?.User.Identity.Name ?? null);
             }
             catch (Exception e)
             {
@@ -76,7 +75,7 @@ namespace CakeItWebApp.Controllers
 
             if (!ModelState.IsValid)
             {
-                this.logger.LogError("OrderDetailsViewModel is not valid.");
+                this.logger.LogDebug("OrderDetailsViewModel is not valid.");
 
                 var errors = this.ModelState.Values.SelectMany(p => p.Errors).Select(e => e.ErrorMessage).ToList();
 
@@ -87,25 +86,29 @@ namespace CakeItWebApp.Controllers
 
             int orderDetailsId = await this.orderDetailsService.AddOrderDetails(model);
 
-            //TO make OrderOrderDetails Table!!!????
             await this.orderService.SetOrderDetailsId(orderDetailsId);
 
             await MarkAsDeletedCustomProductsFromDb();
 
-            await this.shoppingCartService.ClearShoppingCart();
+            await this.emailService.SendOrderMail(model);
 
-            TempData["FinishedOrder"] = "true";
+            TempData["SentEmail"] = "true";
+
+            if (!this.User.Identity.IsAuthenticated)
+            {
+                return this.RedirectToAction("Index", "Cakes");
+            }
 
             return this.RedirectToAction("Index", "Orders");
         }
 
         private async Task MarkAsDeletedCustomProductsFromDb()
         {
-            var customProduct = this.shoppingCartService.GetCartItems().Where(i => i.Product.CategoryId == 2);
+            var customProduct = this.cartService.GetCartItems().CartItems.Where(i => i.Product.CategoryId == 2);
 
             foreach (var item in customProduct)
             {
-               await this.cakeService.SoftDelete(item.Product.Id);
+                await this.cakeService.SoftDelete(item.Product.Id);
             }
         }
 
@@ -119,11 +122,11 @@ namespace CakeItWebApp.Controllers
 
         private void ShwoMessageIfOrderHasBeenFinished()
         {
-            var value = TempData["FinishedOrder"]?.ToString() ?? null;
+            var value = TempData["SentEmail"]?.ToString() ?? null;
 
             if (value == "true")
             {
-                ViewData["FinishedOrder"] = "Thank you for using CakeIt. A member from our team shall contact you shortly.";
+                ViewData["SentEmail"] = "Your order is accepted. Please check your e-mail.";
             }
         }
     }

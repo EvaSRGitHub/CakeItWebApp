@@ -4,9 +4,7 @@ using CakeItWebApp.Services.Common.Repository;
 using CakeItWebApp.ViewModels;
 using CakeWebApp.Services.Common.Contracts;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CakeWebApp.Services.Common.CommonServices
@@ -32,9 +30,9 @@ namespace CakeWebApp.Services.Common.CommonServices
 
             while (true)
             {
-                var cakeIdToDesplay = rnd.Next(1, max + 1);
+                var cakeIdToDisplay = rnd.Next(1, max + 1);
 
-                var product = await this.repository.GetByIdAsync(cakeIdToDesplay);
+                var product = await this.repository.GetByIdAsync(cakeIdToDisplay);
 
                 if (product == null || (max == 1 && product.IsDeleted == true))
                 {

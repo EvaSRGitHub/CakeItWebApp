@@ -1,9 +1,7 @@
-﻿using CakeItWebApp.Models.Enums;
-using System;
+﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 
 namespace CakeItWebApp.Models
 {
@@ -43,6 +41,7 @@ namespace CakeItWebApp.Models
 
         public int? RatingVotes { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<OrderProduct> Orders { get; set; }
     }
 }

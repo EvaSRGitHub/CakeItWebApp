@@ -8,8 +8,6 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CakeWebApp.Services.Common.CommonServices
@@ -33,7 +31,7 @@ namespace CakeWebApp.Services.Common.CommonServices
         {
             if(model.Sponge.Contains("Choose") || model.FirstLayerCream.Contains("Choose") || model.SecondLayerCream.Contains("Choose") || model.Filling.Contains("Choose") || model.SideDecoration.Contains("Choose") || model.TopDecoration.Contains("Choose"))
             {
-                throw new InvalidOperationException("Please fill the form coretlly.");
+                throw new InvalidOperationException("Please fill the form correctlly.");
             }
 
             var side = model.SideDecoration.ToLower();
@@ -74,7 +72,8 @@ namespace CakeWebApp.Services.Common.CommonServices
             }
             catch (Exception e)
             {
-                this.logger.LogError(e.Message);
+                this.logger.LogDebug(e.Message);
+
                 throw new InvalidOperationException("Sorry, an error occurred and your request couldn't be processed.");
             }
 
@@ -156,7 +155,8 @@ namespace CakeWebApp.Services.Common.CommonServices
             }
             catch (Exception e)
             {
-                this.logger.LogError(e.Message);
+                this.logger.LogDebug(e.Message);
+
                 throw new InvalidOperationException("Sorry, an error occurred and your request couldn't be processed.");
             }
         }
@@ -173,7 +173,7 @@ namespace CakeWebApp.Services.Common.CommonServices
             }
             catch (Exception e)
             {
-                this.logger.LogError(e.Message);
+                this.logger.LogDebug(e.Message);
 
                 throw new InvalidOperationException("Sorry, an error occurred while trying to delete custom cake.");
             }

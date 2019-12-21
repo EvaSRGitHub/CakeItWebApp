@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using CakeItWebApp.Models;
+﻿using CakeItWebApp.Models;
 using CakeItWebApp.ViewModels.CustomCake;
 using CakeWebApp.Services.Common.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace CakeItWebApp.Controllers
 {
@@ -38,7 +37,7 @@ namespace CakeItWebApp.Controllers
         {
             if (!ModelState.IsValid)
             {
-                this.logger.LogError("Model is not valid.");
+                this.logger.LogDebug("Model is not valid.");
 
                 var errors = this.ModelState.Values.SelectMany(p => p.Errors).Select(e => e.ErrorMessage).ToList();
 
@@ -87,7 +86,7 @@ namespace CakeItWebApp.Controllers
 
             if (!ModelState.IsValid)
             {
-                this.logger.LogError("Model is not valid.");
+                this.logger.LogDebug("Model is not valid.");
 
                 var errors = this.ModelState.Values.SelectMany(p => p.Errors).Select(e => e.ErrorMessage).ToList();
 
@@ -127,7 +126,7 @@ namespace CakeItWebApp.Controllers
         {
             if (!ModelState.IsValid)
             {
-                this.logger.LogError("Model is not valid.");
+                this.logger.LogDebug("Model is not valid.");
 
                 var errors = this.ModelState.Values.SelectMany(p => p.Errors).Select(e => e.ErrorMessage).ToList();
 

@@ -23,12 +23,13 @@
             </button>
         </div>
     }
-    <!-- Page Heading -->
 
+    <!-- Page Heading -->
     <h1 class="my-4">
-      CakeIt
         <small>Cakes</small>
     </h1>
+
+    <!--List cakes-->
     <div class="row justify-content-around">
         @for (int i = 0; i < Model.Count; i++)
         {
@@ -48,23 +49,44 @@
                     {
                         <div class="button-holder d-flex justify-content-around">
                             <a asp-controller="Cakes" asp-action="Edit" asp-route-id="@Model[i].Id" class="btn btn-info text-white mb-3">Edit</a>
-                            <a asp-controller="Cakes" asp-action="Delete" asp-route-id="@Model[i].Id" class="btn btn-danger text-white mb-3">Delete</a>
+
+                            @if (Model[i].IsDeleted)
+                            {
+                                <!--disable buttons-->
+                                <a asp-controller="Cakes" asp-action="Delete" asp-route-id="@Model[i].Id" class="btn btn-danger text-white mb-3 disabled">Delete</a>
+
+                                <div class="button-holder d-flex justify-content-center">
+                                    <a asp-controller="Cart" asp-action="AddToCart" asp-route-id="@Model[i].Id" class="btn btn-dark text-white mb-3 disabled">Add to Cart</a>
+                                </div>
+                            }
+                            else
+                            {
+                                <a asp-controller="Cakes" asp-action="Delete" asp-route-id="@Model[i].Id" class="btn btn-danger text-white mb-3">Delete</a>
+                                <div class="button-holder d-flex justify-content-center">
+                                    <a asp-controller="Cart" asp-action="AddToCart" asp-route-id="@Model[i].Id" class="btn btn-dark text-white mb-3">Add to Cart</a>
+                                </div>
+                            }
+
                         </div>
                     }
-                    <div class="button-holder d-flex justify-content-center">
-                        <a asp-controller="ShoppingCart" asp-action="AddToCart" asp-route-id="@Model[i].Id" class="btn btn-dark text-white mb-3">Add to Cart</a>
-                    </div>
+                    else
+                    {
+                        <div class="button-holder d-flex justify-content-center">
+                            <a asp-controller="Cart" asp-action="AddToCart" asp-route-id="@Model[i].Id" class="btn btn-dark text-white mb-3">Add to Cart</a>
+                        </div>
+                    }
+
+
                 </div>
             </div>
         }
     </div>
-    <!-- /.row -->
-    <!-- Pagination -->
 
-    @Html.PagedListPager(Model, page => Url.Action("Index", new { page = page }), new X.PagedList.Mvc.Common.PagedListRenderOptionsBase {
+    <!-- Pagination -->
+    @Html.PagedListPager(Model, page => Url.Action("Index", new { page = page }), new X.PagedList.Mvc.Common.PagedListRenderOptionsBase
+    {
         LiElementClasses = new string[] { "page-item" },
         PageClasses = new string[] { "page-link" }
 })
-
 </main>
 

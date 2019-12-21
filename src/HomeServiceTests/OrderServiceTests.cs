@@ -3,22 +3,22 @@ using CakeItWebApp.Models;
 using CakeItWebApp.Services.Common.Repository;
 using CakeItWebApp.ViewModels.Cakes;
 using CakeItWebApp.ViewModels.Orders;
-using CakeWebApp.Models;
+using CakeWebApp.Services.Common.Cart;
 using CakeWebApp.Services.Common.CommonServices;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace CakeItWebApp.Services.Common.Tests
 {
-    public class OrderServiceTests:BaseServiceTestClass
+    public class OrderServiceTests : BaseServiceTestClass
     {
+        private CakeItUser user = new CakeItUser { UserName = "test@test.mail", EmailConfirmed = false, PhoneNumberConfirmed = false, TwoFactorEnabled = false, LockoutEnabled = false, AccessFailedCount = 0, CreatedOn = new DateTime(2018, 12, 14, 18, 22, 10, 20), DeletedOn = null, IsDeleted = false };
+
         private CakeItDbContext SetDb()
         {
 
@@ -37,25 +37,9 @@ namespace CakeItWebApp.Services.Common.Tests
 
         private async Task SeedUser(CakeItDbContext db)
         {
-            db.Users.Add(new CakeItUser { UserName = "test@test.mail", EmailConfirmed = false, PhoneNumberConfirmed = false, TwoFactorEnabled = false, LockoutEnabled = false, AccessFailedCount = 0, CreatedOn = new DateTime(2018, 12, 14, 18, 22, 10, 20), DeletedOn = null, IsDeleted = false });
+            db.Users.Add(user);
 
             await db.SaveChangesAsync();
-        }
-
-        private async Task SeedShopigCart(CakeItDbContext db)
-        {
-            var repo = new Repository<ShoppingCartItem>(db);
-
-            var productRepo = new Repository<Product>(db);
-
-            var provider = new Mock<IServiceProvider>();
-
-            var cart = new Mock<ShoppingCart>();
-
-            var shoppingCartService = new ShoppingCartService(repo, productRepo, null, provider.Object, cart.Object);
-
-            await shoppingCartService.AddToShoppingCart(1);
-            await shoppingCartService.AddToShoppingCart(2);
         }
 
         private async Task SeedProducts(CakeItDbContext db)
@@ -75,27 +59,74 @@ namespace CakeItWebApp.Services.Common.Tests
             //It works without SaveCanges()???
         }
 
+        private class TestCartSessionWrapper : ICartSessionWrapper
+        {
+            private IList<Item> session;
+
+            public TestCartSessionWrapper()
+            {
+                this.session = new List<Item>();
+            }
+
+            public IList<Item> GetJson()
+            {
+                return this.session;
+            }
+
+            public void SetJson(object value)
+            {
+                this.session = value as List<Item>;
+            }
+        }
+
         [Fact]
-        public async Task CreateOrder_ShouldReturnOrderId()
+        public async Task CreateOrderWIthLoggedUser_ShouldReturnOrderId()
         {
             //Arrange
             var db = this.SetDb();
-
             await this.SeedProducts(db);
             await this.SeedUser(db);
-            await this.SeedShopigCart(db);
 
+            var productRepo = new Repository<Product>(db);
             var repo = new Repository<Order>(db);
             var userRepo = new Repository<CakeItUser>(db);
-            var cartItemRepo = new Repository<ShoppingCartItem>(db);
+            var wrapper = new TestCartSessionWrapper();
+            var cartManager = new CartManager(wrapper);
 
-            var item =  cartItemRepo.All().First();
-            item.ShoppingCartId = "test@test.mail";
-            await cartItemRepo.SaveChangesAsync();
+            var item1 = new Item() { Product = await productRepo.GetByIdAsync(1), Quantity = 1 };
+            cartManager.SetCartItem(new List<Item> { item1 });
 
-            var orderService = new OrderService(repo, userRepo, cartItemRepo, this.Mapper);
+            var orderService = new OrderService(repo, userRepo, cartManager, this.Mapper);
 
-            var userName = "test@test.mail";
+            var userName = this.user.UserName;
+
+            //Act
+            var result = await orderService.CreateOrder(userName);
+
+            //Asser
+            Assert.Equal(1, result);
+        }
+
+        [Fact]
+        public async Task CreateOrderWIthNOTLoggedUser_ShouldReturnOrderId()
+        {
+            //Arrange
+            var db = this.SetDb();
+            await this.SeedProducts(db);
+            await this.SeedUser(db);
+
+            var productRepo = new Repository<Product>(db);
+            var repo = new Repository<Order>(db);
+            var userRepo = new Repository<CakeItUser>(db);
+            var wrapper = new TestCartSessionWrapper();
+            var cartManager = new CartManager(wrapper);
+
+            var item1 = new Item() { Product = await productRepo.GetByIdAsync(1), Quantity = 1 };
+            cartManager.SetCartItem(new List<Item> { item1 });
+
+            var orderService = new OrderService(repo, userRepo, cartManager, this.Mapper);
+
+            string userName = null;
 
             //Act
             var result = await orderService.CreateOrder(userName);
@@ -109,21 +140,20 @@ namespace CakeItWebApp.Services.Common.Tests
         {
             //Arrange
             var db = this.SetDb();
-
             await this.SeedProducts(db);
             await this.SeedUser(db);
 
             var repo = new Repository<Order>(db);
             var userRepo = new Repository<CakeItUser>(db);
-            var cartItemRepo = new Repository<ShoppingCartItem>(db);
+            var wrapper = new TestCartSessionWrapper();
+            var cartManager = new CartManager(wrapper);
 
-            var orderService = new OrderService(repo, userRepo, cartItemRepo, this.Mapper);
+            var orderService = new OrderService(repo, userRepo, cartManager, this.Mapper);
 
-            var userName = "test@test.mail";
+            var userName = this.user.UserName;
 
             //Asser
-           await Assert.ThrowsAsync<InvalidOperationException>(async () => await orderService.CreateOrder(userName));
-
+            await Assert.ThrowsAsync<InvalidOperationException>(async () => await orderService.CreateOrder(userName));
         }
 
         [Fact]
@@ -131,23 +161,21 @@ namespace CakeItWebApp.Services.Common.Tests
         {
             //Arrange
             var db = this.SetDb();
-
             await this.SeedProducts(db);
             await this.SeedUser(db);
-            await this.SeedShopigCart(db);
+            var productRepo = new Repository<Product>(db);
 
             var repo = new Repository<Order>(db);
             var userRepo = new Repository<CakeItUser>(db);
-            var cartItemRepo = new Repository<ShoppingCartItem>(db);
+            var wrapper = new TestCartSessionWrapper();
+            var cartManager = new CartManager(wrapper);
 
+            var item1 = new Item() { Product = await productRepo.GetByIdAsync(1), Quantity = 1 };
+            cartManager.SetCartItem(new List<Item> { item1 });
 
-            var item = cartItemRepo.All().First();
-            item.ShoppingCartId = "test@test.mail";
-            await cartItemRepo.SaveChangesAsync();
+            var orderService = new OrderService(repo, userRepo, cartManager, this.Mapper);
 
-            var orderService = new OrderService(repo, userRepo, cartItemRepo, this.Mapper);
-
-            var userName = "test@test.mail";
+            var userName = this.user.UserName;
 
             await orderService.CreateOrder(userName);
 
@@ -165,17 +193,17 @@ namespace CakeItWebApp.Services.Common.Tests
         {
             //Arrange
             var db = this.SetDb();
-
             await this.SeedProducts(db);
             await this.SeedUser(db);
 
             var repo = new Repository<Order>(db);
             var userRepo = new Repository<CakeItUser>(db);
-            var cartItemRepo = new Repository<ShoppingCartItem>(db);
+            var wrapper = new TestCartSessionWrapper();
+            var cartManager = new CartManager(wrapper);
 
-            var orderService = new OrderService(repo, userRepo, cartItemRepo, this.Mapper);
+            var orderService = new OrderService(repo, userRepo, cartManager, this.Mapper);
 
-            var userName = "test@test.mail";
+            var userName = this.user.UserName;
 
             //Act
             var orders = orderService.GetAllOrdersByUser(userName);
@@ -187,29 +215,26 @@ namespace CakeItWebApp.Services.Common.Tests
         }
 
         [Fact]
-        public async Task GetAllItemsPerOrder_ShouldReturnCollectionOfItems()
+        public async Task GetAllItemsPerOrder_WithTwoDifferentItems_ShouldReturnCollectionOfTwoItems()
         {
             //Arrange
             var db = this.SetDb();
-
             await this.SeedProducts(db);
             await this.SeedUser(db);
-            await this.SeedShopigCart(db);
+            var productRepo = new Repository<Product>(db);
 
             var repo = new Repository<Order>(db);
             var userRepo = new Repository<CakeItUser>(db);
-            var cartItemRepo = new Repository<ShoppingCartItem>(db);
+            var wrapper = new TestCartSessionWrapper();
+            var cartManager = new CartManager(wrapper);
 
-            var userName = "test@test.mail";
+            var item1 = new Item() { Product = await productRepo.GetByIdAsync(1), Quantity = 2 };
+            var item2 = new Item() { Product = await productRepo.GetByIdAsync(2), Quantity = 1 };
+            cartManager.SetCartItem(new List<Item> { item1, item2 });
 
-            foreach (var item in cartItemRepo.All())
-            {
-                item.ShoppingCartId = userName;
-            }
+            var orderService = new OrderService(repo, userRepo, cartManager, this.Mapper);
 
-            await cartItemRepo.SaveChangesAsync();
-
-            var orderService = new OrderService(repo, userRepo, cartItemRepo, this.Mapper);
+            var userName = this.user.UserName;
 
             await orderService.CreateOrder(userName);
 
@@ -240,7 +265,7 @@ namespace CakeItWebApp.Services.Common.Tests
                 PhoneNumber = "+359/888777666",
                 City = "Test",
                 Country = "Test",
-                Address ="Test test test 6"
+                Address = "Test test test 6"
             };
 
             //Act
@@ -255,22 +280,21 @@ namespace CakeItWebApp.Services.Common.Tests
         {
             //Arrange
             var db = this.SetDb();
-
             await this.SeedProducts(db);
             await this.SeedUser(db);
-            await this.SeedShopigCart(db);
 
+            var productRepo = new Repository<Product>(db);
             var repo = new Repository<Order>(db);
             var userRepo = new Repository<CakeItUser>(db);
-            var cartItemRepo = new Repository<ShoppingCartItem>(db);
+            var wrapper = new TestCartSessionWrapper();
+            var cartManager = new CartManager(wrapper);
 
-            var item = cartItemRepo.All().First();
-            item.ShoppingCartId = "test@test.mail";
-            await cartItemRepo.SaveChangesAsync();
+            var item1 = new Item() { Product = await productRepo.GetByIdAsync(1), Quantity = 1 };
+            cartManager.SetCartItem(new List<Item> { item1 });
 
-            var orderService = new OrderService(repo, userRepo, cartItemRepo, this.Mapper);
+            var orderService = new OrderService(repo, userRepo, cartManager, this.Mapper);
 
-            var userName = "test@test.mail";
+            var userName = this.user.UserName;
 
             var result = await orderService.CreateOrder(userName);
 
@@ -301,3 +325,4 @@ namespace CakeItWebApp.Services.Common.Tests
         }
     }
 }
+

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace CakeItWebApp.ViewModels.Orders
+﻿namespace CakeItWebApp.ViewModels.Orders
 {
     public class AllOrdersViewModel
     {

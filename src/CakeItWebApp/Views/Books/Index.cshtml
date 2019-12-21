@@ -4,7 +4,7 @@
 @model IPagedList<CakeItWebApp.ViewModels.Books.BookIndexViewModel>
 
 @{
-    var book = Model[0];
+    var book = Model.Count > 0 ? Model[0] : null;
     var currentRating = 0;
     var fullStars = new string((char)9733, currentRating);
     var emptyStars = new string((char)9734, (5 - currentRating));

@@ -1,19 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
-using CakeItWebApp.ViewModels.Books;
+﻿using CakeItWebApp.ViewModels.Books;
 using CakeWebApp.Services.Common.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Net.Http.Headers;
+using System;
+using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 using X.PagedList;
 
 namespace CakeItWebApp.Controllers
 {
+    [Authorize]
     public class BooksController : Controller
     {
         private const int MaxBooksPerPage = 3;

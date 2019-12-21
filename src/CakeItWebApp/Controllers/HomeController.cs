@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using CakeWebApp.Services.Common.Contracts;
 using Microsoft.AspNetCore.Mvc;
-using CakeItWebApp.Models;
-using CakeWebApp.Services.Common.Contracts;
-using CakeItWebApp.ViewModels;
+using System.Threading.Tasks;
 
 namespace CakeItWebApp.Controllers
 {
@@ -25,14 +19,14 @@ namespace CakeItWebApp.Controllers
         {
            var model = await this.homeService.GetRandomCake();
 
-            if (model == null)
-            {
-                var errorMessage = "The site is under construction.Please excuse us and try again later.";
+            //if (model == null)
+            //{
+            //    var errorMessage = "The site is under construction.Please excuse us and try again later.";
 
-                ViewData["Errors"] = errorMessage;
+            //    ViewData["Errors"] = errorMessage;
 
-                return View("Error");
-            }
+            //    return View("Error");
+            //}
 
             return View(model);
         }

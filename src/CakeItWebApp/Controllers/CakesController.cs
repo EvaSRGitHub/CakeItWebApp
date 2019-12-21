@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using CakeItWebApp.ViewModels.Cakes;
+﻿using CakeItWebApp.ViewModels.Cakes;
 using CakeWebApp.Services.Common.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 using X.PagedList;
 
 namespace CakeItWebApp.Controllers
@@ -30,7 +29,9 @@ namespace CakeItWebApp.Controllers
         {
             ShwoMessageIfOrderHasBeenFinished();
 
-            var allCakes = this.cakeService.GetAllActiveCakes();
+            var userIsAdmin = this.User.IsInRole("Admin");
+
+            var allCakes = userIsAdmin ? this.cakeService.GetAllCakes() : this.cakeService.GetAllActiveCakes(); 
 
             var nextPage = page ?? 1;
 
@@ -61,7 +62,7 @@ namespace CakeItWebApp.Controllers
         {
             if (!ModelState.IsValid)
             {
-                this.logger.LogError("Model is not valid.");
+                this.logger.LogDebug("Model is not valid.");
 
                 var errors = this.ModelState.Values.SelectMany(p => p.Errors).Select(e => e.ErrorMessage).ToList();
 
@@ -151,7 +152,8 @@ namespace CakeItWebApp.Controllers
         {
             try
             {
-               await this.cakeService.DeleteCake(model);
+                //await this.cakeService.DeleteCake(model);
+                await this.cakeService.SoftDelete(model.Id);
             }
             catch (Exception e)
             {
@@ -195,14 +197,6 @@ namespace CakeItWebApp.Controllers
             TempData["Rate"] = "Your rating has been successfully registered.";
 
             return RedirectToAction(nameof(Index));
-        }
-
-        [Authorize(Roles = "Admin")]
-        public IActionResult AllCakes()
-        {
-            var model = this.cakeService.GetAllCakes();
-
-            return this.View(model);
         }
     }
 }

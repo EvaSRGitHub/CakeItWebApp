@@ -1,8 +1,6 @@
 ﻿using CakeItWebApp.ViewModels;
 using CakeWebApp.Services.Common.Contracts;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace CakeWebApp.Services.Common.CommonServices
 {

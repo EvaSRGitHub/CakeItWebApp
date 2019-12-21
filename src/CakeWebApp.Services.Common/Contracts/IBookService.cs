@@ -1,8 +1,5 @@
 ﻿using CakeItWebApp.ViewModels.Books;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CakeWebApp.Services.Common.Contracts
@@ -11,7 +8,7 @@ namespace CakeWebApp.Services.Common.Contracts
     {
          Task CreateBook(CreateBookViewModel model);
 
-        IQueryable<BookIndexViewModel> GetAllBooks();
+        IEnumerable<BookIndexViewModel> GetAllBooks();
 
         Task AddRatingToBook(int bookId, double rating);
 

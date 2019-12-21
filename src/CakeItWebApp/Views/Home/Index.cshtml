@@ -15,16 +15,19 @@
             </div>
         </div>
         <!-- /.col-lg-3 -->
-        <div class="col-lg-9">
-            <div class="card mt-4 mb-4">
-                <img class="card-img-top img-fluid" src="@Model.Image" alt="">
-                <div class="card-body">
-                    <h3 class="card-title">@Model.Name</h3>
-                    <h4>$@Model.Price</h4>
-                    <p class="card-text">@Model.Description</p>
+        @if (Model != null)
+        {
+            <div class="col-lg-9">
+                <div class="card mt-4 mb-4">
+                    <img class="card-img-top img-fluid" src="@Model.Image" alt="">
+                    <div class="card-body">
+                        <h3 class="card-title">@Model.Name</h3>
+                        <h4>$@Model.Price</h4>
+                        <p class="card-text">@Model.Description</p>
+                    </div>
                 </div>
             </div>
-        </div>
-        <!-- /.col-lg-9 -->
+            <!-- /.col-lg-9 -->
+        }
     </div>
 </main>

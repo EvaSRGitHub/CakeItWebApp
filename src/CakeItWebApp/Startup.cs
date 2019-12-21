@@ -1,27 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using AutoMapper;
+using CakeItWebApp.Data;
+using CakeItWebApp.Middlewares.MiddlewareExtensions;
+using CakeItWebApp.Models;
+using CakeItWebApp.Services.Common.Repository;
+using CakeItWebApp.Services.Messaging;
+using CakeWebApp.Services.Common.Cart;
+using CakeWebApp.Services.Common.CommonServices;
+using CakeWebApp.Services.Common.Contracts;
+using CakeWebApp.Services.Common.Sanitizer;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using CakeItWebApp.Models;
-using CakeItWebApp.Data;
-using CakeItWebApp.Middlewares.MiddlewareExtensions;
-using CakeItWebApp.Services.Messaging;
-using CakeWebApp.Services.Common.Contracts;
-using CakeWebApp.Services.Common.CommonServices;
-using CakeItWebApp.Services.Common.Repository;
-using AutoMapper;
-using CakeWebApp.Models;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using CakeWebApp.Services.Common.Sanitizer;
+using System;
+using System.Globalization;
 
 namespace CakeItWebApp
 {
@@ -84,11 +80,11 @@ namespace CakeItWebApp
 
             services.AddSingleton<IErrorService, ErrorService>();
 
-            services.AddAuthentication().AddFacebook(facebookOptions =>
-            {
-                facebookOptions.AppId = Configuration["Authentication:Facebook:AppId"];
-                facebookOptions.AppSecret = Configuration["Authentication:Facebook:AppSecret"];
-            });
+            //services.AddAuthentication().AddFacebook(facebookOptions =>
+            //{
+            //    facebookOptions.AppId = Configuration["Authentication:Facebook:AppId"];
+            //    facebookOptions.AppSecret = Configuration["Authentication:Facebook:AppSecret"];
+            //});
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
@@ -101,10 +97,6 @@ namespace CakeItWebApp
             });
 
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-
-            services.AddScoped<IShoppingCartService, ShoppingCartService>();
-
-            services.AddScoped(sp => ShoppingCart.GetShoppingCart(sp));
 
             services.AddScoped<IHomeService, HomeService>();
 
@@ -126,6 +118,13 @@ namespace CakeItWebApp
 
             services.AddScoped<IBookService, BookService>();
 
+            services.AddScoped<ICartService, CartService>();
+
+            services.AddScoped<ICartManager, CartManager>();
+
+            services.AddSingleton<ICartSessionWrapper, CartSessionWrapper>();
+
+            services.AddScoped<IEmailService, EmailService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -142,7 +141,22 @@ namespace CakeItWebApp
                 app.UseHsts();
             }
 
+            var supportedCultures = new[]
+            {
+                new CultureInfo("en-US"),
+                new CultureInfo("bg-BG"),
+            };
+
+            app.UseRequestLocalization(new RequestLocalizationOptions
+            {
+                DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("en-US"),
+                SupportedCultures = supportedCultures,
+                SupportedUICultures = supportedCultures
+            });
+
             app.UseSeedRolesMiddleware();
+
+            app.UseCreateCategoryMiddleware();
 
             app.UseError404Middleware();
 
@@ -155,8 +169,6 @@ namespace CakeItWebApp
             app.UseSession();
 
             app.UseAuthentication();
-
-            app.UseClearShoppingCartMiddleware();
 
             app.UseMvc(routes =>
             {

@@ -1,17 +1,14 @@
-﻿using AutoMapper;
-using CakeItWebApp.Data;
+﻿using CakeItWebApp.Data;
 using CakeItWebApp.Models;
 using CakeItWebApp.Services.Common.Repository;
-using CakeItWebApp.ViewModels;
 using CakeWebApp.Services.Common.CommonServices;
 using Microsoft.EntityFrameworkCore;
-using Moq;
+using Microsoft.Extensions.DependencyInjection;
+using Shouldly;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
-using Shouldly;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace CakeItWebApp.Services.Common.Tests.HomeServiceTests
 {

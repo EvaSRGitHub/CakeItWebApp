@@ -7,7 +7,6 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CakeWebApp.Services.Common.CommonServices
@@ -49,7 +48,7 @@ namespace CakeWebApp.Services.Common.CommonServices
             }
             catch (Exception e)
             {
-                this.logger.LogError(e.Message);
+                this.logger.LogDebug(e.Message);
 
                 throw new InvalidOperationException("Sorry, an error occurred and your request couldn't be processed.");
             }
@@ -77,7 +76,7 @@ namespace CakeWebApp.Services.Common.CommonServices
             }
             catch (Exception e)
             {
-                this.logger.LogError(e.Message);
+                this.logger.LogDebug(e.Message);
 
                 throw new InvalidOperationException("Sorry, an error occurred and your request couldn't be processed.");
             }
@@ -100,7 +99,7 @@ namespace CakeWebApp.Services.Common.CommonServices
             }
             catch (Exception e)
             {
-                this.logger.LogError(e.Message);
+                this.logger.LogDebug(e.Message);
 
                 throw new InvalidOperationException("Sorry, an error occurred and your request couldn't be processed.");
             }
@@ -149,7 +148,8 @@ namespace CakeWebApp.Services.Common.CommonServices
             }
             catch (Exception e)
             {
-                this.logger.LogError(e.Message);
+                this.logger.LogDebug(e.Message);
+
                 throw new InvalidOperationException("Sorry, an error occurred and your request couldn't be processed.");
             }
         }

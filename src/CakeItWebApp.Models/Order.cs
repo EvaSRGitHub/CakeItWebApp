@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 
 namespace CakeItWebApp.Models
 {
@@ -16,7 +15,7 @@ namespace CakeItWebApp.Models
 
         public int Id { get; set; }
 
-        [ForeignKey("User"),Required]
+        [ForeignKey("User")]
         public string UserId { get; set; }
 
         public virtual CakeItUser User { get; set; }

@@ -1,13 +1,8 @@
-﻿
-using AutoMapper;
+﻿using AutoMapper;
 using CakeItWebApp.Models;
 using CakeItWebApp.Services.Common.Repository;
 using CakeItWebApp.ViewModels.Orders;
 using CakeWebApp.Services.Common.Contracts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CakeWebApp.Services.Common.CommonServices

@@ -2,11 +2,11 @@
 using CakeItWebApp.Models;
 using CakeItWebApp.Services.Common.Repository;
 using CakeItWebApp.ViewModels.Orders;
+using CakeWebApp.Services.Common.Cart;
 using CakeWebApp.Services.Common.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CakeWebApp.Services.Common.CommonServices
@@ -15,25 +15,24 @@ namespace CakeWebApp.Services.Common.CommonServices
     {
         private readonly IRepository<Order> repository;
         private readonly IRepository<CakeItUser> userRepo;
-        private readonly IRepository<ShoppingCartItem> shoppingCartItems;
-
+        private readonly ICartManager cartManager;
         private readonly IMapper mapper;
 
-        public OrderService(IRepository<Order> repository, IRepository<CakeItUser> userRepo, IRepository<ShoppingCartItem> shoppingCartItems, IMapper mapper)
+        public OrderService(IRepository<Order> repository, IRepository<CakeItUser> userRepo, ICartManager cartManager, IMapper mapper)
         {
             this.repository = repository;
             this.userRepo = userRepo;
-            this.shoppingCartItems = shoppingCartItems;
+            this.cartManager = cartManager;
             this.mapper = mapper;
         }
 
         public async Task<int> CreateOrder(string userName)
         {
-            var userId = this.userRepo.All().SingleOrDefault(u => u.UserName == userName).Id;
+            var userId = this.userRepo.All().SingleOrDefault(u => u.UserName == userName)?.Id ?? null;
 
-            var orderedItems = this.shoppingCartItems.All().Where(i => i.ShoppingCartId == userName).ToList();
+            var orderedItems = this.cartManager.GetCartItem();
 
-            if(orderedItems.Count() == 0)
+            if (orderedItems.Count() == 0)
             {
                 throw new InvalidOperationException("Your shopping cart is empty.");
             }
@@ -42,7 +41,7 @@ namespace CakeWebApp.Services.Common.CommonServices
             {
                 UserId = userId,
                 Total = orderedItems.Sum(i => i.Product.Price * i.Quantity),
-                Products = orderedItems.Select(i  => new OrderProduct { ProductId = i.ProductId, Quantity = i.Quantity }).ToList()
+                Products = orderedItems.Select(i => new OrderProduct { ProductId = i.Product.Id, Quantity = i.Quantity }).ToList()
             };
 
             var order = this.mapper.Map<OrderViewModel, Order>(model);
@@ -51,14 +50,24 @@ namespace CakeWebApp.Services.Common.CommonServices
 
             await this.repository.SaveChangesAsync();
 
-            return order.Id;
+            var orderId = order.Id;
+
+            foreach (var item in orderedItems)
+            {
+                item.OrderId = orderId;
+            }
+
+            this.cartManager.SetCartItem(orderedItems);
+
+            return orderId;
         }
 
         public IEnumerable<AllOrdersViewModel> GetAllOrdersByUser(string userName)
         {
             var orders = this.repository.All().Where(o => o.User.UserName == userName);
 
-            var model = orders.Select(o => new AllOrdersViewModel {
+            var model = orders.Select(o => new AllOrdersViewModel
+            {
                 OrderId = o.Id,
                 OrderDate = o.OrederDate.ToString("dd-MM-yyyy HH:mm"),
                 Customer = userName,
@@ -75,15 +84,16 @@ namespace CakeWebApp.Services.Common.CommonServices
             var order = this.repository.All().Last();
 
             order.OrderDetailsId = orderDetailsId;
-            
-           await this.repository.SaveChangesAsync();
+
+            await this.repository.SaveChangesAsync();
         }
 
         public IEnumerable<OrderedProductsViewModel> GetAllItemsPerOrder(int orderId)
         {
             var order = this.repository.All().SingleOrDefault(o => o.Id == orderId);
 
-            var model = order.Products.Select(p => new OrderedProductsViewModel {
+            var model = order.Products.Select(p => new OrderedProductsViewModel
+            {
                 OrderId = order.Id,
                 ProductName = p.Product.Name,
                 ProductPrice = p.Product.Price,

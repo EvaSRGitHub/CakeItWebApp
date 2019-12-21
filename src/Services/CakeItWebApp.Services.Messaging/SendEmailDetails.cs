@@ -15,6 +15,5 @@
         public string Content { get; set; }
 
         public bool IsHtml { get; set; }
-
     }
 }

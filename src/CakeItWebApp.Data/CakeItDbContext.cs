@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using CakeItWebApp.Models;
+﻿using CakeItWebApp.Models;
 using CakeItWebApp.Models.Enums;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace CakeItWebApp.Data
 {
@@ -26,8 +22,6 @@ namespace CakeItWebApp.Data
         public DbSet<Tutorial> Tutorials { get; set; }
 
         public DbSet<Ingredients> Ingredients { get; set; }
-
-        public DbSet<ShoppingCartItem> CartItems { get; set; }
 
         public DbSet<Order> Orders { get; set; }
 

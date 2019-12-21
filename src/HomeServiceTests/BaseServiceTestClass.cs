@@ -1,7 +1,5 @@
 ﻿using AutoMapper;
-using CakeItWebApp.Data;
 using CakeItWebApp.Models;
-using CakeItWebApp.Services.Common.Repository;
 using CakeItWebApp.ViewModels;
 using CakeItWebApp.ViewModels.Books;
 using CakeItWebApp.ViewModels.Cakes;
@@ -10,13 +8,7 @@ using CakeItWebApp.ViewModels.Forum;
 using CakeItWebApp.ViewModels.Orders;
 using CakeItWebApp.ViewModels.Tags;
 using CakeItWebApp.ViewModels.Tutorials;
-using CakeWebApp.Services.Common.CommonServices;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CakeItWebApp.Services.Common.Tests
 {
@@ -34,7 +26,6 @@ namespace CakeItWebApp.Services.Common.Tests
                     config.CreateMap<Product, EditAndDeleteViewModel>().ReverseMap();
 
                     config.CreateMap<Order, OrderViewModel>().ReverseMap();
-                    config.CreateMap<ShoppingCartItem, OrderedProductsViewModel>().ReverseMap();
 
                     config.CreateMap<OrderDetails, OrderDetailsViewModel>().ReverseMap();
                     config.CreateMap<CustomCakeImgViewModel, CustomCakeImg>().ReverseMap();
@@ -73,8 +64,6 @@ namespace CakeItWebApp.Services.Common.Tests
                     config.CreateMap<Tag, TagInputViewModel>().ReverseMap();
 
                 }));
-
-            
         }
 
         protected IMapper Mapper { get; private set; }

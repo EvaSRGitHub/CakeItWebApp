@@ -9,9 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
@@ -62,7 +60,7 @@ namespace CakeWebApp.Services.Common.CommonServices
             }
             catch (Exception e)
             {
-                this.logger.LogError(e.Message);
+                this.logger.LogDebug(e.Message);
 
                 throw new InvalidOperationException("Sorry, couldn't process your comment.");
             }
@@ -137,7 +135,7 @@ namespace CakeWebApp.Services.Common.CommonServices
             }
             catch (Exception e)
             {
-                this.logger.LogError(e.Message);
+                this.logger.LogDebug(e.Message);
 
                 throw new InvalidOperationException("Sorry. An error occurred while creating a post.");
             }
@@ -344,7 +342,7 @@ namespace CakeWebApp.Services.Common.CommonServices
             }
             catch (Exception e)
             {
-                this.logger.LogError(e.Message);
+                this.logger.LogDebug(e.Message);
 
                 throw new InvalidOperationException("Sorry, an error occurred while trying to delete your comment.");
             }
@@ -364,7 +362,7 @@ namespace CakeWebApp.Services.Common.CommonServices
             }
             catch (Exception e)
             {
-                this.logger.LogError(e.Message);
+                this.logger.LogDebug(e.Message);
 
                 throw new InvalidOperationException("Sorry, an error occurred while trying to delete your post");
             }
@@ -397,7 +395,7 @@ namespace CakeWebApp.Services.Common.CommonServices
             }
             catch (Exception e)
             {
-                this.logger.LogError(e.Message);
+                this.logger.LogDebug(e.Message);
 
                 throw new InvalidOperationException("Sorry an error occurred whille trying to edit your comment.");
             }
@@ -478,7 +476,7 @@ namespace CakeWebApp.Services.Common.CommonServices
             }
             catch (Exception e)
             {
-                this.logger.LogError(e.Message);
+                this.logger.LogDebug(e.Message);
 
                 throw new InvalidOperationException("Sorry. An error occurred while updating your post.");
             }

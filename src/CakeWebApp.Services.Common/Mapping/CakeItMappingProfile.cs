@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using CakeItWebApp.Models;
-using CakeItWebApp.Models.Enums;
 using CakeItWebApp.ViewModels;
 using CakeItWebApp.ViewModels.Books;
 using CakeItWebApp.ViewModels.Cakes;
@@ -9,11 +8,7 @@ using CakeItWebApp.ViewModels.Forum;
 using CakeItWebApp.ViewModels.Orders;
 using CakeItWebApp.ViewModels.Tags;
 using CakeItWebApp.ViewModels.Tutorials;
-using CakeWebApp.Services.Common.Sanitizer;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace CakeWebApp.Services.Common.Mapping
 {
@@ -30,8 +25,6 @@ namespace CakeWebApp.Services.Common.Mapping
             CreateMap<Order, OrderViewModel>().ReverseMap();
 
             CreateMap<OrderDetails, OrderDetailsViewModel>().ReverseMap();
-
-            CreateMap<ShoppingCartItem, OrderedProductsViewModel>().ReverseMap();
 
             CreateMap<CustomCakeImg, CustomCakeImgViewModel>().ReverseMap();
 

@@ -5,9 +5,7 @@ using CakeItWebApp.ViewModels.Tags;
 using CakeWebApp.Services.Common.Contracts;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CakeWebApp.Services.Common.CommonServices
@@ -42,7 +40,7 @@ namespace CakeWebApp.Services.Common.CommonServices
             }
             catch (Exception e)
             {
-                this.logger.LogError(e.Message);
+                this.logger.LogDebug(e.Message);
 
                 throw new InvalidOperationException("Sorry an error accored while creating a tag.");
             }
@@ -84,7 +82,7 @@ namespace CakeWebApp.Services.Common.CommonServices
             }
             catch (Exception e)
             {
-                this.logger.LogError(e.Message);
+                this.logger.LogDebug(e.Message);
                 throw new InvalidOperationException("Sorry, can't update tag.");
             }
         }

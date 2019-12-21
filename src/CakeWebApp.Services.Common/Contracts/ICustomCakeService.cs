@@ -1,8 +1,6 @@
 ﻿using CakeItWebApp.Models;
 using CakeItWebApp.ViewModels.CustomCake;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CakeWebApp.Services.Common.Contracts
