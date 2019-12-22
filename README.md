@@ -26,8 +26,9 @@ The app is asp.net core 2.1 where is the scaffolded identity, the cantrollers an
 so are the database models, the view models and the service layer. 
 
 ### Launch
-To setup the project first you need to download it locally, resolve dependences and when it builds successfully write 'update-database' in Visual Studio Package Manager Console.
-The poject is build on EF Core 2.1. I plan to seed some inital data, but for now, if you like you can test it with your own data.
+To setup the project first you need to download it locally, resolve dependences and when it builds successfully write 'update-database' 
+in Visual Studio Package Manager Console. The poject is build on EF Core 2.1. I plan to seed some inital data, but for now, 
+if you like you can test it with your own data.
 The app send a confirmation e-mail after each order. To use this feacher you should make account in SENDGRID Email provider and 
 put configuration data in the appsettings.json.
 There is an option for Facebook authentication, which is commented, as you have to include configuration daga in 
