@@ -18,18 +18,17 @@ It uses the following NuGet pacages:
  * HtmlSanitizer v4.0.199
  * TinyMCE" v4.9.2 
  * X.PagedList.Mvc.Core v7.6.0
-For testing: 
  * Moq v4.10.1
  * Shouldly v3.0.2
  * Xunit v2.4.1
 
-The app is asp.net core 2.1 where the scafolded identity is, the cantrollers and views. The data layer is separated in class library, 
-so are the database entities, the view models and the service layer. 
+The app is asp.net core 2.1 where is the scaffolded identity, the cantrollers and views. The data layer is separated in class library, 
+so are the database models, the view models and the service layer. 
 
 ### Launch
-To setup the project first you need to download it locally. To run it write 'update-database' in Visual Studio Package Manager Console.
-The poject is build on EF Core 2.1. I plan to seed some inital data, but for now if you like you can test it with your own.
-The app send confirmation e-mails after each order. To test this feacher you should make account in SENDGRID Email provider and 
+To setup the project first you need to download it locally, resolve dependences and when it builds successfully write 'update-database' in Visual Studio Package Manager Console.
+The poject is build on EF Core 2.1. I plan to seed some inital data, but for now, if you like you can test it with your own data.
+The app send a confirmation e-mail after each order. To use this feacher you should make account in SENDGRID Email provider and 
 put configuration data in the appsettings.json.
 There is an option for Facebook authentication, which is commented, as you have to include configuration daga in 
 appsetting.json to work.
