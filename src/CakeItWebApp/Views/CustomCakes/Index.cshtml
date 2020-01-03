@@ -81,7 +81,7 @@
                         {
                             var itemName = item.ToString().Replace('_', ' ');
 
-                        <option value="@item">@itemName Side Decoration</option>
+                            <option value="@item">@itemName Side Decoration</option>
                         }
                     </select>
                 </div>
@@ -101,7 +101,7 @@
                 </div>
                 <!--Slices-->
                 <div class="form-group w-100 d-flex">
-                    <span><img src="~/images/toppingicon.png"/></span>
+                    <span><img src="~/images/toppingicon.png" /></span>
                     <select class="form-control d-inline ml-2" asp-for="NumberOfSlices" style="background-color: wheat; color: saddlebrown; border: 2px solid saddlebrown;">
                         <option selected>-- Choose Number of Slices --</option>
                         @for (var i = 0; i < slices.Count(); i++)
@@ -116,13 +116,10 @@
                 <button type="submit" class="btn" style="background-color: saddlebrown; color:white">Submit</button>
             </form>
         </div>
-        @*<div class="col-md-7 mt-3">
-                <img class="img-fluid mt-5 mx-auto d-block" src="http://placehold.it/750x500" alt="">
-            </div>*@
-        </div>
-        <!--div row-->
-    </main>
+    </div>
+    <!--div row-->
+</main>
 
-    @section Scripts {
-        <partial name="_ValidationScriptsPartial" />
-    }
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

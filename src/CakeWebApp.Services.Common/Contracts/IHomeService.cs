@@ -6,7 +6,5 @@ namespace CakeWebApp.Services.Common.Contracts
     public interface IHomeService
     {
         Task<CakeIndexViewModel> GetRandomCake();
-
-        int GetCakeProductsCount();
     }
 }

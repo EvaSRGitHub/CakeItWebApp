@@ -102,7 +102,7 @@ namespace CakeItWebApp.Controllers
             {
                 await this.cakeService.AddCakeToDb(product);
 
-                customProductId = await this.customCakeService.GetProductId();
+                customProductId = product.Id;
             }
             catch (Exception e)
             {
@@ -111,7 +111,7 @@ namespace CakeItWebApp.Controllers
                 return this.View("Error");
             }
 
-            return RedirectToAction("AddToCart", "ShoppingCart", new { Id = customProductId });
+            return RedirectToAction("AddToCart", "Cart", new { Id = customProductId });
         }
 
         [Authorize(Roles = "Admin")]

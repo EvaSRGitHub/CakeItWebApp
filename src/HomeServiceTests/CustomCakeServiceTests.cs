@@ -336,58 +336,7 @@ namespace CakeItWebApp.Services.Common.Tests
 >(() => service.CreateCustomProduct(model));
         }
 
-        [Fact]
-        public async Task GetProductId_ShouldReturnTheIdOfTheLastAddedProduct()
-        {
-            //Arrange
-            var db = this.SetDb();
-            var repo = new Repository<CustomCakeImg>(db);
-            var productRepo = new Repository<Product>(db);
-            var mock = new Mock<ILogger<CustomCakeService>>();
-            ILogger<CustomCakeService> logger = mock.Object;
-            var service = new CustomCakeService(productRepo, repo, this.Mapper, logger);
-
-            CustomCakeOrderViewModel model = new CustomCakeOrderViewModel
-            {
-                Sponge = "Vanilla",
-                FirstLayerCream = "Whipped",
-                SecondLayerCream = "Whipped",
-                Filling = "No_Filling",
-                SideDecoration = "White_Chocolate_Cigarettes",
-                TopDecoration = "Habana",
-                NumberOfSlices = 6,
-                Img = "https://res.cloudinary.com/cakeit/image/upload/v1545083551/Top_Habana_WhiteCigarettes.png"
-            };
-
-            var product = service.CreateCustomProduct(model);
-
-            productRepo.Add(product);
-            await productRepo.SaveChangesAsync();
-
-            //Act
-            int? result = await service.GetProductId();
-
-            //Assert
-            Assert.NotNull(result);
-
-        }
-
-        [Fact]
-        public async Task GetProductId_WithEmptyProductDb_ShouldThrow()
-        {
-            //Arrange
-            var db = this.SetDb();
-            var repo = new Repository<CustomCakeImg>(db);
-            var productRepo = new Repository<Product>(db);
-            var mock = new Mock<ILogger<CustomCakeService>>();
-            ILogger<CustomCakeService> logger = mock.Object;
-            var service = new CustomCakeService(productRepo, repo, this.Mapper, logger);
-
-            //Act
-
-            //Assert
-            await Assert.ThrowsAsync<NullReferenceException>(async () => await service.GetProductId());
-        }
+        
 
         [Fact]
         public async Task UpdateCustomCakeImg_WithValidData_ShouldSaveUpdatedEntry()

@@ -230,7 +230,7 @@ namespace CakeItWebApp.Services.Common.Tests
             await cartService.AddToCart(2);
 
             //Act
-            cartService.RemoveFromCart(1);
+            await cartService.RemoveFromCart(1);
 
             var expected = 1;
             var actual = cartManager.GetCartItem().Count;
@@ -255,7 +255,7 @@ namespace CakeItWebApp.Services.Common.Tests
             await cartService.AddToCart(1);
 
             //Act
-            cartService.RemoveFromCart(1);
+            await cartService.RemoveFromCart(1);
 
             var expected = 0;
             var actual = cartManager.GetCartItem().Count;
@@ -280,7 +280,7 @@ namespace CakeItWebApp.Services.Common.Tests
             await cartService.AddToCart(1);
 
             //Assert
-            Assert.Throws<NullReferenceException>(() => cartService.RemoveFromCart(3));
+            await Assert.ThrowsAsync<NullReferenceException>(async () => await cartService.RemoveFromCart(3));
         }
 
         [Fact]
@@ -318,7 +318,7 @@ namespace CakeItWebApp.Services.Common.Tests
             await cartService.AddToCart(1);
 
             //Act
-            cartService.RemoveFromCart(1);
+            await cartService.RemoveFromCart(1);
 
             //Assert
             Assert.Empty(cartManager.GetCartItem());

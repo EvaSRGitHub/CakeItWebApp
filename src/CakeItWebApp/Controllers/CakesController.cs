@@ -40,16 +40,6 @@ namespace CakeItWebApp.Controllers
             return View(cakesPerPage);
         }
 
-        private void ShwoMessageIfOrderHasBeenFinished()
-        {
-            var value = TempData["SentEmail"]?.ToString() ?? null;
-
-            if (value == "true")
-            {
-                ViewData["SentEmail"] = "Your order is accepted. Please check your e-mail.";
-            }
-        }
-
         [Authorize(Roles="Admin")]
         public IActionResult Create()
         {
@@ -197,6 +187,16 @@ namespace CakeItWebApp.Controllers
             TempData["Rate"] = "Your rating has been successfully registered.";
 
             return RedirectToAction(nameof(Index));
+        }
+
+        private void ShwoMessageIfOrderHasBeenFinished()
+        {
+            var value = TempData["SentEmail"]?.ToString() ?? null;
+
+            if (value == "true")
+            {
+                ViewData["SentEmail"] = "Your order is accepted. Please check your e-mail.";
+            }
         }
     }
 }

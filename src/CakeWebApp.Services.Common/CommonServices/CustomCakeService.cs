@@ -3,7 +3,6 @@ using CakeItWebApp.Models;
 using CakeItWebApp.Services.Common.Repository;
 using CakeItWebApp.ViewModels.CustomCake;
 using CakeWebApp.Services.Common.Contracts;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -98,20 +97,6 @@ namespace CakeWebApp.Services.Common.CommonServices
             };
 
             return product;
-        }
-
-        public async Task<int?> GetProductId()
-        {
-            var product = await this.repository.All().LastOrDefaultAsync();
-
-            int? id = product.Id;
-
-            if (product == null)
-            {
-                throw new NullReferenceException("Product not Found");
-            }
-
-            return id;
         }
 
         public IEnumerable<CustomCakeImgViewModel> GetAllCustomCakesImg()

@@ -35,6 +35,7 @@ namespace CakeItWebApp.Models
         [Required]
         public bool IsDeleted { get; set; }
 
+        [JsonIgnore]
         public virtual Ingredients Ingredients { get; set; }
 
         public double? Rating { get; set; }

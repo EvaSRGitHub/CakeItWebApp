@@ -49,7 +49,7 @@ namespace CakeWebApp.Services.Common.CommonServices
             return model;
         }
 
-        public int GetCakeProductsCount()
+        private int GetCakeProductsCount()
         {
             return this.repository.All().Where(p => p.CategoryId == 1).Count();
         }

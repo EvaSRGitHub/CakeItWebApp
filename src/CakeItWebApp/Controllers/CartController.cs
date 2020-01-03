@@ -43,11 +43,11 @@ namespace CakeItWebApp.Controllers
             return RedirectToAction("Index", "Cart");
         }
 
-        public IActionResult RemoveItem(int id)
+        public async Task<IActionResult> RemoveItem(int id)
         {
             try
             {
-                this.cartService.RemoveFromCart(id);
+                await this.cartService.RemoveFromCart(id);
             }
             catch (Exception e)
             {

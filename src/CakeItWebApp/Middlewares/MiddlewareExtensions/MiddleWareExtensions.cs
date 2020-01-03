@@ -18,5 +18,15 @@ namespace CakeItWebApp.Middlewares.MiddlewareExtensions
         {
             return builder.UseMiddleware<CreateCategoryMiddleware>();
         }
+
+        public static IApplicationBuilder UseSeedCakesMiddleware(this IApplicationBuilder builder)
+        {
+            return builder.UseMiddleware<SeedCakesMiddleware>();
+        }
+
+        public static IApplicationBuilder UseSeedCustomCakesImgsMiddleware(this IApplicationBuilder builder)
+        {
+            return builder.UseMiddleware<SeedCustomCakesImgsMiddleware>();
+        }
     }
 }

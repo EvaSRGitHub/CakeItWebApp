@@ -10,14 +10,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CakeItWebApp.Data.Migrations
 {
     [DbContext(typeof(CakeItDbContext))]
-    [Migration("20181217213338_CustomCakeImg")]
-    partial class CustomCakeImg
+    [Migration("20191224122450_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.1.4-rtm-31024")
+                .HasAnnotation("ProductVersion", "2.1.11-servicing-32099")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -30,12 +30,14 @@ namespace CakeItWebApp.Data.Migrations
                     b.Property<string>("Author")
                         .IsRequired();
 
-                    b.Property<string>("CakeItUserId");
+                    b.Property<string>("CoverUrl")
+                        .IsRequired();
 
                     b.Property<string>("Description")
                         .IsRequired();
 
-                    b.Property<int>("DownloadUrl");
+                    b.Property<string>("DownloadUrl")
+                        .IsRequired();
 
                     b.Property<int>("Pages");
 
@@ -47,8 +49,6 @@ namespace CakeItWebApp.Data.Migrations
                         .IsRequired();
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CakeItUserId");
 
                     b.ToTable("Books");
                 });
@@ -124,6 +124,31 @@ namespace CakeItWebApp.Data.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("CakeItWebApp.Models.Comment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("AuthorId");
+
+                    b.Property<string>("Content");
+
+                    b.Property<DateTime>("CreatedOn");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<int>("PostId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
+
+                    b.HasIndex("PostId");
+
+                    b.ToTable("Comments");
+                });
+
             modelBuilder.Entity("CakeItWebApp.Models.CustomCakeImg", b =>
                 {
                     b.Property<int>("Id")
@@ -189,8 +214,7 @@ namespace CakeItWebApp.Data.Migrations
 
                     b.Property<decimal>("Total");
 
-                    b.Property<string>("UserId")
-                        .IsRequired();
+                    b.Property<string>("UserId");
 
                     b.HasKey("Id");
 
@@ -251,6 +275,29 @@ namespace CakeItWebApp.Data.Migrations
                     b.ToTable("OrderProducts");
                 });
 
+            modelBuilder.Entity("CakeItWebApp.Models.Post", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("AuthorId");
+
+                    b.Property<DateTime>("CreatedOn");
+
+                    b.Property<string>("FullContent");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<string>("Title");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
+
+                    b.ToTable("Posts");
+                });
+
             modelBuilder.Entity("CakeItWebApp.Models.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -282,23 +329,32 @@ namespace CakeItWebApp.Data.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("CakeItWebApp.Models.ShoppingCartItem", b =>
+            modelBuilder.Entity("CakeItWebApp.Models.Tag", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("ProductId");
+                    b.Property<bool>("IsDeleted");
 
-                    b.Property<int>("Quantity");
-
-                    b.Property<string>("ShoppingCartId");
+                    b.Property<string>("Name");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProductId");
+                    b.ToTable("Tags");
+                });
 
-                    b.ToTable("CartItems");
+            modelBuilder.Entity("CakeItWebApp.Models.TagPosts", b =>
+                {
+                    b.Property<int>("TagId");
+
+                    b.Property<int>("PostId");
+
+                    b.HasKey("TagId", "PostId");
+
+                    b.HasIndex("PostId");
+
+                    b.ToTable("TagPosts");
                 });
 
             modelBuilder.Entity("CakeItWebApp.Models.Tutorial", b =>
@@ -306,8 +362,6 @@ namespace CakeItWebApp.Data.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("CakeItUserId");
 
                     b.Property<string>("Description");
 
@@ -322,8 +376,6 @@ namespace CakeItWebApp.Data.Migrations
                         .IsRequired();
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CakeItUserId");
 
                     b.ToTable("Tutorials");
                 });
@@ -438,11 +490,16 @@ namespace CakeItWebApp.Data.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("CakeItWebApp.Models.Book", b =>
+            modelBuilder.Entity("CakeItWebApp.Models.Comment", b =>
                 {
-                    b.HasOne("CakeItWebApp.Models.CakeItUser")
-                        .WithMany("Books")
-                        .HasForeignKey("CakeItUserId");
+                    b.HasOne("CakeItWebApp.Models.CakeItUser", "Author")
+                        .WithMany()
+                        .HasForeignKey("AuthorId");
+
+                    b.HasOne("CakeItWebApp.Models.Post", "Post")
+                        .WithMany("Comments")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("CakeItWebApp.Models.Ingredients", b =>
@@ -457,8 +514,7 @@ namespace CakeItWebApp.Data.Migrations
                 {
                     b.HasOne("CakeItWebApp.Models.CakeItUser", "User")
                         .WithMany("Orders")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("CakeItWebApp.Models.OrderDetails", b =>
@@ -481,27 +537,32 @@ namespace CakeItWebApp.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("CakeItWebApp.Models.Post", b =>
+                {
+                    b.HasOne("CakeItWebApp.Models.CakeItUser", "Author")
+                        .WithMany()
+                        .HasForeignKey("AuthorId");
+                });
+
             modelBuilder.Entity("CakeItWebApp.Models.Product", b =>
                 {
                     b.HasOne("CakeItWebApp.Models.Category", "Category")
-                        .WithMany("Products")
+                        .WithMany()
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("CakeItWebApp.Models.ShoppingCartItem", b =>
+            modelBuilder.Entity("CakeItWebApp.Models.TagPosts", b =>
                 {
-                    b.HasOne("CakeItWebApp.Models.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
+                    b.HasOne("CakeItWebApp.Models.Post", "Post")
+                        .WithMany("Tags")
+                        .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade);
-                });
 
-            modelBuilder.Entity("CakeItWebApp.Models.Tutorial", b =>
-                {
-                    b.HasOne("CakeItWebApp.Models.CakeItUser")
-                        .WithMany("Tutorials")
-                        .HasForeignKey("CakeItUserId");
+                    b.HasOne("CakeItWebApp.Models.Tag", "Tag")
+                        .WithMany("Posts")
+                        .HasForeignKey("TagId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

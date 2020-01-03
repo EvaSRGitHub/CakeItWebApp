@@ -158,6 +158,10 @@ namespace CakeItWebApp
 
             app.UseCreateCategoryMiddleware();
 
+            app.UseSeedCakesMiddleware();
+
+            app.UseSeedCustomCakesImgsMiddleware();
+
             app.UseError404Middleware();
 
             app.UseHttpsRedirection();

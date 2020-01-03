@@ -64,7 +64,7 @@ namespace CakeWebApp.Services.Common.CommonServices
             return model;
         }
 
-        public void RemoveFromCart(int id)
+        public async Task RemoveFromCart(int id)
         {
             var product = this.productsRepo.All().SingleOrDefault(p => p.Id == id);
 
@@ -76,6 +76,16 @@ namespace CakeWebApp.Services.Common.CommonServices
             if (product.CategoryId == 2)
             {
                 this.productsRepo.Delete(product);
+
+                try
+                {
+                    await this.productsRepo.SaveChangesAsync();
+                }
+                catch (Exception)
+                {
+                    throw new InvalidOperationException("Sorry, an error occurred while trying to delete custom cake.");
+                }
+                
             }
 
             int index = isExist(id);
@@ -99,6 +109,7 @@ namespace CakeWebApp.Services.Common.CommonServices
         {
             this.ClearCart();
         }
+
         private void ClearCart()
         {
             this.cart = new List<Item>();

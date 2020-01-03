@@ -13,8 +13,6 @@ namespace CakeWebApp.Services.Common.Contracts
 
         Product CreateCustomProduct(CustomCakeOrderViewModel model);
 
-        Task<int?> GetProductId();
-
         IEnumerable<CustomCakeImgViewModel> GetAllCustomCakesImg();
 
         Task<CustomCakeImgViewModel> GetCustomCakeImgById(int id);

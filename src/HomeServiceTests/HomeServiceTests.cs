@@ -54,25 +54,6 @@ namespace CakeItWebApp.Services.Common.Tests.HomeServiceTests
         }
 
         [Fact]
-        public void GetProductCount_Home_Index_WhenNoProducts_ShouldReturn0()
-        {
-            var db = this.SetDb();
-            using (db)
-            {
-                //Arrange
-                var repo = new Repository<Product>(db);
-
-                var homeService = new HomeService(repo, null);
-
-                //Act
-                var result = homeService.GetCakeProductsCount();
-
-                //Assert
-                Assert.Equal(0, result);
-            }
-        }
-
-        [Fact]
         public async Task GetRandomCake_Home_Index_WhenFirstProductIsDeletedTrue_ShouldReturnProductId2()
         {
             var db = this.SetDb();

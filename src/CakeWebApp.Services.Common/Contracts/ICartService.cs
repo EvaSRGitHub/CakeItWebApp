@@ -9,7 +9,7 @@ namespace CakeWebApp.Services.Common.Contracts
 
         CartViewModel GetCartItems();
 
-        void RemoveFromCart(int id);
+        Task RemoveFromCart(int id);
 
         void EmptyCart();
     }
